@@ -77,6 +77,21 @@ describe("site technical export service", () => {
           notes: "Verification manuelle OK.",
         },
       ],
+      securityChecks: [
+        {
+          id: "security_1",
+          status: "warning",
+          checkedAt: new Date("2026-05-28T10:30:00.000Z"),
+          httpsEnabled: true,
+          hstsHeader: false,
+          cspHeader: false,
+          xFrameOptionsHeader: true,
+          xContentTypeOptionsHeader: true,
+          xmlrpcAccessible: false,
+          readmeAccessible: false,
+          summary: "À surveiller.",
+        },
+      ],
     });
 
     const exportState = await exportSiteTechnicalState("site_1");
@@ -118,6 +133,12 @@ describe("site technical export service", () => {
             },
           ],
         },
+        securityChecks: {
+          orderBy: {
+            checkedAt: "desc",
+          },
+          take: 5,
+        },
       },
     });
     expect(exportState).toMatchObject({
@@ -138,7 +159,17 @@ describe("site technical export service", () => {
         },
         summary: wpurSummary,
       },
-      security: [],
+      security: {
+        latest: {
+          id: "security_1",
+          status: "warning",
+        },
+        history: [
+          {
+            id: "security_1",
+          },
+        ],
+      },
       performance: [],
       forms: [
         {

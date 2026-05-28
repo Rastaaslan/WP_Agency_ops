@@ -74,6 +74,13 @@ enum WatchedFormStatus {
   ignored
 }
 
+enum SecurityCheckStatus {
+  ok
+  warning
+  issue
+  failed
+}
+
 model Client {
   id          String       @id @default(cuid())
   name        String
@@ -90,20 +97,21 @@ model Client {
 }
 
 model Site {
-  id            String         @id @default(cuid())
-  clientId      String
-  name          String
-  url           String
-  environment   SiteEnvironment @default(production)
-  status        SiteStatus      @default(active)
-  notes         String?
-  createdAt     DateTime        @default(now())
-  updatedAt     DateTime        @updatedAt
-  client        Client          @relation(fields: [clientId], references: [id], onDelete: Cascade)
-  interventions Intervention[]
-  wpurImports   WpurImport[]
-  backups       BackupRecord[]
-  watchedForms  WatchedForm[]
+  id             String          @id @default(cuid())
+  clientId       String
+  name           String
+  url            String
+  environment    SiteEnvironment @default(production)
+  status         SiteStatus      @default(active)
+  notes          String?
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  client         Client          @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  interventions  Intervention[]
+  wpurImports    WpurImport[]
+  backups        BackupRecord[]
+  watchedForms   WatchedForm[]
+  securityChecks SecurityCheck[]
 
   @@index([clientId])
   @@index([status])
@@ -193,4 +201,27 @@ model WatchedForm {
   @@index([siteId])
   @@index([status])
   @@index([lastCheckedAt])
+}
+
+model SecurityCheck {
+  id                        String              @id @default(cuid())
+  siteId                    String
+  checkedAt                 DateTime
+  status                    SecurityCheckStatus
+  httpStatus                Int?
+  httpsEnabled              Boolean             @default(false)
+  hstsHeader                Boolean             @default(false)
+  cspHeader                 Boolean             @default(false)
+  xFrameOptionsHeader       Boolean             @default(false)
+  xContentTypeOptionsHeader Boolean             @default(false)
+  xmlrpcAccessible          Boolean             @default(false)
+  readmeAccessible          Boolean             @default(false)
+  summary                   String?
+  notes                     String?
+  rawJson                   Json?
+  createdAt                 DateTime            @default(now())
+  site                      Site                @relation(fields: [siteId], references: [id], onDelete: Cascade)
+
+  @@index([siteId, checkedAt])
+  @@index([status])
 }

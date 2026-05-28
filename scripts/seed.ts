@@ -157,6 +157,53 @@ async function main() {
     },
   });
 
+  await prisma.securityCheck.upsert({
+    where: { id: "seed-security-check-2026-05-28" },
+    update: {
+      siteId: site.id,
+      checkedAt: new Date("2026-05-28T10:30:00.000Z"),
+      status: "warning",
+      httpStatus: 200,
+      httpsEnabled: true,
+      hstsHeader: false,
+      cspHeader: false,
+      xFrameOptionsHeader: true,
+      xContentTypeOptionsHeader: true,
+      xmlrpcAccessible: false,
+      readmeAccessible: false,
+      summary:
+        "À surveiller : certains en-têtes ou fichiers publics méritent une revue.",
+      notes:
+        "Contrôle fictif non offensif limité aux en-têtes HTTP basiques.",
+      rawJson: json({
+        checkedUrl: site.url,
+        policy: "non_offensive_limited_http_checks",
+      }),
+    },
+    create: {
+      id: "seed-security-check-2026-05-28",
+      siteId: site.id,
+      checkedAt: new Date("2026-05-28T10:30:00.000Z"),
+      status: "warning",
+      httpStatus: 200,
+      httpsEnabled: true,
+      hstsHeader: false,
+      cspHeader: false,
+      xFrameOptionsHeader: true,
+      xContentTypeOptionsHeader: true,
+      xmlrpcAccessible: false,
+      readmeAccessible: false,
+      summary:
+        "À surveiller : certains en-têtes ou fichiers publics méritent une revue.",
+      notes:
+        "Contrôle fictif non offensif limité aux en-têtes HTTP basiques.",
+      rawJson: json({
+        checkedUrl: site.url,
+        policy: "non_offensive_limited_http_checks",
+      }),
+    },
+  });
+
   const wpurPayload = wpurPayloadSchema.parse({
     schemaVersion: "1.0",
     reportType: "monthly_plugin_maintenance",

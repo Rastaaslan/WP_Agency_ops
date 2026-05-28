@@ -38,6 +38,12 @@ export async function exportSiteTechnicalState(siteId: string) {
           },
         ],
       },
+      securityChecks: {
+        orderBy: {
+          checkedAt: "desc",
+        },
+        take: 5,
+      },
     },
   });
 
@@ -49,11 +55,13 @@ export async function exportSiteTechnicalState(siteId: string) {
     backups,
     client,
     interventions,
+    securityChecks,
     watchedForms,
     wpurImports,
     ...site
   } = siteRecord;
   const latestWpurImport = wpurImports[0] ?? null;
+  const latestSecurityCheck = securityChecks[0] ?? null;
 
   return {
     client,
@@ -65,7 +73,10 @@ export async function exportSiteTechnicalState(siteId: string) {
           summary: latestWpurImport.summaryJson ?? null,
         }
       : null,
-    security: [],
+    security: {
+      latest: latestSecurityCheck,
+      history: securityChecks,
+    },
     performance: [],
     forms: watchedForms,
     backups,

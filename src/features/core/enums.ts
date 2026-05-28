@@ -53,6 +53,13 @@ export const watchedFormStatuses = [
   "ignored",
 ] as const;
 
+export const securityCheckStatuses = [
+  "ok",
+  "warning",
+  "issue",
+  "failed",
+] as const;
+
 export type ClientStatus = (typeof clientStatuses)[number];
 export type SiteEnvironment = (typeof siteEnvironments)[number];
 export type SiteStatus = (typeof siteStatuses)[number];
@@ -62,3 +69,4 @@ export type InterventionItemStatus = (typeof interventionItemStatuses)[number];
 export type BackupType = (typeof backupTypes)[number];
 export type BackupStatus = (typeof backupStatuses)[number];
 export type WatchedFormStatus = (typeof watchedFormStatuses)[number];
+export type SecurityCheckStatus = (typeof securityCheckStatuses)[number];

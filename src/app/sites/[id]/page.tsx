@@ -7,6 +7,9 @@ import { StatusBadge } from "@/components/status-badge";
 import { listBackupsBySite } from "@/features/backups/services/backup-service";
 import { listFormsBySite } from "@/features/forms/services/form-watch-service";
 import { listInterventionsBySite } from "@/features/interventions/services/intervention-service";
+import { SecurityCheckForm } from "@/features/security/components/security-check-form";
+import { runSecurityCheckAction } from "@/features/security/security-actions";
+import { listSecurityChecksBySite } from "@/features/security/services/security-check-service";
 import { archiveSiteAction } from "@/features/sites/site-actions";
 import { ArchiveSiteForm } from "@/features/sites/components/archive-site-form";
 import { getSiteById } from "@/features/sites/services/site-service";
@@ -27,10 +30,18 @@ export default async function SiteDetailPage({
   await connection();
 
   const { id } = await params;
-  const [site, interventions, backups, watchedForms, wpurImports] =
+  const [
+    site,
+    interventions,
+    securityChecks,
+    backups,
+    watchedForms,
+    wpurImports,
+  ] =
     await Promise.all([
       getSiteById(id),
       listInterventionsBySite(id),
+      listSecurityChecksBySite(id),
       listBackupsBySite(id),
       listFormsBySite(id),
       listWpurImportsBySite(id),
@@ -39,6 +50,8 @@ export default async function SiteDetailPage({
   if (!site) {
     notFound();
   }
+
+  const latestSecurityCheck = securityChecks[0] ?? null;
 
   return (
     <div className="space-y-6">
@@ -167,6 +180,113 @@ export default async function SiteDetailPage({
               </article>
             ))}
           </div>
+        )}
+      </SectionPanel>
+
+      <SectionPanel
+        description="Contrôle non offensif limité à l'URL du site, quelques en-têtes HTTP et deux fichiers publics. Aucun scan massif, brute force ou test d'exploitation n'est lancé."
+        title="Sécurité"
+      >
+        <div className="mb-5">
+          <SecurityCheckForm
+            action={runSecurityCheckAction.bind(null, site.id)}
+          />
+        </div>
+        {latestSecurityCheck ? (
+          <div className="space-y-5">
+            <dl className="grid gap-4 text-sm md:grid-cols-3">
+              <SecurityMetric label="Dernier statut">
+                <SecurityStatusBadge value={latestSecurityCheck.status} />
+              </SecurityMetric>
+              <SecurityMetric label="Date du contrôle">
+                {formatDateTime(latestSecurityCheck.checkedAt)}
+              </SecurityMetric>
+              <SecurityMetric label="HTTP">
+                {formatNullable(
+                  latestSecurityCheck.httpStatus?.toString(),
+                  "Non joignable",
+                )}
+              </SecurityMetric>
+              <SecurityMetric label="HTTPS">
+                {formatSecurityBoolean(latestSecurityCheck.httpsEnabled)}
+              </SecurityMetric>
+              <SecurityMetric label="HSTS">
+                {formatHeaderPresence(latestSecurityCheck.hstsHeader)}
+              </SecurityMetric>
+              <SecurityMetric label="Content Security Policy">
+                {formatHeaderPresence(latestSecurityCheck.cspHeader)}
+              </SecurityMetric>
+              <SecurityMetric label="X-Frame-Options">
+                {formatHeaderPresence(latestSecurityCheck.xFrameOptionsHeader)}
+              </SecurityMetric>
+              <SecurityMetric label="X-Content-Type-Options">
+                {formatHeaderPresence(
+                  latestSecurityCheck.xContentTypeOptionsHeader,
+                )}
+              </SecurityMetric>
+              <SecurityMetric label="XML-RPC">
+                {formatAccessibleFlag(latestSecurityCheck.xmlrpcAccessible)}
+              </SecurityMetric>
+              <SecurityMetric label="readme.html">
+                {formatAccessibleFlag(latestSecurityCheck.readmeAccessible)}
+              </SecurityMetric>
+            </dl>
+            <p className="text-sm leading-6 text-zinc-700">
+              {formatNullable(
+                latestSecurityCheck.summary,
+                "Contrôle recommandé : ajoutez un premier résultat.",
+              )}
+            </p>
+            {securityChecks.length > 1 ? (
+              <div className="overflow-x-auto">
+                <table className="min-w-full divide-y divide-zinc-200 text-sm">
+                  <thead className="bg-zinc-50 text-left text-xs font-semibold uppercase text-zinc-500">
+                    <tr>
+                      <th className="px-4 py-3">Date</th>
+                      <th className="px-4 py-3">Statut</th>
+                      <th className="px-4 py-3">HTTPS</th>
+                      <th className="px-4 py-3">HTTP</th>
+                      <th className="px-4 py-3">XML-RPC</th>
+                      <th className="px-4 py-3">readme</th>
+                      <th className="px-4 py-3">Résumé</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-zinc-200">
+                    {securityChecks.slice(0, 5).map((securityCheck) => (
+                      <tr key={securityCheck.id}>
+                        <td className="px-4 py-4 text-zinc-600">
+                          {formatDateTime(securityCheck.checkedAt)}
+                        </td>
+                        <td className="px-4 py-4">
+                          <SecurityStatusBadge value={securityCheck.status} />
+                        </td>
+                        <td className="px-4 py-4 text-zinc-600">
+                          {formatSecurityBoolean(securityCheck.httpsEnabled)}
+                        </td>
+                        <td className="px-4 py-4 text-zinc-600">
+                          {formatNullable(
+                            securityCheck.httpStatus?.toString(),
+                            "Non joignable",
+                          )}
+                        </td>
+                        <td className="px-4 py-4 text-zinc-600">
+                          {formatAccessibleFlag(securityCheck.xmlrpcAccessible)}
+                        </td>
+                        <td className="px-4 py-4 text-zinc-600">
+                          {formatAccessibleFlag(securityCheck.readmeAccessible)}
+                        </td>
+                        <td className="px-4 py-4 text-zinc-600">
+                          {formatNullable(securityCheck.summary)}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            ) : null}
+          </div>
+        ) : (
+          <InlineEmpty message="Aucun contrôle sécurité enregistré pour ce site. L'action ci-dessus lance un contrôle simple et non offensif." />
         )}
       </SectionPanel>
 
@@ -420,6 +540,59 @@ function InfoTile({
       <div className="mt-3 text-sm text-zinc-800">{children}</div>
     </section>
   );
+}
+
+function SecurityMetric({
+  children,
+  label,
+}: {
+  children: React.ReactNode;
+  label: string;
+}) {
+  return (
+    <div>
+      <dt className="font-medium text-zinc-500">{label}</dt>
+      <dd className="mt-1 text-zinc-900">{children}</dd>
+    </div>
+  );
+}
+
+function SecurityStatusBadge({ value }: { value: string }) {
+  const labels: Record<string, string> = {
+    failed: "Contrôle recommandé",
+    issue: "Point à vérifier",
+    ok: "Aucune anomalie bloquante",
+    warning: "À surveiller",
+  };
+
+  const tones: Record<string, string> = {
+    failed: "border-zinc-200 bg-zinc-100 text-zinc-700",
+    issue: "border-amber-200 bg-amber-50 text-amber-800",
+    ok: "border-emerald-200 bg-emerald-50 text-emerald-700",
+    warning: "border-cyan-200 bg-cyan-50 text-cyan-800",
+  };
+
+  return (
+    <span
+      className={`inline-flex min-h-7 items-center rounded-md border px-2 text-xs font-medium ${
+        tones[value] ?? "border-zinc-200 bg-zinc-50 text-zinc-700"
+      }`}
+    >
+      {labels[value] ?? formatEnumLabel(value)}
+    </span>
+  );
+}
+
+function formatSecurityBoolean(value: boolean) {
+  return value ? "Oui" : "Contrôle recommandé";
+}
+
+function formatHeaderPresence(value: boolean) {
+  return value ? "Présent" : "Contrôle recommandé";
+}
+
+function formatAccessibleFlag(value: boolean) {
+  return value ? "À surveiller" : "Non accessible";
 }
 
 function InlineEmpty({ message }: { message: string }) {
