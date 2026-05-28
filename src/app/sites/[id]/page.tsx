@@ -169,9 +169,22 @@ export default async function SiteDetailPage({
         description="Synthèse des payloads importés. WP Agency Ops ne génère pas ces données."
         title="Imports WPUR"
       >
-        <p className="mb-4 rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-sm leading-6 text-amber-900">
-          WPUR reste la source de vérité pour les rapports détaillés plugins.
-        </p>
+        <div className="mb-5 flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
+          <div className="space-y-2 text-sm leading-6">
+            <p className="rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-amber-900">
+              WPUR reste la source de vérité pour les rapports détaillés plugins.
+            </p>
+            <p className="rounded-md border border-cyan-200 bg-cyan-50 px-3 py-2 text-cyan-950">
+              WP Agency Ops importe uniquement une synthèse du payload WPUR.
+            </p>
+          </div>
+          <Link
+            className="inline-flex min-h-10 shrink-0 items-center justify-center rounded-md border border-zinc-200 px-3 text-sm font-medium text-cyan-800 hover:border-cyan-300"
+            href={`/sites/${site.id}/wpur-imports/new`}
+          >
+            Importer un payload WPUR
+          </Link>
+        </div>
         {wpurImports.length === 0 ? (
           <InlineEmpty message="Aucun import WPUR n'est encore enregistré pour ce site." />
         ) : (

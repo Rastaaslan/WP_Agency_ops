@@ -2,9 +2,9 @@
 
 WP Agency Ops v2 est le cockpit global WordPress.
 
-Statut actuel : base technique, modèle de données minimal, routes API minimales, première UI métier, CRUD clients côté UI, CRUD sites côté UI et CRUD interventions globales côté UI. Cette branche ne contient pas encore de sécurité, de performance, de formulaires, de sauvegardes, de rapports, d'auth, de plugin compagnon ou d'intégration WPUR exécutée.
+Statut actuel : base technique, modèle de données minimal, routes API minimales, première UI métier, CRUD clients côté UI, CRUD sites côté UI, CRUD interventions globales côté UI et import WPUR manuel côté UI. Cette branche ne contient pas encore de sécurité, de performance, de formulaires, de sauvegardes, de rapports, d'auth, de plugin compagnon ou d'intégration WPUR exécutée.
 
-WPUR reste un projet séparé dédié à la maintenance détaillée des plugins WordPress. WP Agency Ops v2 pourra importer et afficher des synthèses WPUR plus tard, mais ne doit pas réimplémenter son moteur.
+WPUR reste un projet séparé dédié à la maintenance détaillée des plugins WordPress. WP Agency Ops v2 peut importer et afficher des synthèses WPUR, mais ne doit pas réimplémenter son moteur.
 
 ## Installation
 
@@ -116,17 +116,18 @@ L'interface applicative expose une première navigation métier :
 - `/sites` : liste des sites WordPress et accès à la création ;
 - `/sites/new` : création d'un site rattaché à un client existant ;
 - `/sites/[id]` : fiche site, interventions récentes avec lien de création pré-rattachée au site, synthèse des imports WPUR, modification, archivage et lien vers l'export technique JSON ;
+- `/sites/[id]/wpur-imports/new` : import manuel d'un payload JSON WPUR produit par WPUR ;
 - `/sites/[id]/edit` : modification d'un site.
 - `/interventions` : liste des interventions globales ;
 - `/interventions/new` : création d'une intervention liée à un site ;
 - `/interventions/[id]` : fiche intervention, changement de statut et gestion d'items simples ;
 - `/interventions/[id]/edit` : modification d'une intervention globale.
 
-Le CRUD UI est limité aux clients, aux sites et aux interventions globales. Les imports WPUR restent en lecture seule ou à venir.
+Le CRUD UI est limité aux clients, aux sites et aux interventions globales. L'import WPUR UI est limité au collage manuel d'un payload JSON déjà produit par WPUR, validé puis stocké comme donnée externe liée au site.
 
 Les items d'intervention doivent rester génériques. Le détail maintenance plugins, les versions, comparaisons et rapports plugins restent dans WPUR.
 
-Prochaines étapes prévues : import WPUR manuel et modules sécurité/performance/forms/backups, dans des tickets séparés.
+Prochaines étapes prévues : modules sécurité/performance/forms/backups, dans des tickets séparés.
 
 ## Ancienne base locale v1
 
