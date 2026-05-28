@@ -2,7 +2,7 @@
 
 WP Agency Ops v2 est le cockpit global WordPress.
 
-Statut actuel : base technique, modèle de données minimal, routes API minimales, première UI métier et CRUD clients côté UI. Cette branche ne contient pas encore de formulaires CRUD pour les sites ou interventions, de sécurité, de performance, de formulaires, de sauvegardes, de rapports, d'auth, de plugin compagnon ou d'intégration WPUR exécutée.
+Statut actuel : base technique, modèle de données minimal, routes API minimales, première UI métier, CRUD clients côté UI et CRUD sites côté UI. Cette branche ne contient pas encore de formulaires CRUD pour les interventions, de sécurité, de performance, de formulaires, de sauvegardes, de rapports, d'auth, de plugin compagnon ou d'intégration WPUR exécutée.
 
 WPUR reste un projet séparé dédié à la maintenance détaillée des plugins WordPress. WP Agency Ops v2 pourra importer et afficher des synthèses WPUR plus tard, mais ne doit pas réimplémenter son moteur.
 
@@ -113,12 +113,14 @@ L'interface applicative expose une première navigation métier :
 - `/clients/new` : création d'un client ;
 - `/clients/[id]` : fiche client, sites liés, modification et archivage ;
 - `/clients/[id]/edit` : modification d'un client ;
-- `/sites` : liste des sites WordPress ;
-- `/sites/[id]` : fiche site, interventions récentes, synthèse des imports WPUR et lien vers l'export technique JSON.
+- `/sites` : liste des sites WordPress et accès à la création ;
+- `/sites/new` : création d'un site rattaché à un client existant ;
+- `/sites/[id]` : fiche site, interventions récentes, synthèse des imports WPUR, modification, archivage et lien vers l'export technique JSON ;
+- `/sites/[id]/edit` : modification d'un site.
 
-Le CRUD UI est limité aux clients. Les sites, interventions et imports WPUR restent en lecture seule ou à venir.
+Le CRUD UI est limité aux clients et aux sites. Les interventions et imports WPUR restent en lecture seule ou à venir.
 
-Prochaines étapes prévues : formulaires CRUD sites/interventions et import WPUR manuel, dans des tickets séparés.
+Prochaines étapes prévues : formulaires CRUD interventions et import WPUR manuel, dans des tickets séparés.
 
 ## Ancienne base locale v1
 

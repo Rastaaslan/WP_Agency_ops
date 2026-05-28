@@ -2,18 +2,23 @@ import { z } from "zod";
 import { siteEnvironments, siteStatuses } from "@/features/core/enums";
 import { optionalTextSchema, requiredTextSchema } from "@/features/core/schemas";
 
-export const createSiteSchema = z
+const siteBaseSchema = z
   .object({
     clientId: requiredTextSchema,
     name: requiredTextSchema,
     url: z.string().trim().url(),
-    environment: z.enum(siteEnvironments).default("production"),
-    status: z.enum(siteStatuses).default("active"),
+    environment: z.enum(siteEnvironments),
+    status: z.enum(siteStatuses),
     notes: optionalTextSchema,
   })
   .strict();
 
-export const updateSiteSchema = createSiteSchema
+export const createSiteSchema = siteBaseSchema.extend({
+  environment: z.enum(siteEnvironments).default("production"),
+  status: z.enum(siteStatuses).default("active"),
+});
+
+export const updateSiteSchema = siteBaseSchema
   .partial()
   .refine((input) => Object.keys(input).length > 0, {
     message: "At least one site field must be provided.",

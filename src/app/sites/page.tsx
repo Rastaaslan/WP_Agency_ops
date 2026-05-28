@@ -14,14 +14,23 @@ export default async function SitesPage() {
   return (
     <div>
       <PageHeader
-        description="Vue de lecture des sites WordPress suivis dans le cockpit."
-        eyebrow="Lecture seule"
+        description="Sites WordPress suivis dans le cockpit."
+        eyebrow="Sites"
         title="Sites"
-      />
+      >
+        <Link
+          className="inline-flex min-h-10 items-center rounded-md bg-zinc-950 px-3 text-sm font-medium text-white transition hover:bg-zinc-800"
+          href="/sites/new"
+        >
+          Nouveau site
+        </Link>
+      </PageHeader>
 
       {sites.length === 0 ? (
         <EmptyState
           description="Aucun site n'est encore présent dans la base v2."
+          href="/sites/new"
+          linkLabel="Créer un site"
           title="Aucun site"
         />
       ) : (

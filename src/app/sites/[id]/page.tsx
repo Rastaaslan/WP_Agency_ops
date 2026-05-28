@@ -5,6 +5,8 @@ import { PageHeader } from "@/components/page-header";
 import { SectionPanel } from "@/components/section-panel";
 import { StatusBadge } from "@/components/status-badge";
 import { listInterventionsBySite } from "@/features/interventions/services/intervention-service";
+import { archiveSiteAction } from "@/features/sites/site-actions";
+import { ArchiveSiteForm } from "@/features/sites/components/archive-site-form";
 import { getSiteById } from "@/features/sites/services/site-service";
 import { listWpurImportsBySite } from "@/features/wpur/services/wpur-import-service";
 import {
@@ -46,6 +48,16 @@ export default async function SiteDetailPage({
         >
           Retour sites
         </Link>
+        <Link
+          className="inline-flex min-h-10 items-center rounded-md border border-zinc-200 bg-white px-3 text-sm font-medium text-cyan-800 hover:border-cyan-300"
+          href={`/sites/${site.id}/edit`}
+        >
+          Modifier
+        </Link>
+        <ArchiveSiteForm
+          action={archiveSiteAction.bind(null, site.id)}
+          disabled={site.status === "archived"}
+        />
       </PageHeader>
 
       <section className="grid gap-4 md:grid-cols-4">
