@@ -71,3 +71,18 @@ Le service `checkWordPressConnection` permet de tester une connexion sans créer
 Le schéma Prisma couvre les clients, sites, connexions, scans, plugins, thèmes, interventions, items, rapports, formulaires, soumissions, checks performance/sécurité et reviews Static Publish.
 
 SQLite suffit pour le MVP local. Le modèle reste compatible avec une future migration PostgreSQL.
+
+## Workflow de demo
+
+Le parcours principal stabilise est :
+
+```txt
+Site WordPress connecte
+-> scan compagnon enrichi
+-> recommandations techniques
+-> intervention pre-remplie depuis scan
+-> rapport client Markdown/HTML
+```
+
+Les recommandations sont generees dans `src/features/wordpress/services/scan-insights.ts`.
+Les items d'intervention issus d'un scan sont generes dans `src/features/maintenance/services/intervention-from-scan.ts`.

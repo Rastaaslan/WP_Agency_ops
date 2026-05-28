@@ -55,9 +55,9 @@ async function main() {
       adminUrl: "https://example.com/wp-admin",
       environment: "production",
       status: "active",
-      connectionType: "public_rest",
+      connectionType: "companion_plugin",
       connectionStatus: "connected",
-      notes: "Site vitrine prioritaire.",
+      notes: "Site vitrine prioritaire. Donnees seed simulees comme si le plugin compagnon etait connecte.",
     },
     create: {
       id: "seed-site-atelier-prod",
@@ -66,9 +66,9 @@ async function main() {
       url: "https://example.com",
       adminUrl: "https://example.com/wp-admin",
       environment: "production",
-      connectionType: "public_rest",
+      connectionType: "companion_plugin",
       connectionStatus: "connected",
-      notes: "Site vitrine prioritaire.",
+      notes: "Site vitrine prioritaire. Donnees seed simulees comme si le plugin compagnon etait connecte.",
     },
   });
 
@@ -124,15 +124,17 @@ async function main() {
   await prisma.wordPressConnection.upsert({
     where: { siteId: siteOne.id },
     update: {
-      type: "public_rest",
+      type: "companion_plugin",
       apiBaseUrl: siteOne.url,
+      secretReference: "env:WP_AGENCY_OPS_COMPANION_API_KEY",
       lastConnectionStatus: "connected",
       lastConnectionCheckAt: new Date(),
     },
     create: {
       siteId: siteOne.id,
-      type: "public_rest",
+      type: "companion_plugin",
       apiBaseUrl: siteOne.url,
+      secretReference: "env:WP_AGENCY_OPS_COMPANION_API_KEY",
       lastConnectionStatus: "connected",
       lastConnectionCheckAt: new Date(),
     },
@@ -147,14 +149,76 @@ async function main() {
       finishedAt: new Date("2026-05-20T09:00:05.000Z"),
       summaryJson: json({
         detected: true,
+        connectionType: "companion_plugin",
         wpVersion: "6.8.1",
         phpVersion: "8.2",
+        activeTheme: "Atelier Theme",
+        environment: "production",
+        debugEnabled: false,
+        multisite: false,
         pluginCount: 3,
         themeCount: 1,
-        updateCount: 1,
-        warningCount: 1,
+        updateCount: 2,
+        warningCount: 2,
+        recommendationCount: 3,
       }),
-      rawJson: json({ seed: true, mode: "manual_fixture" }),
+      rawJson: json({
+        seed: true,
+        mode: "companion_fixture",
+        connectionType: "companion_plugin",
+        detected: true,
+        siteUrl: siteOne.url,
+        wpVersion: "6.8.1",
+        phpVersion: "8.2",
+        activeTheme: "Atelier Theme",
+        environment: "production",
+        debugEnabled: false,
+        updates: [
+          {
+            kind: "plugin",
+            slug: "contact-forms-pro",
+            currentVersion: "2.9.1",
+            newVersion: "2.10.0",
+            label: "Plugin contact-forms-pro",
+          },
+          {
+            kind: "theme",
+            slug: "atelier-theme",
+            currentVersion: "1.8.0",
+            newVersion: "1.9.0",
+            label: "Theme atelier-theme",
+          },
+        ],
+        warnings: [
+          {
+            code: "plugin_updates_available",
+            severity: "warning",
+            message: "1 extension avec mise a jour disponible.",
+          },
+          {
+            code: "theme_updates_available",
+            severity: "warning",
+            message: "1 theme avec mise a jour disponible.",
+          },
+        ],
+        recommendations: [
+          {
+            code: "backup_before_maintenance",
+            priority: "important",
+            message: "Effectuer une sauvegarde avant intervention.",
+          },
+          {
+            code: "plan_plugin_updates",
+            priority: "warning",
+            message: "Prevoir une mise a jour des extensions.",
+          },
+          {
+            code: "rescan_after_maintenance",
+            priority: "info",
+            message: "Relancer un scan apres intervention.",
+          },
+        ],
+      }),
     },
     create: {
       id: "seed-scan-atelier-may",
@@ -164,14 +228,76 @@ async function main() {
       finishedAt: new Date("2026-05-20T09:00:05.000Z"),
       summaryJson: json({
         detected: true,
+        connectionType: "companion_plugin",
         wpVersion: "6.8.1",
         phpVersion: "8.2",
+        activeTheme: "Atelier Theme",
+        environment: "production",
+        debugEnabled: false,
+        multisite: false,
         pluginCount: 3,
         themeCount: 1,
-        updateCount: 1,
-        warningCount: 1,
+        updateCount: 2,
+        warningCount: 2,
+        recommendationCount: 3,
       }),
-      rawJson: json({ seed: true, mode: "manual_fixture" }),
+      rawJson: json({
+        seed: true,
+        mode: "companion_fixture",
+        connectionType: "companion_plugin",
+        detected: true,
+        siteUrl: siteOne.url,
+        wpVersion: "6.8.1",
+        phpVersion: "8.2",
+        activeTheme: "Atelier Theme",
+        environment: "production",
+        debugEnabled: false,
+        updates: [
+          {
+            kind: "plugin",
+            slug: "contact-forms-pro",
+            currentVersion: "2.9.1",
+            newVersion: "2.10.0",
+            label: "Plugin contact-forms-pro",
+          },
+          {
+            kind: "theme",
+            slug: "atelier-theme",
+            currentVersion: "1.8.0",
+            newVersion: "1.9.0",
+            label: "Theme atelier-theme",
+          },
+        ],
+        warnings: [
+          {
+            code: "plugin_updates_available",
+            severity: "warning",
+            message: "1 extension avec mise a jour disponible.",
+          },
+          {
+            code: "theme_updates_available",
+            severity: "warning",
+            message: "1 theme avec mise a jour disponible.",
+          },
+        ],
+        recommendations: [
+          {
+            code: "backup_before_maintenance",
+            priority: "important",
+            message: "Effectuer une sauvegarde avant intervention.",
+          },
+          {
+            code: "plan_plugin_updates",
+            priority: "warning",
+            message: "Prevoir une mise a jour des extensions.",
+          },
+          {
+            code: "rescan_after_maintenance",
+            priority: "info",
+            message: "Relancer un scan apres intervention.",
+          },
+        ],
+      }),
     },
   });
 
@@ -221,6 +347,29 @@ async function main() {
     },
   });
 
+  await prisma.wordPressPlugin.upsert({
+    where: { id: "seed-plugin-legacy-gallery" },
+    update: {
+      scanId: scan.id,
+      name: "Legacy Gallery",
+      slug: "legacy-gallery",
+      version: "1.4.0",
+      updateAvailable: false,
+      active: false,
+      status: "inactive",
+    },
+    create: {
+      id: "seed-plugin-legacy-gallery",
+      scanId: scan.id,
+      name: "Legacy Gallery",
+      slug: "legacy-gallery",
+      version: "1.4.0",
+      updateAvailable: false,
+      active: false,
+      status: "inactive",
+    },
+  });
+
   await prisma.wordPressTheme.upsert({
     where: { id: "seed-theme-atelier" },
     update: {
@@ -228,8 +377,10 @@ async function main() {
       name: "Atelier Theme",
       slug: "atelier-theme",
       version: "1.8.0",
+      updateAvailable: true,
+      newVersion: "1.9.0",
       active: true,
-      status: "healthy",
+      status: "update_available",
     },
     create: {
       id: "seed-theme-atelier",
@@ -237,8 +388,10 @@ async function main() {
       name: "Atelier Theme",
       slug: "atelier-theme",
       version: "1.8.0",
+      updateAvailable: true,
+      newVersion: "1.9.0",
       active: true,
-      status: "healthy",
+      status: "update_available",
     },
   });
 
@@ -300,6 +453,89 @@ async function main() {
       details: "Reception OK, anti-spam a surveiller.",
     },
   });
+
+  const generatedIntervention = await prisma.maintenanceIntervention.upsert({
+    where: { id: "seed-intervention-generated-from-scan" },
+    update: {
+      siteId: siteOne.id,
+      title: "Maintenance technique - mises a jour et verifications",
+      type: "update",
+      status: "planned",
+      description:
+        "Intervention generee a partir du dernier scan technique du site.",
+      technicalNotes:
+        "Scan source : seed-scan-atelier-may\nLot de demo : aucune mise a jour automatique n'est declenchee.",
+      clientSummary:
+        "Une maintenance technique est planifiee a partir des controles recents du site.",
+      startedAt: null,
+      finishedAt: null,
+    },
+    create: {
+      id: "seed-intervention-generated-from-scan",
+      siteId: siteOne.id,
+      title: "Maintenance technique - mises a jour et verifications",
+      type: "update",
+      status: "planned",
+      description:
+        "Intervention generee a partir du dernier scan technique du site.",
+      technicalNotes:
+        "Scan source : seed-scan-atelier-may\nLot de demo : aucune mise a jour automatique n'est declenchee.",
+      clientSummary:
+        "Une maintenance technique est planifiee a partir des controles recents du site.",
+    },
+  });
+
+  const generatedItems = [
+    [
+      "seed-generated-item-backup",
+      "Effectuer une sauvegarde avant intervention.",
+      "planned",
+      "Categorie: backup\nNiveau: important\nSource: scan\nScan: seed-scan-atelier-may",
+    ],
+    [
+      "seed-generated-item-plugin",
+      "Mettre a jour le plugin Contact Forms Pro de 2.9.1 vers 2.10.0.",
+      "planned",
+      "Categorie: update\nNiveau: warning\nSource: scan\nScan: seed-scan-atelier-may",
+    ],
+    [
+      "seed-generated-item-theme",
+      "Mettre a jour le theme Atelier Theme de 1.8.0 vers 1.9.0.",
+      "planned",
+      "Categorie: update\nNiveau: warning\nSource: scan\nScan: seed-scan-atelier-may",
+    ],
+    [
+      "seed-generated-item-inactive",
+      "Verifier les plugins inactifs.",
+      "planned",
+      "Categorie: cleanup\nNiveau: info\nSource: scan\nScan: seed-scan-atelier-may",
+    ],
+    [
+      "seed-generated-item-rescan",
+      "Relancer un scan apres intervention.",
+      "planned",
+      "Categorie: scan\nNiveau: info\nSource: scan\nScan: seed-scan-atelier-may",
+    ],
+  ] as const;
+
+  for (const [id, label, status, details] of generatedItems) {
+    await prisma.interventionItem.upsert({
+      where: { id },
+      update: {
+        interventionId: generatedIntervention.id,
+        label,
+        status,
+        details,
+      },
+      create: {
+        id,
+        interventionId: generatedIntervention.id,
+        label,
+        status,
+        details,
+      },
+    });
+  }
 
   await prisma.formEndpoint.upsert({
     where: { id: "seed-form-contact" },
@@ -415,21 +651,69 @@ async function main() {
 
   const reportMarkdown = `# Rapport technique - Atelier Nova
 
-## Resume clair
+## Resume
 
-Maintenance mensuelle realisee, controle securite simple effectue et formulaire principal verifie.
+La maintenance technique du site a ete suivie et documentee. Aucun point bloquant n'est signale dans cette demo, mais quelques mises a jour restent a planifier.
+
+## Periode
+
+Du 01/05/2026 au 31/05/2026
+
+## Site concerne
+
+- Client : Atelier Nova
+- Site : Atelier Nova
+- URL : https://example.com
+- Environnement : production
+
+## Etat general
+
+- Statut : Attention recommandee
+- Dernier scan : OK le 20/05/2026
+- Version WordPress : 6.8.1
+- Version PHP : 8.2
+- Theme actif : Atelier Theme
+- Mises a jour detectees : 2
 
 ## Actions realisees
 
-- Mise a jour mineure et controle des extensions.
-- Verification du formulaire de contact.
-- Controle HTTP performance et headers.
+- Maintenance mensuelle plugins : maintenance mensuelle realisee sans anomalie bloquante.
+- Formulaire de contact teste (A surveiller)
 
-## Prochaines actions
+## Mises a jour et maintenance
 
-- Verifier XML-RPC.
-- Completer les headers de securite.
-- Refaire un scan apres la prochaine maintenance.`;
+- Contact Forms Pro 2.9.1 -> 2.10.0
+- Atelier Theme 1.8.0 -> 1.9.0
+
+## Securite technique
+
+- HTTPS : actif
+- Headers principaux : presents
+- XML-RPC : expose, a verifier selon l'usage
+
+## Performance
+
+- 482 ms observes sur https://example.com (OK).
+
+## Formulaires
+
+- Contact principal : OK (https://example.com/contact)
+
+## Points a surveiller
+
+- Maintenance technique - mises a jour et verifications (A surveiller)
+- 1 extension avec mise a jour disponible.
+- 1 theme avec mise a jour disponible.
+
+## Recommandations techniques
+
+- Effectuer une sauvegarde avant intervention.
+- Prevoir une mise a jour des extensions.
+- Relancer un scan apres intervention.
+
+## Conclusion
+
+Le site reste suivi avec une approche technique progressive. Les prochaines actions sont identifiees et peuvent etre traitees dans une intervention planifiee.`;
 
   await prisma.report.upsert({
     where: { id: "seed-report-atelier-may" },

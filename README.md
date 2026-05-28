@@ -18,11 +18,15 @@ Le produit est **WordPress-first** et **static-ready** : WordPress reste le cent
 - Scan WordPress via REST API publique `/wp-json`.
 - Test de connexion WordPress persistant par site.
 - Plugin compagnon WordPress minimal, en lecture seule, sous `wordpress-plugin/wp-agency-ops-companion`.
+- Endpoint compagnon `site-info` pour une synthèse exploitable en démo.
 - Snapshot manuel WordPress quand le site n’est pas connecté.
 - Historique de scans, plugins, thèmes et warnings.
+- Recommandations techniques simples générées depuis les scans.
+- Création d’intervention pré-remplie depuis un scan réussi.
 - Interventions de maintenance avec items.
 - Génération et édition de rapports Markdown, avec preview HTML.
 - Export Markdown d’un rapport.
+- Export HTML autonome d’un rapport.
 - Forms Watch manuel pour les formulaires critiques.
 - Contrôle performance HTTP simple.
 - Contrôle sécurité non intrusif : HTTPS, headers, `readme.html`, `xmlrpc.php`.
@@ -104,6 +108,19 @@ npm run db:studio
 9. Lancez un **check performance** depuis la fiche site.
 10. Ajoutez un formulaire dans **Forms Watch**.
 11. Complétez la checklist **Static Publish** sur la fiche site.
+
+## Scénario de démo recommandé
+
+1. Lancez l’application avec `npm run dev`.
+2. Chargez les données de démo avec `npm run db:seed`.
+3. Ouvrez `http://localhost:3000/sites/seed-site-atelier-prod`.
+4. Montrez le site **Atelier Nova** : il simule un site WordPress connecté au plugin compagnon, avec updates, warnings et recommandations.
+5. Cliquez sur **Créer intervention** depuis le dernier scan réussi.
+6. Ouvrez l’intervention générée, puis marquez quelques items comme `done`, `skipped` ou `warning` en ajoutant une note.
+7. Revenez sur la fiche site et générez un rapport pour le mois courant.
+8. Ouvrez la preview client du rapport.
+9. Exportez le rapport en Markdown ou en HTML.
+10. Pour une démo sur un vrai site, installez le plugin compagnon, copiez la clé API depuis **Outils > WP Agency Ops**, puis configurez le site avec `env:WP_AGENCY_OPS_COMPANION_API_KEY`.
 
 ## Architecture technique
 

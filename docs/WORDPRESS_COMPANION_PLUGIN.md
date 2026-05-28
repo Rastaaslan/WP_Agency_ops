@@ -23,7 +23,12 @@ Le plugin devra exposer en lecture seule :
 /wp-json/wp-agency-ops/v1/plugins
 /wp-json/wp-agency-ops/v1/themes
 /wp-json/wp-agency-ops/v1/updates
+/wp-json/wp-agency-ops/v1/site-info
 ```
+
+`/health` remonte maintenant une synthese exploitable pour la demo : versions WordPress/PHP, URLs, locale, timezone, mode debug, type d'environnement, theme actif, nombre de plugins actifs/inactifs, nombre d'updates et timestamp du controle.
+
+`/site-info` fournit une version courte pour les tableaux de bord et rapports : versions, theme actif, compte plugins/updates, debug, environnement, multisite et HTTPS detecte.
 
 ## Sécurité
 
@@ -60,6 +65,5 @@ WP_AGENCY_OPS_COMPANION_API_KEY="copiez-la-cle-ici"
 
 - Stockage chiffré de secrets côté app.
 - Référence de secret par site sans variable globale.
-- Endpoint santé plus détaillé.
 - État des backups.
 - Logs de lecture plus complets.

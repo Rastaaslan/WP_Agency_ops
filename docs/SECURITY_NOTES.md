@@ -11,6 +11,7 @@
 - Aucune mise à jour WordPress automatique.
 - Aucun secret sensible en dur.
 - Les clés du plugin compagnon passent par variables d'environnement côté app.
+- Le plugin compagnon reste en lecture seule : les endpoints de demo n'executent aucune mise a jour WordPress.
 
 ## SSRF et réseau privé
 
