@@ -64,6 +64,8 @@ Le résultat de scan est normalisé dans `WordPressScanResult`, puis stocké dan
 
 Le connecteur compagnon lit une clé API via `SecretProvider`. Dans ce MVP, `EnvironmentSecretProvider` accepte une référence `env:VARIABLE` ou la variable serveur `WP_AGENCY_OPS_COMPANION_API_KEY`.
 
+Le service `checkWordPressConnection` permet de tester une connexion sans créer de scan complet. Il met à jour `WordPressSite.connectionStatus` et `WordPressConnection.lastConnectionCheckAt`.
+
 ## Base de données
 
 Le schéma Prisma couvre les clients, sites, connexions, scans, plugins, thèmes, interventions, items, rapports, formulaires, soumissions, checks performance/sécurité et reviews Static Publish.

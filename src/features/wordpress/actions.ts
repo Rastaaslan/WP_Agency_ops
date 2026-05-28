@@ -3,8 +3,17 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { formDataValue } from "@/server/validators/helpers";
-import { runWordPressScan } from "./services/scanner";
+import { checkWordPressConnection, runWordPressScan } from "./services/scanner";
 import { manualScanSchema } from "./schemas";
+
+export async function checkSiteWordPressConnection(siteId: string) {
+  await checkWordPressConnection(siteId);
+
+  revalidatePath("/");
+  revalidatePath("/sites");
+  revalidatePath(`/sites/${siteId}`);
+  redirect(`/sites/${siteId}`);
+}
 
 export async function runPublicWordPressScan(siteId: string) {
   await runWordPressScan(siteId);

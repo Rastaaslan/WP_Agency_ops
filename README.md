@@ -16,6 +16,7 @@ Le produit est **WordPress-first** et **static-ready** : WordPress reste le cent
 - CRUD clients avec archivage.
 - CRUD sites WordPress avec statut, environnement et mode de connexion.
 - Scan WordPress via REST API publique `/wp-json`.
+- Test de connexion WordPress persistant par site.
 - Plugin compagnon WordPress minimal, en lecture seule, sous `wordpress-plugin/wp-agency-ops-companion`.
 - Snapshot manuel WordPress quand le site n’est pas connecté.
 - Historique de scans, plugins, thèmes et warnings.

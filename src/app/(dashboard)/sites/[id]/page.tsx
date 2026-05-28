@@ -6,6 +6,7 @@ import {
   FileText,
   Gauge,
   Radar,
+  RefreshCw,
   ShieldCheck,
   Wrench,
 } from "lucide-react";
@@ -20,6 +21,7 @@ import { runSecurityCheck } from "@/features/security/actions";
 import { archiveSite } from "@/features/sites/actions";
 import { saveStaticCompatibilityReview } from "@/features/static-publish/actions";
 import {
+  checkSiteWordPressConnection,
   runManualWordPressScan,
   runPublicWordPressScan,
 } from "@/features/wordpress/actions";
@@ -52,6 +54,7 @@ export default async function SiteDetailPage({
       performanceChecks: { orderBy: { createdAt: "desc" }, take: 6 },
       securityChecks: { orderBy: { createdAt: "desc" }, take: 6 },
       staticReviews: { orderBy: { createdAt: "desc" }, take: 1 },
+      connection: true,
     },
   });
 
@@ -62,6 +65,7 @@ export default async function SiteDetailPage({
   const latestScan = site.scans[0];
   const latestStaticReview = site.staticReviews[0];
   const publicScanAction = runPublicWordPressScan.bind(null, site.id);
+  const connectionCheckAction = checkSiteWordPressConnection.bind(null, site.id);
   const manualScanAction = runManualWordPressScan.bind(null, site.id);
   const performanceAction = runPerformanceCheck.bind(null, site.id);
   const securityAction = runSecurityCheck.bind(null, site.id);
@@ -105,6 +109,7 @@ export default async function SiteDetailPage({
             <div><dt className="text-zinc-500">Connexion</dt><dd><Badge value={site.connectionStatus} /></dd></div>
             <div><dt className="text-zinc-500">Mode</dt><dd><Badge value={site.connectionType} /></dd></div>
             <div><dt className="text-zinc-500">Environnement</dt><dd><Badge value={site.environment} /></dd></div>
+            <div><dt className="text-zinc-500">Dernier test connexion</dt><dd>{site.connection?.lastConnectionCheckAt ? formatDateTime(site.connection.lastConnectionCheckAt) : "Aucun"}</dd></div>
             <div><dt className="text-zinc-500">Dernier scan</dt><dd>{site.lastScanAt ? formatDateTime(site.lastScanAt) : "Aucun"}</dd></div>
           </dl>
         </Card>
@@ -114,6 +119,12 @@ export default async function SiteDetailPage({
             <CardTitle>Actions techniques</CardTitle>
           </CardHeader>
           <div className="grid gap-3 md:grid-cols-2">
+            <form action={connectionCheckAction}>
+              <Button type="submit" variant="secondary" className="w-full">
+                <RefreshCw className="h-4 w-4" aria-hidden="true" />
+                Tester la connexion
+              </Button>
+            </form>
             <form action={publicScanAction}>
               <Button type="submit" className="w-full">
                 <Radar className="h-4 w-4" aria-hidden="true" />

@@ -7,7 +7,12 @@ import {
 } from "../connectors/placeholders";
 import { PublicRestWordPressConnector } from "../connectors/public-rest";
 import { EnvironmentSecretProvider } from "../secret-provider";
-import type { ConnectorSite, WordPressConnector, WordPressScanResult } from "../types";
+import type {
+  ConnectionCheckResult,
+  ConnectorSite,
+  WordPressConnector,
+  WordPressScanResult,
+} from "../types";
 
 function jsonValue(value: unknown): Prisma.InputJsonValue {
   return JSON.parse(JSON.stringify(value ?? null)) as Prisma.InputJsonValue;
@@ -27,6 +32,25 @@ function connectorFor(site: ConnectorSite, manualInput?: ManualScanInput): WordP
   }
 
   return new PublicRestWordPressConnector();
+}
+
+async function getConnectorSite(siteId: string) {
+  return prisma.wordPressSite.findUniqueOrThrow({
+    where: { id: siteId },
+    select: {
+      id: true,
+      name: true,
+      url: true,
+      connectionType: true,
+      connection: {
+        select: {
+          apiBaseUrl: true,
+          secretReference: true,
+          username: true,
+        },
+      },
+    },
+  });
 }
 
 export function summarizeScanResult(result: WordPressScanResult) {
@@ -51,22 +75,7 @@ export async function runWordPressScan(
   siteId: string,
   manualInput?: ManualScanInput,
 ) {
-  const site = await prisma.wordPressSite.findUniqueOrThrow({
-    where: { id: siteId },
-    select: {
-      id: true,
-      name: true,
-      url: true,
-      connectionType: true,
-      connection: {
-        select: {
-          apiBaseUrl: true,
-          secretReference: true,
-          username: true,
-        },
-      },
-    },
-  });
+  const site = await getConnectorSite(siteId);
 
   const scan = await prisma.siteScan.create({
     data: {
@@ -172,4 +181,44 @@ export async function runWordPressScan(
 
     throw error;
   }
+}
+
+export async function checkWordPressConnection(
+  siteId: string,
+): Promise<ConnectionCheckResult> {
+  const site = await getConnectorSite(siteId);
+  const connector = connectorFor(site);
+  const result = await connector.checkConnection(site);
+  const status = result.ok && result.detected ? "connected" : "failed";
+  const checkedAt = new Date();
+
+  await prisma.$transaction(async (tx) => {
+    await tx.wordPressSite.update({
+      where: { id: siteId },
+      data: { connectionStatus: status },
+    });
+
+    await tx.wordPressConnection.upsert({
+      where: { siteId },
+      create: {
+        siteId,
+        type: site.connectionType,
+        apiBaseUrl: site.connection?.apiBaseUrl ?? site.url,
+        secretReference: site.connection?.secretReference,
+        username: site.connection?.username,
+        lastConnectionStatus: status,
+        lastConnectionCheckAt: checkedAt,
+      },
+      update: {
+        type: site.connectionType,
+        apiBaseUrl: site.connection?.apiBaseUrl ?? site.url,
+        secretReference: site.connection?.secretReference,
+        username: site.connection?.username,
+        lastConnectionStatus: status,
+        lastConnectionCheckAt: checkedAt,
+      },
+    });
+  });
+
+  return result;
 }
