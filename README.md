@@ -80,6 +80,7 @@ npm run doctor
 npm run build
 npm run start
 npm run lint
+npm run typecheck
 npm run test
 npm run plugin:lint
 npm run plugin:zip

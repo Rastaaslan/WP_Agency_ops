@@ -4,10 +4,12 @@ export interface SecretProvider {
 }
 
 export class UnconfiguredSecretProvider implements SecretProvider {
+  async getSecret(reference?: string): Promise<string | null>;
   async getSecret() {
     return null;
   }
 
+  async setSecret(reference: string, value: string): Promise<void>;
   async setSecret() {
     throw new Error(
       "Le stockage de secrets chiffres n'est pas encore configure dans ce MVP.",
@@ -28,6 +30,7 @@ export class EnvironmentSecretProvider implements SecretProvider {
     return process.env.WP_AGENCY_OPS_COMPANION_API_KEY ?? null;
   }
 
+  async setSecret(reference: string, value: string): Promise<void>;
   async setSecret() {
     throw new Error(
       "Les secrets compagnon doivent etre fournis via variables d'environnement pour ce MVP.",

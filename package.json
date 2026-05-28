@@ -8,6 +8,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
+    "typecheck": "tsc --noEmit",
     "plugin:zip": "node scripts/package-wordpress-plugin.mjs",
     "plugin:lint": "node scripts/lint-wordpress-plugin.mjs",
     "test": "vitest run",
