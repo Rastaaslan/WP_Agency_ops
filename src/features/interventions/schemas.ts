@@ -6,28 +6,37 @@ import {
 } from "@/features/core/enums";
 import { optionalTextSchema, requiredTextSchema } from "@/features/core/schemas";
 
-export const createInterventionSchema = z
+const interventionBaseSchema = z
   .object({
     siteId: requiredTextSchema,
     title: requiredTextSchema,
-    type: z.enum(interventionTypes).default("other"),
-    status: z.enum(interventionStatuses).default("planned"),
+    type: z.enum(interventionTypes),
+    status: z.enum(interventionStatuses),
     date: z.coerce.date(),
     internalNotes: optionalTextSchema,
     clientSummary: optionalTextSchema,
   })
   .strict();
 
-export const createInterventionItemSchema = z
+const interventionItemBaseSchema = z
   .object({
-    interventionId: requiredTextSchema,
     label: requiredTextSchema,
-    status: z.enum(interventionItemStatuses).default("planned"),
+    status: z.enum(interventionItemStatuses),
     notes: optionalTextSchema,
   })
   .strict();
 
-export const updateInterventionSchema = createInterventionSchema
+export const createInterventionSchema = interventionBaseSchema.extend({
+  type: z.enum(interventionTypes).default("other"),
+  status: z.enum(interventionStatuses).default("planned"),
+});
+
+export const createInterventionItemSchema = interventionItemBaseSchema.extend({
+  interventionId: requiredTextSchema,
+  status: z.enum(interventionItemStatuses).default("planned"),
+});
+
+export const updateInterventionSchema = interventionBaseSchema
   .partial()
   .refine((input) => Object.keys(input).length > 0, {
     message: "At least one intervention field must be provided.",
@@ -35,11 +44,11 @@ export const updateInterventionSchema = createInterventionSchema
 
 export const interventionStatusSchema = z.enum(interventionStatuses);
 
-export const addInterventionItemSchema = createInterventionItemSchema.omit({
-  interventionId: true,
+export const addInterventionItemSchema = interventionItemBaseSchema.extend({
+  status: z.enum(interventionItemStatuses).default("planned"),
 });
 
-export const updateInterventionItemSchema = addInterventionItemSchema
+export const updateInterventionItemSchema = interventionItemBaseSchema
   .partial()
   .refine((input) => Object.keys(input).length > 0, {
     message: "At least one intervention item field must be provided.",

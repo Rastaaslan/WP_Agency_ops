@@ -19,7 +19,11 @@ export async function listInterventions() {
           client: true,
         },
       },
-      items: true,
+      items: {
+        orderBy: {
+          createdAt: "asc",
+        },
+      },
     },
     orderBy: {
       date: "desc",
@@ -31,7 +35,11 @@ export async function listInterventionsBySite(siteId: string) {
   return prisma.intervention.findMany({
     where: { siteId },
     include: {
-      items: true,
+      items: {
+        orderBy: {
+          createdAt: "asc",
+        },
+      },
     },
     orderBy: {
       date: "desc",
@@ -48,7 +56,11 @@ export async function getInterventionById(id: string) {
           client: true,
         },
       },
-      items: true,
+      items: {
+        orderBy: {
+          createdAt: "asc",
+        },
+      },
     },
   });
 }

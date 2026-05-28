@@ -12,6 +12,10 @@ const navigationItems = [
     label: "Sites",
   },
   {
+    href: "/interventions",
+    label: "Interventions",
+  },
+  {
     href: "/api/health",
     label: "API Health",
   },

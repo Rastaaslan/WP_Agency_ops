@@ -110,6 +110,14 @@ export default async function SiteDetailPage({
         description="Dernières interventions globales enregistrées pour ce site."
         title="Interventions récentes"
       >
+        <div className="mb-5">
+          <Link
+            className="inline-flex min-h-10 items-center justify-center rounded-md border border-zinc-200 px-3 text-sm font-medium text-cyan-800 hover:border-cyan-300"
+            href={`/interventions/new?siteId=${site.id}`}
+          >
+            Nouvelle intervention pour ce site
+          </Link>
+        </div>
         {interventions.length === 0 ? (
           <InlineEmpty message="Aucune intervention n'est encore liée à ce site." />
         ) : (
@@ -119,7 +127,12 @@ export default async function SiteDetailPage({
                 <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
                   <div>
                     <h3 className="font-medium text-zinc-950">
-                      {intervention.title}
+                      <Link
+                        className="text-cyan-800 hover:text-cyan-950"
+                        href={`/interventions/${intervention.id}`}
+                      >
+                        {intervention.title}
+                      </Link>
                     </h3>
                     <p className="mt-1 text-sm text-zinc-600">
                       {formatDate(intervention.date)} ·{" "}

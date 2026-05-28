@@ -14,7 +14,7 @@ export default function Home() {
         </p>
       </section>
 
-      <section className="grid gap-4 md:grid-cols-3">
+      <section className="grid gap-4 md:grid-cols-4">
         <HomeLink
           description="Parcourir le portefeuille clients et accéder aux sites rattachés."
           href="/clients"
@@ -24,6 +24,11 @@ export default function Home() {
           description="Consulter les sites WordPress, leur environnement et leur statut."
           href="/sites"
           title="Sites"
+        />
+        <HomeLink
+          description="Suivre les interventions globales sans détail plugin côté cockpit."
+          href="/interventions"
+          title="Interventions"
         />
         <HomeLink
           description="Vérifier la réponse JSON minimale de santé applicative."
