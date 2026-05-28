@@ -22,6 +22,7 @@ export const maintenanceStatusValues = [
 ] as const;
 
 export const interventionItemStatusValues = [
+  "planned",
   "done",
   "skipped",
   "failed",

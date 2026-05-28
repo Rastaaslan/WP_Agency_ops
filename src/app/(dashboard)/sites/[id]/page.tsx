@@ -15,6 +15,7 @@ import { PageHeader } from "@/components/layout/page-header";
 import { Badge } from "@/components/ui/badge";
 import { Button, buttonClassName } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
+import { createInterventionFromScan } from "@/features/maintenance/actions";
 import { runPerformanceCheck } from "@/features/performance/actions";
 import { generateReport } from "@/features/reports/actions";
 import { runSecurityCheck } from "@/features/security/actions";
@@ -172,12 +173,21 @@ export default async function SiteDetailPage({
           </CardHeader>
           <div className="divide-y divide-zinc-100">
             {site.scans.map((scan) => (
-              <div key={scan.id} className="flex justify-between gap-4 py-3">
+              <div key={scan.id} className="grid gap-3 py-3 md:grid-cols-[1fr_auto]">
                 <div>
                   <p className="font-medium text-zinc-950">{formatDateTime(scan.createdAt)}</p>
                   <p className="text-sm text-zinc-500">{scan.errorMessage || "Snapshot stocke en base."}</p>
                 </div>
-                <Badge value={scan.status} />
+                <div className="flex items-center gap-2">
+                  <Badge value={scan.status} />
+                  {scan.status === "success" ? (
+                    <form action={createInterventionFromScan.bind(null, scan.id)}>
+                      <Button type="submit" variant="secondary" className="h-8 px-2 text-xs">
+                        Creer intervention
+                      </Button>
+                    </form>
+                  ) : null}
+                </div>
               </div>
             ))}
           </div>

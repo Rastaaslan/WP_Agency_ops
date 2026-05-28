@@ -9,6 +9,7 @@ import {
   interventionFormSchema,
   interventionItemFormSchema,
 } from "./schemas";
+import { generateInterventionItemsFromScan } from "./services/intervention-from-scan";
 
 function parseInterventionForm(formData: FormData) {
   return interventionFormSchema.parse({
@@ -35,7 +36,7 @@ export async function createIntervention(formData: FormData) {
   const data = parseInterventionForm(formData);
   const items = parseLines(data.itemsText).map((label) => ({
     label,
-    status: "done" as const,
+    status: "planned" as const,
   }));
 
   const intervention = await prisma.maintenanceIntervention.create({
@@ -107,4 +108,66 @@ export async function addInterventionItem(
   revalidatePath(`/interventions/${interventionId}`);
   revalidatePath(`/sites/${intervention.siteId}`);
   redirect(`/interventions/${interventionId}`);
+}
+
+export async function updateInterventionItem(
+  interventionId: string,
+  itemId: string,
+  formData: FormData,
+) {
+  const data = interventionItemFormSchema.parse({
+    label: formDataValue(formData, "label"),
+    status: formDataValue(formData, "status") || "planned",
+    details: formDataValue(formData, "details"),
+  });
+  const intervention = await prisma.maintenanceIntervention.findUniqueOrThrow({
+    where: { id: interventionId },
+    select: { siteId: true },
+  });
+
+  await prisma.interventionItem.update({
+    where: { id: itemId },
+    data,
+  });
+
+  revalidatePath("/");
+  revalidatePath(`/interventions/${interventionId}`);
+  revalidatePath(`/sites/${intervention.siteId}`);
+  redirect(`/interventions/${interventionId}`);
+}
+
+export async function createInterventionFromScan(scanId: string) {
+  const scan = await prisma.siteScan.findUniqueOrThrow({
+    where: { id: scanId },
+    include: {
+      site: true,
+      plugins: true,
+      themes: true,
+    },
+  });
+  const items = generateInterventionItemsFromScan(scan);
+  const intervention = await prisma.maintenanceIntervention.create({
+    data: {
+      siteId: scan.siteId,
+      title: "Maintenance technique - mises a jour et verifications",
+      type: "update",
+      status: "planned",
+      description:
+        "Intervention generee a partir du dernier scan technique du site.",
+      technicalNotes: [
+        `Scan source : ${scan.id}`,
+        scan.errorMessage ? `Erreur scan : ${scan.errorMessage}` : null,
+      ]
+        .filter(Boolean)
+        .join("\n"),
+      clientSummary:
+        "Une maintenance technique est planifiee a partir des controles recents du site.",
+      items: items.length > 0 ? { create: items } : undefined,
+    },
+  });
+
+  revalidatePath("/");
+  revalidatePath("/interventions");
+  revalidatePath(`/sites/${scan.siteId}`);
+  redirect(`/interventions/${intervention.id}`);
 }

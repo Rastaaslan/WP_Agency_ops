@@ -74,6 +74,7 @@ enum MaintenanceStatus {
 }
 
 enum InterventionItemStatus {
+  planned
   done
   skipped
   failed
@@ -248,7 +249,7 @@ model InterventionItem {
   id             String                  @id @default(cuid())
   interventionId String
   label          String
-  status         InterventionItemStatus  @default(done)
+  status         InterventionItemStatus  @default(planned)
   details        String?
   createdAt      DateTime                @default(now())
   intervention   MaintenanceIntervention @relation(fields: [interventionId], references: [id], onDelete: Cascade)

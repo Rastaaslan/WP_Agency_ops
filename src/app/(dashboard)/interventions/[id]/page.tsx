@@ -5,7 +5,10 @@ import { PageHeader } from "@/components/layout/page-header";
 import { Badge } from "@/components/ui/badge";
 import { Button, buttonClassName } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
-import { addInterventionItem } from "@/features/maintenance/actions";
+import {
+  addInterventionItem,
+  updateInterventionItem,
+} from "@/features/maintenance/actions";
 import { interventionItemStatusValues } from "@/features/maintenance/schemas";
 import { formatDateTime } from "@/lib/dates";
 import { labelFromEnum } from "@/lib/utils";
@@ -68,18 +71,33 @@ export default async function InterventionDetailPage({
         </CardHeader>
         <div className="divide-y divide-zinc-100">
           {intervention.items.map((item) => (
-            <div key={item.id} className="flex justify-between gap-4 py-3">
-              <div>
+            <form
+              key={item.id}
+              action={updateInterventionItem.bind(null, intervention.id, item.id)}
+              className="grid gap-3 py-4 lg:grid-cols-[1fr_180px_auto]"
+            >
+              <div className="grid gap-2">
                 <p className="font-medium text-zinc-950">{item.label}</p>
-                <p className="text-sm text-zinc-500">{item.details}</p>
+                <input type="hidden" name="label" value={item.label} />
+                <textarea
+                  name="details"
+                  rows={3}
+                  defaultValue={item.details ?? ""}
+                  placeholder="Note technique ou decision"
+                />
               </div>
-              <Badge value={item.status} />
-            </div>
+              <select name="status" defaultValue={item.status}>
+                {interventionItemStatusValues.map((value) => (
+                  <option key={value} value={value}>{labelFromEnum(value)}</option>
+                ))}
+              </select>
+              <Button type="submit" variant="secondary">Mettre a jour</Button>
+            </form>
           ))}
         </div>
         <form action={addInterventionItem.bind(null, intervention.id)} className="mt-5 grid gap-3 border-t border-zinc-100 pt-5 md:grid-cols-[1fr_180px_auto]">
           <input name="label" required placeholder="Nouvel item" />
-          <select name="status" defaultValue="done">
+          <select name="status" defaultValue="planned">
             {interventionItemStatusValues.map((value) => (
               <option key={value} value={value}>{labelFromEnum(value)}</option>
             ))}
