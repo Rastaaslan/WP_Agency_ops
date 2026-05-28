@@ -2,7 +2,7 @@
 
 WP Agency Ops v2 est le cockpit global WordPress.
 
-Statut actuel : base technique et modèle de données minimal. Cette branche ne contient pas encore de CRUD, d'UI métier, de sécurité, de performance, de formulaires, de sauvegardes, de rapports, d'auth, de plugin compagnon ou d'intégration WPUR réelle.
+Statut actuel : base technique, modèle de données minimal, routes API minimales et première UI métier en lecture seule. Cette branche ne contient pas encore de formulaires CRUD, de sécurité, de performance, de formulaires, de sauvegardes, de rapports, d'auth, de plugin compagnon ou d'intégration WPUR exécutée.
 
 WPUR reste un projet séparé dédié à la maintenance détaillée des plugins WordPress. WP Agency Ops v2 pourra importer et afficher des synthèses WPUR plus tard, mais ne doit pas réimplémenter son moteur.
 
@@ -103,6 +103,20 @@ Les routes API minimales exposent les services serveur existants :
 Les réponses suivent le format `{ "data": ... }` en succès et `{ "error": { "message": "...", "code": "..." } }` en erreur.
 
 Les imports WPUR restent des données reçues et stockées. Ces routes ne lancent pas WPUR, ne scannent pas les plugins, ne récupèrent pas WordPress.org et ne génèrent pas de rapport plugin.
+
+## UI lecture seule
+
+L'interface applicative expose une première navigation de consultation :
+
+- `/` : accueil avec accès aux clients, sites et healthcheck ;
+- `/clients` : liste des clients ;
+- `/clients/[id]` : fiche client et sites liés ;
+- `/sites` : liste des sites WordPress ;
+- `/sites/[id]` : fiche site, interventions récentes, synthèse des imports WPUR et lien vers l'export technique JSON.
+
+Cette UI est volontairement en lecture seule. Elle ne crée pas, ne modifie pas et n'importe pas de données depuis l'interface.
+
+Prochaines étapes prévues : formulaires CRUD clients/sites/interventions et import WPUR manuel, dans des tickets séparés.
 
 ## Ancienne base locale v1
 

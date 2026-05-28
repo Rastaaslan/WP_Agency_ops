@@ -17,6 +17,7 @@
 
 html {
   min-height: 100%;
+  scroll-padding-top: 96px;
 }
 
 body {
