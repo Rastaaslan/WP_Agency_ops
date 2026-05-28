@@ -47,14 +47,14 @@ export async function importWpurPayloadAction(
 
 function getWpurImportMutationErrorMessage(error: unknown) {
   if (error instanceof ZodError) {
-    return "Le payload WPUR ne respecte pas le schéma attendu.";
+    return "L'export WPUR ne respecte pas le schéma attendu.";
   }
 
   if (isPrismaForeignKeyError(error)) {
     return "Site introuvable. Choisissez un site existant puis réessayez.";
   }
 
-  return "Impossible d'importer le payload WPUR. Vérifiez le JSON puis réessayez.";
+  return "Impossible d'importer l'export WPUR. Vérifiez le JSON puis réessayez.";
 }
 
 function isPrismaForeignKeyError(error: unknown) {

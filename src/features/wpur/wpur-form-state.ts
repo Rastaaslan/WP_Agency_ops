@@ -54,7 +54,7 @@ export function parseWpurImportForm(formData: FormData):
     return {
       success: false,
       state: createWpurImportFieldErrorState(values, [
-        "Le JSON WPUR est obligatoire.",
+        "Le contenu JSON de l'export WPUR est obligatoire.",
       ]),
     };
   }
@@ -78,7 +78,7 @@ export function parseWpurImportForm(formData: FormData):
     return {
       success: false,
       state: createWpurImportFieldErrorState(values, [
-        "Le payload WPUR ne respecte pas le schéma attendu.",
+        "L'export WPUR ne respecte pas le schéma attendu.",
       ]),
     };
   }

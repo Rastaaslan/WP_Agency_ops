@@ -26,11 +26,7 @@ npm run dev
 
 Ouvrez ensuite [http://localhost:3000](http://localhost:3000).
 
-La page d'accueil doit afficher :
-
-```txt
-WP Agency Ops v2 — Cockpit global WordPress
-```
+La page d'accueil affiche le dashboard synthèse du cockpit global WordPress.
 
 ## Santé applicative
 
@@ -62,7 +58,7 @@ Prisma et SQLite sont configurés avec un modèle minimal :
 - `PerformanceCheck` ;
 - `WpurImport`.
 
-`WpurImport` stocke un payload produit par WPUR. WP Agency Ops v2 ne scanne pas les plugins, ne compare pas les versions et ne génère pas les payloads WPUR.
+`WpurImport` stocke un export produit par WPUR. WP Agency Ops v2 ne scanne pas les plugins, ne compare pas les versions et ne génère pas les exports WPUR.
 
 ```bash
 npm run db:migrate
@@ -70,9 +66,12 @@ npm run db:seed
 npm run db:studio
 ```
 
+Limite locale connue : dans cet environnement, Prisma peut renvoyer `Schema engine error:` sans détail pendant `npm run db:migrate`. Les migrations SQL présentes dans `prisma/migrations` ont été vérifiées sur base SQLite temporaire, mais ce point doit être corrigé avant packaging ou démo hors environnement contrôlé.
+
 `npm run db:seed` crée un jeu de données de démo réaliste autour d'Atelier Nova, avec plusieurs interventions, sauvegardes, formulaires surveillés, contrôles sécurité/performance, import WPUR synthétique et un second client léger.
 
 Un scénario guidé est disponible dans [`docs/DEMO.md`](docs/DEMO.md).
+Le statut de gel MVP local est résumé dans [`docs/MVP_STATUS.md`](docs/MVP_STATUS.md).
 
 ## Services serveur
 
@@ -85,7 +84,7 @@ Une couche serveur minimale prépare les futurs CRUD sans exposer encore de rout
 - sécurité ;
 - performance ;
 - imports WPUR ;
-- export technique global.
+- état technique global du site.
 
 Ces services utilisent Prisma et les schémas Zod existants. WPUR est seulement importé via `WpurImport` : le toolkit ne lance pas WPUR, ne scanne pas les plugins et ne génère pas de rapport plugin.
 
@@ -124,10 +123,10 @@ L'interface applicative expose une première navigation métier :
 - `/clients/[id]/edit` : modification d'un client ;
 - `/sites` : liste des sites WordPress et accès à la création ;
 - `/sites/new` : création d'un site rattaché à un client existant ;
-- `/sites/[id]` : fiche site, interventions récentes avec lien de création pré-rattachée au site, contrôle sécurité simple, contrôle performance simple, synthèse des imports WPUR, modification, archivage et lien vers l'export technique JSON ;
+- `/sites/[id]` : fiche site, interventions récentes avec lien de création pré-rattachée au site, contrôle sécurité simple, contrôle performance simple, synthèse des imports WPUR, modification, archivage et lien vers l'état technique du site ;
 - `/sites/[id]/backups/new` : création d'un suivi manuel de sauvegarde pour le site ;
 - `/sites/[id]/forms/new` : création d'un formulaire surveillé pour le site ;
-- `/sites/[id]/wpur-imports/new` : import manuel d'un payload JSON WPUR produit par WPUR ;
+- `/sites/[id]/wpur-imports/new` : import manuel d'un export WPUR JSON produit par WPUR ;
 - `/sites/[id]/edit` : modification d'un site.
 - `/backups/[id]/edit` : modification du statut et des notes d'une sauvegarde documentée ;
 - `/forms/[id]/edit` : modification du statut, de la dernière vérification et des notes d'un formulaire surveillé ;
@@ -136,7 +135,7 @@ L'interface applicative expose une première navigation métier :
 - `/interventions/[id]` : fiche intervention, changement de statut et gestion d'items simples ;
 - `/interventions/[id]/edit` : modification d'une intervention globale.
 
-Le CRUD UI est limité aux clients, aux sites et aux interventions globales. L'import WPUR UI est limité au collage manuel d'un payload JSON déjà produit par WPUR, validé puis stocké comme donnée externe liée au site.
+Le CRUD UI est limité aux clients, aux sites et aux interventions globales. L'import WPUR UI est limité au collage manuel d'un export JSON déjà produit par WPUR, validé puis stocké comme donnée externe liée au site.
 
 Le suivi des sauvegardes est documentaire : l'application permet d'enregistrer le type, le statut, la date, le fournisseur, l'emplacement et les notes d'une sauvegarde, avec une liaison optionnelle à une intervention. WP Agency Ops ne lance pas de sauvegarde automatique, ne stocke aucun fichier de backup, ne se connecte pas à un hébergeur et ne fait pas de rollback.
 

@@ -523,7 +523,7 @@ export default async function SiteDetailPage({
       </SectionPanel>
 
       <SectionPanel
-        description="Synthèse des payloads importés depuis WPUR. WP Agency Ops ne génère pas ces données."
+        description="Synthèse des exports importés depuis WPUR. WP Agency Ops ne génère pas ces données."
         title="Imports WPUR"
       >
         <div className="mb-5 flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
@@ -532,18 +532,18 @@ export default async function SiteDetailPage({
               WPUR reste la source de vérité pour les rapports détaillés plugins.
             </p>
             <p className="rounded-md border border-cyan-200 bg-cyan-50 px-3 py-2 text-cyan-950">
-              WP Agency Ops importe uniquement une synthèse du payload WPUR.
+              WP Agency Ops affiche uniquement une synthèse de l&apos;export WPUR.
             </p>
           </div>
           <Link
             className="inline-flex min-h-10 shrink-0 items-center justify-center rounded-md border border-zinc-200 px-3 text-sm font-medium text-cyan-800 hover:border-cyan-300"
             href={`/sites/${site.id}/wpur-imports/new`}
           >
-            Importer un payload WPUR
+            Importer un export WPUR
           </Link>
         </div>
         {wpurImports.length === 0 ? (
-          <InlineEmpty message="Aucun import WPUR n'est encore enregistré pour ce site. Importez un payload produit par WPUR pour afficher une synthèse ici." />
+          <InlineEmpty message="Aucun import WPUR n'est encore enregistré pour ce site. Importez un export produit par WPUR pour afficher une synthèse ici." />
         ) : (
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-zinc-200 text-sm">
@@ -555,7 +555,7 @@ export default async function SiteDetailPage({
                   <th className="px-4 py-3 text-right">Lignes</th>
                   <th className="px-4 py-3 text-right">Alertes</th>
                   <th className="px-4 py-3">Importé le</th>
-                  <th className="px-4 py-3 text-right">Payload</th>
+                  <th className="px-4 py-3 text-right">Export WPUR</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-zinc-200">
@@ -590,7 +590,7 @@ export default async function SiteDetailPage({
                           className="font-medium text-cyan-800 hover:text-cyan-950"
                           href={`/api/wpur-imports/${wpurImport.id}`}
                         >
-                          Voir JSON
+                          Voir l&apos;export
                         </Link>
                       </td>
                     </tr>
@@ -602,10 +602,10 @@ export default async function SiteDetailPage({
         )}
       </SectionPanel>
 
-      <SectionPanel title="Export technique disponible">
+      <SectionPanel title="État technique du site">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <p className="max-w-2xl text-sm leading-6 text-zinc-700">
-            L&apos;export technique global expose le client, le site, les
+            L&apos;état technique global expose le client, le site, les
             interventions, le dernier import WPUR dans un bloc séparé et les
             suivis globaux documentés.
           </p>
@@ -613,7 +613,7 @@ export default async function SiteDetailPage({
             className="inline-flex min-h-10 items-center justify-center rounded-md border border-zinc-200 px-3 text-sm font-medium text-cyan-800 hover:border-cyan-300"
             href={`/api/sites/${site.id}/technical-export`}
           >
-            Voir l&apos;export JSON
+            Voir l&apos;état technique
           </Link>
         </div>
       </SectionPanel>

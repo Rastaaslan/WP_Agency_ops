@@ -99,7 +99,7 @@ describe("wpur actions", () => {
     expect(siteServiceMock.getSiteById).not.toHaveBeenCalled();
     expect(wpurServiceMock.importWpurPayload).not.toHaveBeenCalled();
     expect(result.fieldErrors.payloadJson).toEqual([
-      "Le payload WPUR ne respecte pas le schéma attendu.",
+      "L'export WPUR ne respecte pas le schéma attendu.",
     ]);
   });
 

@@ -31,6 +31,8 @@ npm run db:migrate
 npm run db:seed
 ```
 
+Si `npm run db:migrate` renvoie `Schema engine error:` sans détail, ne supprimez pas `dev.db` automatiquement. C'est une limite locale connue à traiter avant packaging ; les migrations SQL versionnées restent la source à vérifier sur une base propre.
+
 Démarrer l'application :
 
 ```bash
@@ -68,7 +70,7 @@ http://localhost:3000
     - formulaire de contact OK ;
     - demande de devis à vérifier.
 11. Montrer les contrôles sécurité et performance.
-12. Ouvrir l'export technique depuis la fiche site.
+12. Ouvrir l'état technique du site depuis la fiche site.
 
 ## Message produit à expliquer
 
@@ -82,7 +84,7 @@ WP Agency Ops v2 est le cockpit global WordPress :
 - sécurité ;
 - performance ;
 - imports WPUR ;
-- exports techniques globaux.
+- état technique global du site.
 
 WPUR reste séparé et spécialisé plugins :
 
