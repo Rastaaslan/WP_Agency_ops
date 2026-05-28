@@ -75,6 +75,7 @@ Ouvrez ensuite [http://localhost:3000](http://localhost:3000).
 
 ```bash
 npm run dev
+npm run doctor
 npm run build
 npm run start
 npm run lint
@@ -85,6 +86,8 @@ npm run db:migrate
 npm run db:seed
 npm run db:studio
 ```
+
+`npm run doctor` vérifie rapidement l’environnement local : Node, npm, schéma Prisma, migration, fichier `.env.example` et syntaxe PHP du plugin compagnon.
 
 ## Utilisation rapide
 
