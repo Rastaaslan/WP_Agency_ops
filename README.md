@@ -80,6 +80,30 @@ Une couche serveur minimale prépare les futurs CRUD sans exposer encore de rout
 
 Ces services utilisent Prisma et les schémas Zod existants. WPUR est seulement importé via `WpurImport` : le toolkit ne lance pas WPUR, ne scanne pas les plugins et ne génère pas de rapport plugin.
 
+## API minimale
+
+Les routes API minimales exposent les services serveur existants :
+
+- `GET /api/health` ;
+- `GET /api/clients` et `POST /api/clients` ;
+- `GET /api/clients/[id]`, `PATCH /api/clients/[id]` et `POST /api/clients/[id]/archive` ;
+- `GET /api/clients/[id]/sites` ;
+- `GET /api/sites` et `POST /api/sites` ;
+- `GET /api/sites/[id]`, `PATCH /api/sites/[id]` et `POST /api/sites/[id]/archive` ;
+- `GET /api/sites/[id]/interventions` ;
+- `GET /api/interventions` et `POST /api/interventions` ;
+- `GET /api/interventions/[id]` et `PATCH /api/interventions/[id]` ;
+- `PATCH /api/interventions/[id]/status` ;
+- `POST /api/interventions/[id]/items` ;
+- `PATCH /api/intervention-items/[id]` ;
+- `GET /api/sites/[id]/wpur-imports` et `POST /api/sites/[id]/wpur-imports` ;
+- `GET /api/wpur-imports/[id]` ;
+- `GET /api/sites/[id]/technical-export`.
+
+Les réponses suivent le format `{ "data": ... }` en succès et `{ "error": { "message": "...", "code": "..." } }` en erreur.
+
+Les imports WPUR restent des données reçues et stockées. Ces routes ne lancent pas WPUR, ne scannent pas les plugins, ne récupèrent pas WordPress.org et ne génèrent pas de rapport plugin.
+
 ## Ancienne base locale v1
 
 Si `dev.db` existe déjà et contient l'ancien schéma v1, `npm run db:migrate` peut échouer avec une erreur de drift Prisma.

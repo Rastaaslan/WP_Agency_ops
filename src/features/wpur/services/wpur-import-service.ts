@@ -1,7 +1,4 @@
-import {
-  type WpurPayload,
-  wpurPayloadSchema,
-} from "@/features/wpur/schemas";
+import { wpurPayloadSchema } from "@/features/wpur/schemas";
 import { prisma } from "@/server/db/client";
 import { toPrismaJson } from "@/server/db/json";
 
@@ -28,7 +25,7 @@ export async function getWpurImportById(id: string) {
   });
 }
 
-export function summarizeWpurPayload(payload: WpurPayload): WpurPayloadSummary {
+export function summarizeWpurPayload(payload: unknown): WpurPayloadSummary {
   const parsedPayload = wpurPayloadSchema.parse(payload);
 
   return {
@@ -44,7 +41,7 @@ export function summarizeWpurPayload(payload: WpurPayload): WpurPayloadSummary {
   };
 }
 
-export async function importWpurPayload(siteId: string, payload: WpurPayload) {
+export async function importWpurPayload(siteId: string, payload: unknown) {
   const parsedPayload = wpurPayloadSchema.parse(payload);
   const summary = summarizeWpurPayload(parsedPayload);
 
