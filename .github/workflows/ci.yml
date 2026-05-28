@@ -50,3 +50,12 @@ jobs:
 
       - name: PHP syntax check
         run: npm run plugin:lint
+
+      - name: Package plugin
+        run: npm run plugin:zip
+
+      - name: Upload plugin artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: wp-agency-ops-companion
+          path: dist/wp-agency-ops-companion.zip

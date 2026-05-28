@@ -79,6 +79,8 @@ npm run build
 npm run start
 npm run lint
 npm run test
+npm run plugin:lint
+npm run plugin:zip
 npm run db:migrate
 npm run db:seed
 npm run db:studio

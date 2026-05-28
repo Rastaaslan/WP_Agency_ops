@@ -4,11 +4,12 @@ Plugin WordPress minimal et en lecture seule pour WP Agency Ops Toolkit.
 
 ## Installation
 
-1. Copier le dossier `wp-agency-ops-companion` dans `wp-content/plugins/`.
-2. Activer le plugin depuis l'administration WordPress.
-3. Aller dans **Outils > WP Agency Ops**.
-4. Copier la cle API.
-5. Configurer l'application WP Agency Ops Toolkit avec le mode `companion_plugin`.
+1. Depuis le repo, generer l'archive avec `npm run plugin:zip`.
+2. Installer `dist/wp-agency-ops-companion.zip` depuis l'administration WordPress ou copier le dossier `wp-agency-ops-companion` dans `wp-content/plugins/`.
+3. Activer le plugin depuis l'administration WordPress.
+4. Aller dans **Outils > WP Agency Ops**.
+5. Copier la cle API.
+6. Configurer l'application WP Agency Ops Toolkit avec le mode `companion_plugin`.
 
 ## Endpoints
 
