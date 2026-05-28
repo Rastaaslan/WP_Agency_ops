@@ -2,7 +2,7 @@
 
 WP Agency Ops v2 est le cockpit global WordPress.
 
-Statut actuel : base technique, modèle de données minimal, routes API minimales et première UI métier en lecture seule. Cette branche ne contient pas encore de formulaires CRUD, de sécurité, de performance, de formulaires, de sauvegardes, de rapports, d'auth, de plugin compagnon ou d'intégration WPUR exécutée.
+Statut actuel : base technique, modèle de données minimal, routes API minimales, première UI métier et CRUD clients côté UI. Cette branche ne contient pas encore de formulaires CRUD pour les sites ou interventions, de sécurité, de performance, de formulaires, de sauvegardes, de rapports, d'auth, de plugin compagnon ou d'intégration WPUR exécutée.
 
 WPUR reste un projet séparé dédié à la maintenance détaillée des plugins WordPress. WP Agency Ops v2 pourra importer et afficher des synthèses WPUR plus tard, mais ne doit pas réimplémenter son moteur.
 
@@ -104,19 +104,21 @@ Les réponses suivent le format `{ "data": ... }` en succès et `{ "error": { "m
 
 Les imports WPUR restent des données reçues et stockées. Ces routes ne lancent pas WPUR, ne scannent pas les plugins, ne récupèrent pas WordPress.org et ne génèrent pas de rapport plugin.
 
-## UI lecture seule
+## UI métier
 
-L'interface applicative expose une première navigation de consultation :
+L'interface applicative expose une première navigation métier :
 
 - `/` : accueil avec accès aux clients, sites et healthcheck ;
-- `/clients` : liste des clients ;
-- `/clients/[id]` : fiche client et sites liés ;
+- `/clients` : liste des clients et accès à la création ;
+- `/clients/new` : création d'un client ;
+- `/clients/[id]` : fiche client, sites liés, modification et archivage ;
+- `/clients/[id]/edit` : modification d'un client ;
 - `/sites` : liste des sites WordPress ;
 - `/sites/[id]` : fiche site, interventions récentes, synthèse des imports WPUR et lien vers l'export technique JSON.
 
-Cette UI est volontairement en lecture seule. Elle ne crée pas, ne modifie pas et n'importe pas de données depuis l'interface.
+Le CRUD UI est limité aux clients. Les sites, interventions et imports WPUR restent en lecture seule ou à venir.
 
-Prochaines étapes prévues : formulaires CRUD clients/sites/interventions et import WPUR manuel, dans des tickets séparés.
+Prochaines étapes prévues : formulaires CRUD sites/interventions et import WPUR manuel, dans des tickets séparés.
 
 ## Ancienne base locale v1
 

@@ -16,14 +16,23 @@ export default async function ClientsPage() {
   return (
     <div>
       <PageHeader
-        description="Vue de lecture du portefeuille clients et des sites WordPress rattachés."
-        eyebrow="Lecture seule"
+        description="Portefeuille clients et sites WordPress rattachés."
+        eyebrow="Clients"
         title="Clients"
-      />
+      >
+        <Link
+          className="inline-flex min-h-10 items-center rounded-md bg-zinc-950 px-3 text-sm font-medium text-white transition hover:bg-zinc-800"
+          href="/clients/new"
+        >
+          Nouveau client
+        </Link>
+      </PageHeader>
 
       {clients.length === 0 ? (
         <EmptyState
           description="Aucun client n'est encore présent dans la base v2."
+          href="/clients/new"
+          linkLabel="Créer un client"
           title="Aucun client"
         />
       ) : (

@@ -4,6 +4,8 @@ import { notFound } from "next/navigation";
 import { PageHeader } from "@/components/page-header";
 import { SectionPanel } from "@/components/section-panel";
 import { StatusBadge } from "@/components/status-badge";
+import { archiveClientAction } from "@/features/clients/client-actions";
+import { ArchiveClientForm } from "@/features/clients/components/archive-client-form";
 import { getClientById } from "@/features/clients/services/client-service";
 import { listSitesByClient } from "@/features/sites/services/site-service";
 import { formatNullable } from "@/lib/format";
@@ -28,7 +30,10 @@ export default async function ClientDetailPage({
   return (
     <div className="space-y-6">
       <PageHeader
-        description={formatNullable(client.companyName, "Client sans entreprise renseignée")}
+        description={formatNullable(
+          client.companyName,
+          "Client sans entreprise renseignée",
+        )}
         eyebrow="Client"
         title={client.name}
       >
@@ -38,6 +43,16 @@ export default async function ClientDetailPage({
         >
           Retour clients
         </Link>
+        <Link
+          className="inline-flex min-h-10 items-center rounded-md border border-zinc-200 bg-white px-3 text-sm font-medium text-cyan-800 hover:border-cyan-300"
+          href={`/clients/${client.id}/edit`}
+        >
+          Modifier
+        </Link>
+        <ArchiveClientForm
+          action={archiveClientAction.bind(null, client.id)}
+          disabled={client.status === "archived"}
+        />
       </PageHeader>
 
       <section className="grid gap-4 md:grid-cols-3">
