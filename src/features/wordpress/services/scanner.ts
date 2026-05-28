@@ -1,0 +1,160 @@
+import { Prisma } from "@/generated/prisma/client";
+import { prisma } from "@/server/db/client";
+import { ManualWordPressConnector, type ManualScanInput } from "../connectors/manual";
+import {
+  ApplicationPasswordWordPressConnector,
+  CompanionPluginWordPressConnector,
+} from "../connectors/placeholders";
+import { PublicRestWordPressConnector } from "../connectors/public-rest";
+import type { ConnectorSite, WordPressConnector, WordPressScanResult } from "../types";
+
+function jsonValue(value: unknown): Prisma.InputJsonValue {
+  return JSON.parse(JSON.stringify(value ?? null)) as Prisma.InputJsonValue;
+}
+
+function connectorFor(site: ConnectorSite, manualInput?: ManualScanInput): WordPressConnector {
+  if (manualInput || site.connectionType === "manual") {
+    return new ManualWordPressConnector(manualInput);
+  }
+
+  if (site.connectionType === "companion_plugin") {
+    return new CompanionPluginWordPressConnector();
+  }
+
+  if (site.connectionType === "application_password") {
+    return new ApplicationPasswordWordPressConnector();
+  }
+
+  return new PublicRestWordPressConnector();
+}
+
+export function summarizeScanResult(result: WordPressScanResult) {
+  const updateCount = [
+    ...result.plugins.filter((plugin) => plugin.updateAvailable),
+    ...result.themes.filter((theme) => theme.updateAvailable),
+    ...result.updates,
+  ].length;
+
+  return {
+    detected: result.detected,
+    wpVersion: result.wpVersion,
+    phpVersion: result.phpVersion,
+    pluginCount: result.plugins.length,
+    themeCount: result.themes.length,
+    updateCount,
+    warningCount: result.warnings.filter((warning) => warning.severity !== "info").length,
+  };
+}
+
+export async function runWordPressScan(
+  siteId: string,
+  manualInput?: ManualScanInput,
+) {
+  const site = await prisma.wordPressSite.findUniqueOrThrow({
+    where: { id: siteId },
+    select: {
+      id: true,
+      name: true,
+      url: true,
+      connectionType: true,
+    },
+  });
+
+  const scan = await prisma.siteScan.create({
+    data: {
+      siteId,
+      status: "running",
+      startedAt: new Date(),
+    },
+  });
+
+  const connector = connectorFor(site, manualInput);
+
+  try {
+    const result = await connector.scan(site);
+    const summary = summarizeScanResult(result);
+
+    await prisma.$transaction([
+      prisma.wordPressPlugin.createMany({
+        data: result.plugins.map((plugin) => ({
+          scanId: scan.id,
+          name: plugin.name,
+          slug: plugin.slug,
+          version: plugin.version,
+          updateAvailable: Boolean(plugin.updateAvailable),
+          newVersion: plugin.newVersion,
+          active: Boolean(plugin.active),
+          requiresWp: plugin.requiresWp,
+          requiresPhp: plugin.requiresPhp,
+          testedUpTo: plugin.testedUpTo,
+          status:
+            plugin.status ??
+            (plugin.updateAvailable
+              ? "update_available"
+              : plugin.active === false
+                ? "inactive"
+                : "healthy"),
+        })),
+      }),
+      prisma.wordPressTheme.createMany({
+        data: result.themes.map((theme) => ({
+          scanId: scan.id,
+          name: theme.name,
+          slug: theme.slug,
+          version: theme.version,
+          updateAvailable: Boolean(theme.updateAvailable),
+          newVersion: theme.newVersion,
+          active: Boolean(theme.active),
+          status:
+            theme.status ??
+            (theme.updateAvailable
+              ? "update_available"
+              : theme.active === false
+                ? "inactive"
+                : "healthy"),
+        })),
+      }),
+      prisma.siteScan.update({
+        where: { id: scan.id },
+        data: {
+          status: "success",
+          finishedAt: new Date(),
+          summaryJson: jsonValue(summary),
+          rawJson: jsonValue(result),
+        },
+      }),
+      prisma.wordPressSite.update({
+        where: { id: siteId },
+        data: {
+          lastScanAt: new Date(),
+          connectionStatus: result.detected ? "connected" : "failed",
+        },
+      }),
+    ]);
+
+    return prisma.siteScan.findUniqueOrThrow({
+      where: { id: scan.id },
+      include: { plugins: true, themes: true },
+    });
+  } catch (error) {
+    const message =
+      error instanceof Error ? error.message : "Le scan WordPress a echoue.";
+
+    await prisma.$transaction([
+      prisma.siteScan.update({
+        where: { id: scan.id },
+        data: {
+          status: "failed",
+          finishedAt: new Date(),
+          errorMessage: message,
+        },
+      }),
+      prisma.wordPressSite.update({
+        where: { id: siteId },
+        data: { connectionStatus: "failed" },
+      }),
+    ]);
+
+    throw error;
+  }
+}
