@@ -2,7 +2,7 @@
 
 WP Agency Ops v2 est le cockpit global WordPress.
 
-Statut actuel : squelette technique uniquement. Cette branche ne contient pas encore de CRUD clients, sites, interventions, sécurité, performance, formulaires, sauvegardes, rapports, auth, plugin compagnon ou intégration WPUR réelle.
+Statut actuel : base technique et modèle de données minimal. Cette branche ne contient pas encore de CRUD, d'UI métier, de sécurité, de performance, de formulaires, de sauvegardes, de rapports, d'auth, de plugin compagnon ou d'intégration WPUR réelle.
 
 WPUR reste un projet séparé dédié à la maintenance détaillée des plugins WordPress. WP Agency Ops v2 pourra importer et afficher des synthèses WPUR plus tard, mais ne doit pas réimplémenter son moteur.
 
@@ -50,7 +50,15 @@ npm run build
 
 ## Base de données
 
-Prisma et SQLite sont configurés, mais aucun modèle métier définitif n'est encore créé.
+Prisma et SQLite sont configurés avec un modèle minimal :
+
+- `Client` ;
+- `Site` ;
+- `Intervention` ;
+- `InterventionItem` ;
+- `WpurImport`.
+
+`WpurImport` stocke un payload produit par WPUR. WP Agency Ops v2 ne scanne pas les plugins, ne compare pas les versions et ne génère pas les payloads WPUR.
 
 ```bash
 npm run db:migrate
@@ -58,7 +66,30 @@ npm run db:seed
 npm run db:studio
 ```
 
-`npm run db:seed` est volontairement un no-op tant que le modèle métier v2 n'est pas validé.
+`npm run db:seed` crée un petit jeu de données fictif : un client, un site, une intervention globale, deux items et un import WPUR minimal.
+
+## Ancienne base locale v1
+
+Si `dev.db` existe déjà et contient l'ancien schéma v1, `npm run db:migrate` peut échouer avec une erreur de drift Prisma.
+
+Ne forcez pas de reset si vous voulez conserver cette base. Renommez-la d'abord en backup local :
+
+```bash
+mv dev.db dev-v1-backup.db
+```
+
+Sur PowerShell :
+
+```powershell
+Move-Item -LiteralPath dev.db -Destination dev-v1-backup.db
+```
+
+Relancez ensuite les commandes sur une base propre :
+
+```bash
+npm run db:migrate
+npm run db:seed
+```
 
 ## Structure minimale
 

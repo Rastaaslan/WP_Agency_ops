@@ -6,3 +6,128 @@ generator client {
 datasource db {
   provider = "sqlite"
 }
+
+enum ClientStatus {
+  active
+  archived
+}
+
+enum SiteEnvironment {
+  production
+  staging
+  development
+}
+
+enum SiteStatus {
+  active
+  paused
+  archived
+}
+
+enum InterventionType {
+  general_maintenance
+  security
+  performance
+  form
+  backup
+  deployment
+  content
+  bugfix
+  wpur_plugin_maintenance
+  other
+}
+
+enum InterventionStatus {
+  planned
+  in_progress
+  done
+  issue
+  cancelled
+}
+
+enum InterventionItemStatus {
+  planned
+  done
+  skipped
+  failed
+  warning
+}
+
+model Client {
+  id          String       @id @default(cuid())
+  name        String
+  companyName String?
+  email       String?
+  phone       String?
+  notes       String?
+  status      ClientStatus @default(active)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  sites       Site[]
+
+  @@index([status])
+}
+
+model Site {
+  id            String         @id @default(cuid())
+  clientId      String
+  name          String
+  url           String
+  environment   SiteEnvironment @default(production)
+  status        SiteStatus      @default(active)
+  notes         String?
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  client        Client          @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  interventions Intervention[]
+  wpurImports   WpurImport[]
+
+  @@index([clientId])
+  @@index([status])
+}
+
+model Intervention {
+  id            String                 @id @default(cuid())
+  siteId        String
+  title         String
+  type          InterventionType       @default(other)
+  status        InterventionStatus     @default(planned)
+  date          DateTime
+  internalNotes String?
+  clientSummary String?
+  createdAt     DateTime               @default(now())
+  updatedAt     DateTime               @updatedAt
+  site          Site                   @relation(fields: [siteId], references: [id], onDelete: Cascade)
+  items         InterventionItem[]
+
+  @@index([siteId, date])
+  @@index([status])
+  @@index([type])
+}
+
+model InterventionItem {
+  id             String                 @id @default(cuid())
+  interventionId String
+  label          String
+  status         InterventionItemStatus @default(planned)
+  notes          String?
+  createdAt      DateTime               @default(now())
+  updatedAt      DateTime               @updatedAt
+  intervention   Intervention           @relation(fields: [interventionId], references: [id], onDelete: Cascade)
+
+  @@index([interventionId])
+  @@index([status])
+}
+
+model WpurImport {
+  id          String   @id @default(cuid())
+  siteId      String
+  periodMonth String
+  importedAt  DateTime @default(now())
+  payloadJson Json
+  summaryJson Json?
+  site        Site     @relation(fields: [siteId], references: [id], onDelete: Cascade)
+
+  @@index([siteId, importedAt])
+  @@index([periodMonth])
+}

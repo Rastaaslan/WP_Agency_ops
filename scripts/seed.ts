@@ -1,8 +1,169 @@
-async function main() {
-  console.log("No seed data yet: WP Agency Ops v2 is a technical skeleton.");
+import "dotenv/config";
+import { Prisma } from "../src/generated/prisma/client";
+import { wpurPayloadSchema } from "../src/features/wpur/schemas";
+import { prisma } from "../src/server/db/client";
+
+function json(value: unknown): Prisma.InputJsonValue {
+  return JSON.parse(JSON.stringify(value)) as Prisma.InputJsonValue;
 }
 
-main().catch((error: unknown) => {
-  console.error(error);
-  process.exit(1);
-});
+async function main() {
+  const client = await prisma.client.upsert({
+    where: { id: "seed-client-agence-demo" },
+    update: {
+      name: "Client Demo",
+      companyName: "Agence Demo",
+      email: "contact@example.com",
+      phone: "+33 1 23 45 67 89",
+      notes: "Client fictif pour valider le modele de donnees v2.",
+      status: "active",
+    },
+    create: {
+      id: "seed-client-agence-demo",
+      name: "Client Demo",
+      companyName: "Agence Demo",
+      email: "contact@example.com",
+      phone: "+33 1 23 45 67 89",
+      notes: "Client fictif pour valider le modele de donnees v2.",
+    },
+  });
+
+  const site = await prisma.site.upsert({
+    where: { id: "seed-site-vitrine-demo" },
+    update: {
+      clientId: client.id,
+      name: "Site vitrine demo",
+      url: "https://example.com",
+      environment: "production",
+      status: "active",
+      notes: "Site fictif rattache au client demo.",
+    },
+    create: {
+      id: "seed-site-vitrine-demo",
+      clientId: client.id,
+      name: "Site vitrine demo",
+      url: "https://example.com",
+      environment: "production",
+      notes: "Site fictif rattache au client demo.",
+    },
+  });
+
+  const intervention = await prisma.intervention.upsert({
+    where: { id: "seed-intervention-maintenance-globale" },
+    update: {
+      siteId: site.id,
+      title: "Maintenance globale mensuelle",
+      type: "general_maintenance",
+      status: "planned",
+      date: new Date("2026-05-28T09:00:00.000Z"),
+      internalNotes: "Intervention fictive sans action plugin detaillee.",
+      clientSummary: "Maintenance globale planifiee pour le site demo.",
+    },
+    create: {
+      id: "seed-intervention-maintenance-globale",
+      siteId: site.id,
+      title: "Maintenance globale mensuelle",
+      type: "general_maintenance",
+      status: "planned",
+      date: new Date("2026-05-28T09:00:00.000Z"),
+      internalNotes: "Intervention fictive sans action plugin detaillee.",
+      clientSummary: "Maintenance globale planifiee pour le site demo.",
+    },
+  });
+
+  await prisma.interventionItem.upsert({
+    where: { id: "seed-item-backup-check" },
+    update: {
+      interventionId: intervention.id,
+      label: "Verifier la presence d'une sauvegarde recente",
+      status: "planned",
+      notes: "Controle global, sans execution de sauvegarde.",
+    },
+    create: {
+      id: "seed-item-backup-check",
+      interventionId: intervention.id,
+      label: "Verifier la presence d'une sauvegarde recente",
+      status: "planned",
+      notes: "Controle global, sans execution de sauvegarde.",
+    },
+  });
+
+  await prisma.interventionItem.upsert({
+    where: { id: "seed-item-form-check" },
+    update: {
+      interventionId: intervention.id,
+      label: "Controler le formulaire de contact principal",
+      status: "planned",
+      notes: "Verification fonctionnelle globale.",
+    },
+    create: {
+      id: "seed-item-form-check",
+      interventionId: intervention.id,
+      label: "Controler le formulaire de contact principal",
+      status: "planned",
+      notes: "Verification fonctionnelle globale.",
+    },
+  });
+
+  const wpurPayload = wpurPayloadSchema.parse({
+    schemaVersion: "1.0",
+    reportType: "monthly_plugin_maintenance",
+    period: {
+      month: "2026-05",
+    },
+    client: {
+      name: client.companyName ?? client.name,
+    },
+    site: {
+      name: site.name,
+      url: site.url,
+    },
+    maintenanceDates: ["2026-05-28"],
+    sections: [
+      {
+        title: "Synthese WPUR",
+        summary: "Import fictif minimal produit par WPUR.",
+      },
+    ],
+    alerts: [
+      {
+        level: "info",
+        message: "Payload minimal de demonstration, sans comparaison plugins.",
+      },
+    ],
+    notes: ["WP Agency Ops stocke ce payload mais ne le genere pas."],
+  });
+
+  await prisma.wpurImport.upsert({
+    where: { id: "seed-wpur-import-2026-05" },
+    update: {
+      siteId: site.id,
+      periodMonth: "2026-05",
+      payloadJson: json(wpurPayload),
+      summaryJson: json({
+        alertCount: wpurPayload.alerts.length,
+        sectionCount: wpurPayload.sections.length,
+      }),
+    },
+    create: {
+      id: "seed-wpur-import-2026-05",
+      siteId: site.id,
+      periodMonth: "2026-05",
+      payloadJson: json(wpurPayload),
+      summaryJson: json({
+        alertCount: wpurPayload.alerts.length,
+        sectionCount: wpurPayload.sections.length,
+      }),
+    },
+  });
+}
+
+main()
+  .then(async () => {
+    await prisma.$disconnect();
+  })
+  .catch(async (error: unknown) => {
+    console.error(error);
+    await prisma.$disconnect();
+    process.exit(1);
+  });
