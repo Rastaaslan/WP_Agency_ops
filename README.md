@@ -16,6 +16,7 @@ Le produit est **WordPress-first** et **static-ready** : WordPress reste le cent
 - CRUD clients avec archivage.
 - CRUD sites WordPress avec statut, environnement et mode de connexion.
 - Scan WordPress via REST API publique `/wp-json`.
+- Plugin compagnon WordPress minimal, en lecture seule, sous `wordpress-plugin/wp-agency-ops-companion`.
 - Snapshot manuel WordPress quand le site n’est pas connecté.
 - Historique de scans, plugins, thèmes et warnings.
 - Interventions de maintenance avec items.
@@ -35,7 +36,6 @@ Le produit est **WordPress-first** et **static-ready** : WordPress reste le cent
 - Pas de rollback automatique.
 - Pas de scan offensif de vulnérabilités.
 - Pas de PDF avancé.
-- Pas de vrai plugin compagnon livré dans ce premier jet.
 - Pas de stockage chiffré de secrets applicatifs.
 
 ## Installation
@@ -49,6 +49,7 @@ Créez un fichier `.env` à partir de `.env.example` si nécessaire :
 ```bash
 DATABASE_URL="file:./dev.db"
 ALLOW_PRIVATE_NETWORK_TARGETS="false"
+# WP_AGENCY_OPS_COMPANION_API_KEY=""
 ```
 
 `ALLOW_PRIVATE_NETWORK_TARGETS=true` ne doit être utilisé qu’en local si vous voulez volontairement tester `localhost`, `127.0.0.1` ou une IP privée.
@@ -88,13 +89,14 @@ npm run db:studio
 1. Allez dans **Clients** puis ajoutez un client.
 2. Allez dans **Sites WP** puis rattachez un site au client.
 3. Ouvrez la fiche site et lancez **Scan REST public**.
-4. Si REST public ne suffit pas, ajoutez un **snapshot manuel**.
-5. Créez une **intervention** depuis la fiche site ou le menu Interventions.
-6. Générez un **rapport** depuis la fiche site ou le menu Rapports.
-7. Lancez un **check sécurité** depuis la fiche site.
-8. Lancez un **check performance** depuis la fiche site.
-9. Ajoutez un formulaire dans **Forms Watch**.
-10. Complétez la checklist **Static Publish** sur la fiche site.
+4. Si le plugin compagnon est installé, choisissez le mode **companion_plugin** et renseignez une référence de secret comme `env:WP_AGENCY_OPS_COMPANION_API_KEY`.
+5. Si REST public ne suffit pas, ajoutez un **snapshot manuel**.
+6. Créez une **intervention** depuis la fiche site ou le menu Interventions.
+7. Générez un **rapport** depuis la fiche site ou le menu Rapports.
+8. Lancez un **check sécurité** depuis la fiche site.
+9. Lancez un **check performance** depuis la fiche site.
+10. Ajoutez un formulaire dans **Forms Watch**.
+11. Complétez la checklist **Static Publish** sur la fiche site.
 
 ## Architecture technique
 
@@ -126,7 +128,7 @@ docs/
 
 ## Limites actuelles
 
-- Le mode REST public ne retourne généralement pas les plugins, thèmes et mises à jour.
+- Le mode REST public ne retourne généralement pas les plugins, thèmes et mises à jour. Le plugin compagnon corrige cela si la clé API est configurée.
 - Les checks HTTP sont volontaires, courts et non agressifs.
 - Les secrets sont représentés par une abstraction `SecretProvider`, mais aucun coffre chiffré n’est implémenté.
 - Static Publish est une analyse/checklist, pas encore un générateur statique.
@@ -134,7 +136,7 @@ docs/
 
 ## Roadmap courte
 
-- Plugin compagnon WordPress en lecture seule.
+- Améliorer la configuration multi-site des clés du plugin compagnon.
 - Rapports PDF et templates agence.
 - Monitoring planifié avec alertes.
 - Screenshots avant/après intervention.

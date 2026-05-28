@@ -10,6 +10,7 @@
 - Aucun brute force.
 - Aucune mise à jour WordPress automatique.
 - Aucun secret sensible en dur.
+- Les clés du plugin compagnon passent par variables d'environnement côté app.
 
 ## SSRF et réseau privé
 
@@ -37,6 +38,7 @@ ALLOW_PRIVATE_NETWORK_TARGETS="true"
 - Il n’y a pas encore d’authentification.
 - Il n’y a pas encore de rate limiting persistant.
 - Le stockage chiffré de secrets n’est pas implémenté.
+  Le MVP accepte des références `env:VARIABLE` pour éviter d'enregistrer les clés dans SQLite.
 
 ## Avant un passage SaaS
 

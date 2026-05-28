@@ -1,6 +1,6 @@
 # Plugin compagnon WordPress
 
-Le MVP ne livre pas encore le plugin compagnon afin de garder la première version robuste et simple. L’architecture est prête via `WordPressConnector`, `CompanionPluginWordPressConnector` et `SecretProvider`.
+Le MVP livre un plugin compagnon minimal dans `wordpress-plugin/wp-agency-ops-companion`. Il expose des endpoints REST en lecture seule et protégés par clé API.
 
 ## Objectif du plugin
 
@@ -16,7 +16,7 @@ Le plugin devra exposer en lecture seule :
 - recommandations simples ;
 - logs de lecture.
 
-## Endpoints prévus
+## Endpoints disponibles
 
 ```txt
 /wp-json/wp-agency-ops/v1/health
@@ -25,34 +25,41 @@ Le plugin devra exposer en lecture seule :
 /wp-json/wp-agency-ops/v1/updates
 ```
 
-## Sécurité prévue
+## Sécurité
 
-- Clé API générée côté WordPress.
+- Clé API générée côté WordPress à l'activation.
 - Header `X-WP-Agency-Ops-Key`.
 - Aucune action destructive.
-- Lecture seule au début.
+- Lecture seule.
 - Pas de mise à jour automatique.
 - Rotation manuelle de clé.
 
-## Structure future
+## Structure actuelle
 
 ```txt
 wordpress-plugin/
   wp-agency-ops-companion/
     wp-agency-ops-companion.php
-    includes/
-      class-rest-controller.php
-      class-auth.php
-      class-readers.php
     README.md
 ```
 
-## Étapes d’implémentation
+## Configuration côté app
 
-1. Créer le plugin minimal.
-2. Ajouter la clé API dans les options WordPress.
-3. Protéger toutes les routes REST custom.
-4. Retourner uniquement des données de lecture.
-5. Ajouter le mode `companion_plugin` dans l’application.
-6. Stocker une référence de secret via `SecretProvider`.
-7. Ajouter tests et documentation d’installation.
+1. Installer et activer le plugin.
+2. Copier la clé depuis **Outils > WP Agency Ops**.
+3. Ajouter la clé dans `.env`, par exemple :
+
+```bash
+WP_AGENCY_OPS_COMPANION_API_KEY="copiez-la-cle-ici"
+```
+
+4. Dans la fiche site, sélectionner `companion_plugin`.
+5. Renseigner `env:WP_AGENCY_OPS_COMPANION_API_KEY` comme référence de secret.
+
+## Prochaines améliorations
+
+- Stockage chiffré de secrets côté app.
+- Référence de secret par site sans variable globale.
+- Endpoint santé plus détaillé.
+- État des backups.
+- Logs de lecture plus complets.

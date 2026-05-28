@@ -12,7 +12,10 @@ export default async function EditSitePage({
 }) {
   const { id } = await params;
   const [site, clients] = await Promise.all([
-    prisma.wordPressSite.findUnique({ where: { id } }),
+    prisma.wordPressSite.findUnique({
+      where: { id },
+      include: { connection: true },
+    }),
     prisma.client.findMany({
       where: { status: "active" },
       orderBy: { name: "asc" },
@@ -31,7 +34,10 @@ export default async function EditSitePage({
         <SiteForm
           action={updateSite.bind(null, site.id)}
           clients={clients}
-          site={site}
+          site={{
+            ...site,
+            secretReference: site.connection?.secretReference,
+          }}
           submitLabel="Enregistrer"
         />
       </Card>

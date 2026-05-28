@@ -12,16 +12,18 @@ export async function GET() {
 
 export async function POST(request: Request) {
   const data = siteFormSchema.parse(await request.json());
+  const { secretReference, ...siteData } = data;
   const site = await prisma.wordPressSite.create({
     data: {
-      ...data,
+      ...siteData,
       connection:
-        data.connectionType === "none"
+        siteData.connectionType === "none"
           ? undefined
           : {
               create: {
-                type: data.connectionType,
-                apiBaseUrl: data.url,
+                type: siteData.connectionType,
+                apiBaseUrl: siteData.url,
+                secretReference,
               },
             },
     },

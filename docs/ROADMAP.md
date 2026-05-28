@@ -12,9 +12,9 @@
 
 ## Phase 2 — Plugin compagnon WordPress
 
-- Endpoints sécurisés par clé API.
-- Version WordPress/PHP.
-- Plugins, thèmes et mises à jour.
+- Endpoints sécurisés par clé API. MVP minimal livré.
+- Version WordPress/PHP. MVP minimal livré.
+- Plugins, thèmes et mises à jour. MVP minimal livré via transients WordPress.
 - État des backups.
 - Santé WordPress.
 - Logs de lecture.

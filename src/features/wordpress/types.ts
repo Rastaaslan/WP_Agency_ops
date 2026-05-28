@@ -3,6 +3,11 @@ export type ConnectorSite = {
   name: string;
   url: string;
   connectionType: string;
+  connection?: {
+    apiBaseUrl?: string | null;
+    secretReference?: string | null;
+    username?: string | null;
+  } | null;
 };
 
 export type ConnectionCheckResult = {

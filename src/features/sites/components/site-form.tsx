@@ -15,6 +15,7 @@ type SiteFormValue = {
   adminUrl?: string | null;
   environment?: string;
   connectionType?: string;
+  secretReference?: string | null;
   notes?: string | null;
 };
 
@@ -80,6 +81,14 @@ export function SiteForm({
           </select>
         </label>
       </div>
+      <label>
+        Reference de secret
+        <input
+          name="secretReference"
+          placeholder="env:WP_AGENCY_OPS_COMPANION_API_KEY"
+          defaultValue={site?.secretReference ?? ""}
+        />
+      </label>
       <label>
         Notes
         <textarea name="notes" rows={6} defaultValue={site?.notes ?? ""} />

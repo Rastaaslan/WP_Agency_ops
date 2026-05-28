@@ -52,13 +52,15 @@ Le MVP implémente :
 
 - `PublicRestWordPressConnector`
 - `ManualWordPressConnector`
+- `CompanionPluginWordPressConnector`
 
 Préparé :
 
-- `CompanionPluginWordPressConnector`
 - `ApplicationPasswordWordPressConnector`
 
 Le résultat de scan est normalisé dans `WordPressScanResult`, puis stocké dans `SiteScan`, `WordPressPlugin` et `WordPressTheme`.
+
+Le connecteur compagnon lit une clé API via `SecretProvider`. Dans ce MVP, `EnvironmentSecretProvider` accepte une référence `env:VARIABLE` ou la variable serveur `WP_AGENCY_OPS_COMPANION_API_KEY`.
 
 ## Base de données
 

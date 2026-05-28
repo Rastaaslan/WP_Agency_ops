@@ -14,24 +14,27 @@ function parseSiteForm(formData: FormData) {
     adminUrl: formDataValue(formData, "adminUrl"),
     environment: formDataValue(formData, "environment") || "production",
     connectionType: formDataValue(formData, "connectionType") || "public_rest",
+    secretReference: formDataValue(formData, "secretReference"),
     notes: formDataValue(formData, "notes"),
   });
 }
 
 export async function createSite(formData: FormData) {
   const data = parseSiteForm(formData);
+  const { secretReference, ...siteData } = data;
 
   const site = await prisma.wordPressSite.create({
     data: {
-      ...data,
+      ...siteData,
       connectionStatus: "unknown",
       connection:
-        data.connectionType === "none"
+        siteData.connectionType === "none"
           ? undefined
           : {
               create: {
-                type: data.connectionType,
-                apiBaseUrl: data.url,
+                type: siteData.connectionType,
+                apiBaseUrl: siteData.url,
+                secretReference,
                 lastConnectionStatus: "unknown",
               },
             },
@@ -45,21 +48,24 @@ export async function createSite(formData: FormData) {
 
 export async function updateSite(siteId: string, formData: FormData) {
   const data = parseSiteForm(formData);
+  const { secretReference, ...siteData } = data;
 
   await prisma.wordPressSite.update({
     where: { id: siteId },
     data: {
-      ...data,
+      ...siteData,
       connection: {
         upsert: {
           create: {
-            type: data.connectionType,
-            apiBaseUrl: data.url,
+            type: siteData.connectionType,
+            apiBaseUrl: siteData.url,
+            secretReference,
             lastConnectionStatus: "unknown",
           },
           update: {
-            type: data.connectionType,
-            apiBaseUrl: data.url,
+            type: siteData.connectionType,
+            apiBaseUrl: siteData.url,
+            secretReference,
           },
         },
       },

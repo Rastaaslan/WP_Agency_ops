@@ -35,10 +35,6 @@ abstract class FutureConnector implements WordPressConnector {
   }
 }
 
-export class CompanionPluginWordPressConnector extends FutureConnector {
-  readonly modeLabel = "Le plugin compagnon";
-}
-
 export class ApplicationPasswordWordPressConnector extends FutureConnector {
   readonly modeLabel = "La connexion application password";
 }

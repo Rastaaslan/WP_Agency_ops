@@ -26,6 +26,7 @@ export const siteFormSchema = z.object({
   adminUrl: optionalUrl,
   environment: z.enum(siteEnvironmentValues),
   connectionType: z.enum(connectionTypeValues),
+  secretReference: optionalText(160),
   notes: optionalText(4000),
 });
 
