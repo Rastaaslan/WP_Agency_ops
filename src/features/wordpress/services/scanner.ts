@@ -62,12 +62,18 @@ export function summarizeScanResult(result: WordPressScanResult) {
 
   return {
     detected: result.detected,
+    connectionType: result.connectionType,
     wpVersion: result.wpVersion,
     phpVersion: result.phpVersion,
+    activeTheme: result.activeTheme,
+    environment: result.environment,
+    debugEnabled: result.debugEnabled,
+    multisite: result.multisite,
     pluginCount: result.plugins.length,
     themeCount: result.themes.length,
     updateCount,
     warningCount: result.warnings.filter((warning) => warning.severity !== "info").length,
+    recommendationCount: result.recommendations.length,
   };
 }
 

@@ -51,6 +51,12 @@ final class WP_Agency_Ops_Companion {
             'callback' => [$this, 'get_updates'],
             'permission_callback' => [$this, 'authorize_request'],
         ]);
+
+        register_rest_route(self::REST_NAMESPACE, '/site-info', [
+            'methods' => WP_REST_Server::READABLE,
+            'callback' => [$this, 'get_site_info'],
+            'permission_callback' => [$this, 'authorize_request'],
+        ]);
     }
 
     public function authorize_request(WP_REST_Request $request) {
@@ -75,7 +81,12 @@ final class WP_Agency_Ops_Companion {
     public function get_health(): WP_REST_Response {
         global $wp_version;
 
+        require_once ABSPATH . 'wp-admin/includes/plugin.php';
+
         $active_theme = wp_get_theme();
+        $plugins = get_plugins();
+        $active_plugins = (array) get_option('active_plugins', []);
+        $updates = $this->collect_updates();
 
         return new WP_REST_Response([
             'detected' => true,
@@ -83,14 +94,21 @@ final class WP_Agency_Ops_Companion {
             'homeUrl' => home_url(),
             'wpVersion' => $wp_version,
             'phpVersion' => PHP_VERSION,
-            'isMultisite' => is_multisite(),
-            'debugEnabled' => defined('WP_DEBUG') && WP_DEBUG,
             'locale' => get_locale(),
+            'timezone' => wp_timezone_string(),
+            'debugEnabled' => defined('WP_DEBUG') && WP_DEBUG,
+            'environmentType' => function_exists('wp_get_environment_type') ? wp_get_environment_type() : 'production',
+            'isMultisite' => is_multisite(),
             'activeTheme' => [
                 'name' => $active_theme->get('Name'),
                 'slug' => $active_theme->get_stylesheet(),
                 'version' => $active_theme->get('Version'),
             ],
+            'activePluginCount' => count($active_plugins),
+            'inactivePluginCount' => max(count($plugins) - count($active_plugins), 0),
+            'updateCount' => $updates['updateCount'],
+            'restAvailable' => true,
+            'checkedAt' => gmdate('c'),
         ]);
     }
 
@@ -115,10 +133,12 @@ final class WP_Agency_Ops_Companion {
                 'active' => is_plugin_active($plugin_file),
                 'updateAvailable' => (bool) $update,
                 'newVersion' => $update->new_version ?? null,
+                'pluginUrl' => $plugin_data['PluginURI'] ?? null,
+                'author' => wp_strip_all_tags($plugin_data['Author'] ?? ''),
                 'requiresWp' => $plugin_data['RequiresWP'] ?? null,
                 'requiresPhp' => $plugin_data['RequiresPHP'] ?? null,
                 'testedUpTo' => $plugin_data['TestedUpTo'] ?? null,
-                'status' => $update ? 'update_available' : 'healthy',
+                'status' => $update ? 'update_available' : (is_plugin_active($plugin_file) ? 'healthy' : 'inactive'),
             ];
         }
 
@@ -132,6 +152,7 @@ final class WP_Agency_Ops_Companion {
 
         foreach (wp_get_themes() as $stylesheet => $theme) {
             $update = $theme_updates->response[$stylesheet] ?? null;
+            $parent = $theme->parent();
 
             $themes[] = [
                 'name' => $theme->get('Name'),
@@ -140,6 +161,8 @@ final class WP_Agency_Ops_Companion {
                 'active' => $stylesheet === $active_stylesheet,
                 'updateAvailable' => (bool) $update,
                 'newVersion' => $update['new_version'] ?? null,
+                'parentTheme' => $parent ? $parent->get('Name') : null,
+                'isChildTheme' => (bool) $parent,
                 'status' => $update ? 'update_available' : 'healthy',
             ];
         }
@@ -148,15 +171,105 @@ final class WP_Agency_Ops_Companion {
     }
 
     public function get_updates(): WP_REST_Response {
+        return new WP_REST_Response($this->collect_updates());
+    }
+
+    public function get_site_info(): WP_REST_Response {
+        global $wp_version;
+
+        require_once ABSPATH . 'wp-admin/includes/plugin.php';
+
+        $active_theme = wp_get_theme();
+        $plugins = get_plugins();
+        $active_plugins = (array) get_option('active_plugins', []);
+        $updates = $this->collect_updates();
+
+        return new WP_REST_Response([
+            'detected' => true,
+            'siteUrl' => site_url(),
+            'homeUrl' => home_url(),
+            'wpVersion' => $wp_version,
+            'phpVersion' => PHP_VERSION,
+            'activeTheme' => $active_theme->get('Name'),
+            'pluginCount' => count($plugins),
+            'activePluginCount' => count($active_plugins),
+            'inactivePluginCount' => max(count($plugins) - count($active_plugins), 0),
+            'updateCount' => $updates['updateCount'],
+            'debugEnabled' => defined('WP_DEBUG') && WP_DEBUG,
+            'environmentType' => function_exists('wp_get_environment_type') ? wp_get_environment_type() : 'production',
+            'timezone' => wp_timezone_string(),
+            'isMultisite' => is_multisite(),
+            'httpsDetected' => is_ssl() || strpos(home_url(), 'https://') === 0,
+            'checkedAt' => gmdate('c'),
+        ]);
+    }
+
+    private function collect_updates(): array {
+        require_once ABSPATH . 'wp-admin/includes/update.php';
+
         $core_updates = get_site_transient('update_core');
         $plugin_updates = get_site_transient('update_plugins');
         $theme_updates = get_site_transient('update_themes');
+        $translation_updates = wp_get_translation_updates();
+        $core = [];
 
-        return new WP_REST_Response([
-            'core' => $core_updates->updates ?? [],
-            'plugins' => $plugin_updates->response ?? [],
-            'themes' => $theme_updates->response ?? [],
-        ]);
+        foreach (($core_updates->updates ?? []) as $update) {
+            if (is_object($update) && isset($update->response) && $update->response !== 'upgrade') {
+                continue;
+            }
+
+            $core[] = [
+                'currentVersion' => get_bloginfo('version'),
+                'newVersion' => is_object($update) ? ($update->version ?? null) : null,
+                'response' => is_object($update) ? ($update->response ?? null) : null,
+            ];
+        }
+
+        $plugins = [];
+
+        foreach (($plugin_updates->response ?? []) as $plugin_file => $update) {
+            $plugins[] = [
+                'slug' => dirname($plugin_file) === '.' ? basename($plugin_file, '.php') : dirname($plugin_file),
+                'plugin' => $plugin_file,
+                'currentVersion' => $update->Version ?? null,
+                'newVersion' => $update->new_version ?? null,
+                'package' => isset($update->package),
+            ];
+        }
+
+        $themes = [];
+
+        foreach (($theme_updates->response ?? []) as $stylesheet => $update) {
+            $themes[] = [
+                'slug' => $stylesheet,
+                'theme' => $stylesheet,
+                'currentVersion' => $update['Version'] ?? null,
+                'newVersion' => $update['new_version'] ?? null,
+                'package' => isset($update['package']),
+            ];
+        }
+
+        $translations = [];
+
+        foreach ($translation_updates as $update) {
+            $translations[] = [
+                'slug' => $update->slug ?? ($update->language ?? 'translation'),
+                'language' => $update->language ?? null,
+                'version' => $update->version ?? null,
+                'type' => $update->type ?? null,
+            ];
+        }
+
+        return [
+            'core' => [
+                'updateAvailable' => count($core) > 0,
+                'updates' => $core,
+            ],
+            'plugins' => $plugins,
+            'themes' => $themes,
+            'translations' => $translations,
+            'updateCount' => count($core) + count($plugins) + count($themes) + count($translations),
+        ];
     }
 
     public function register_admin_page(): void {
@@ -193,7 +306,8 @@ final class WP_Agency_Ops_Companion {
                         <code><?php echo esc_url_raw(rest_url(self::REST_NAMESPACE . '/health')); ?></code><br />
                         <code><?php echo esc_url_raw(rest_url(self::REST_NAMESPACE . '/plugins')); ?></code><br />
                         <code><?php echo esc_url_raw(rest_url(self::REST_NAMESPACE . '/themes')); ?></code><br />
-                        <code><?php echo esc_url_raw(rest_url(self::REST_NAMESPACE . '/updates')); ?></code>
+                        <code><?php echo esc_url_raw(rest_url(self::REST_NAMESPACE . '/updates')); ?></code><br />
+                        <code><?php echo esc_url_raw(rest_url(self::REST_NAMESPACE . '/site-info')); ?></code>
                     </td>
                 </tr>
             </table>

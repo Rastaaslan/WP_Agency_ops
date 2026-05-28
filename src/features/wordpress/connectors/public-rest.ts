@@ -6,6 +6,7 @@ import type {
   WordPressConnector,
   WordPressScanResult,
 } from "../types";
+import { enrichScanResult } from "../services/scan-insights";
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null;
@@ -119,13 +120,15 @@ export class PublicRestWordPressConnector implements WordPressConnector {
       });
     }
 
-    return {
+    return enrichScanResult({
       detected,
+      connectionType: "public_rest",
       siteUrl,
       plugins: [],
       themes: [],
       updates: [],
       warnings,
+      recommendations: [],
       securityHints: [
         {
           code: siteUrl.startsWith("https://") ? "https_enabled" : "https_missing",
@@ -143,6 +146,6 @@ export class PublicRestWordPressConnector implements WordPressConnector {
         },
       ],
       raw,
-    };
+    });
   }
 }

@@ -57,6 +57,12 @@ describe("CompanionPluginWordPressConnector", () => {
             siteUrl: "https://example.com",
             wpVersion: "6.8.1",
             phpVersion: "8.3",
+            activeTheme: {
+              name: "Client Theme",
+              slug: "client-theme",
+            },
+            debugEnabled: true,
+            environmentType: "production",
           });
         }
 
@@ -87,7 +93,20 @@ describe("CompanionPluginWordPressConnector", () => {
           ]);
         }
 
+        if (url.endsWith("/site-info")) {
+          return Response.json({
+            detected: true,
+            activeTheme: "Client Theme",
+            updateCount: 1,
+            isMultisite: false,
+          });
+        }
+
         return Response.json({
+          core: {
+            updateAvailable: false,
+            updates: [],
+          },
           plugins: {
             "contact-forms-pro/contact-forms-pro.php": {
               new_version: "2.10.0",
@@ -104,9 +123,12 @@ describe("CompanionPluginWordPressConnector", () => {
     expect(result.detected).toBe(true);
     expect(result.wpVersion).toBe("6.8.1");
     expect(result.phpVersion).toBe("8.3");
+    expect(result.activeTheme).toBe("Client Theme");
+    expect(result.debugEnabled).toBe(true);
     expect(result.plugins).toHaveLength(1);
     expect(result.plugins[0]?.updateAvailable).toBe(true);
     expect(result.themes[0]?.name).toBe("Client Theme");
     expect(result.updates[0]?.kind).toBe("plugin");
+    expect(result.recommendations[0]?.message).toContain("mise a jour");
   });
 });

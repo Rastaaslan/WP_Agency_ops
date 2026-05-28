@@ -26,6 +26,7 @@ Routes :
 /wp-json/wp-agency-ops/v1/plugins
 /wp-json/wp-agency-ops/v1/themes
 /wp-json/wp-agency-ops/v1/updates
+/wp-json/wp-agency-ops/v1/site-info
 ```
 
 ## Donnees exposees
@@ -33,9 +34,20 @@ Routes :
 - Version WordPress.
 - Version PHP.
 - Theme actif.
-- Plugins installes et actifs.
-- Themes installes.
-- Updates disponibles depuis les transients WordPress.
+- Locale, timezone, type d'environnement et mode debug.
+- Nombre de plugins actifs/inactifs.
+- Plugins installes, statut actif, auteur, URL, version et update disponible.
+- Themes installes, theme actif, parent/enfant et update disponible.
+- Updates disponibles pour core, plugins, themes et traductions depuis les transients WordPress.
+- Synthese `site-info` pour le dashboard et les rapports.
+
+## Exemple curl
+
+```bash
+curl \
+  -H "X-WP-Agency-Ops-Key: votre-cle-api" \
+  https://votre-site.test/wp-json/wp-agency-ops/v1/site-info
+```
 
 ## Limites
 

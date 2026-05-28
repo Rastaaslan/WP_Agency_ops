@@ -8,6 +8,7 @@ import type {
   WordPressConnector,
   WordPressScanResult,
 } from "../types";
+import { enrichScanResult } from "../services/scan-insights";
 
 export type ManualScanInput = {
   wpVersion?: string;
@@ -45,8 +46,9 @@ export class ManualWordPressConnector implements WordPressConnector {
     const plugins = parseLines(this.input.pluginsText).map(parseAssetLine);
     const themes = parseLines(this.input.themesText).map(parseAssetLine) as ThemeInfo[];
 
-    return {
+    return enrichScanResult({
       detected: true,
+      connectionType: "manual",
       siteUrl: normalizeUrl(site.url),
       wpVersion: this.input.wpVersion,
       phpVersion: this.input.phpVersion,
@@ -61,12 +63,13 @@ export class ManualWordPressConnector implements WordPressConnector {
             "Ces donnees proviennent d'une saisie manuelle et doivent etre verifiees lors de la prochaine intervention.",
         },
       ],
+      recommendations: [],
       securityHints: [],
       performanceHints: [],
       raw: {
         mode: "manual",
         notes: this.input.notes,
       },
-    };
+    });
   }
 }

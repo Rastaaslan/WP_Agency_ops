@@ -1,6 +1,7 @@
 import { joinUrl, normalizeUrl } from "@/lib/urls";
 import { safeFetch } from "@/server/http/fetch";
 import type { SecretProvider } from "../secret-provider";
+import { enrichScanResult } from "../services/scan-insights";
 import type {
   ConnectionCheckResult,
   ConnectorSite,
@@ -23,9 +24,14 @@ type CompanionPluginPayload = {
   requiresPhp?: string;
   testedUpTo?: string;
   status?: PluginInfo["status"];
+  pluginUrl?: string;
+  author?: string;
 };
 
-type CompanionThemePayload = CompanionPluginPayload;
+type CompanionThemePayload = CompanionPluginPayload & {
+  parentTheme?: string;
+  isChildTheme?: boolean;
+};
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null;
@@ -94,32 +100,105 @@ function updateListFromPayload(payload: unknown): UpdateInfo[] {
   }
 
   const updates: UpdateInfo[] = [];
-  const pluginUpdates = isRecord(payload.plugins) ? payload.plugins : {};
-  const themeUpdates = isRecord(payload.themes) ? payload.themes : {};
+  const coreUpdates = Array.isArray(payload.core)
+    ? payload.core
+    : isRecord(payload.core) && Array.isArray(payload.core.updates)
+      ? payload.core.updates
+      : [];
+  const pluginUpdates = Array.isArray(payload.plugins)
+    ? payload.plugins
+    : isRecord(payload.plugins)
+      ? Object.entries(payload.plugins).map(([slug, update]) => ({
+          ...(isRecord(update) ? update : {}),
+          slug,
+        }))
+      : [];
+  const themeUpdates = Array.isArray(payload.themes)
+    ? payload.themes
+    : isRecord(payload.themes)
+      ? Object.entries(payload.themes).map(([slug, update]) => ({
+          ...(isRecord(update) ? update : {}),
+          slug,
+        }))
+      : [];
+  const translationUpdates = Array.isArray(payload.translations)
+    ? payload.translations
+    : [];
 
-  for (const [slug, update] of Object.entries(pluginUpdates)) {
+  for (const update of coreUpdates) {
     const record = isRecord(update) ? update : {};
+    const currentVersion = asString(record.current_version) ?? asString(record.currentVersion);
+    const newVersion =
+      asString(record.version) ??
+      asString(record.new_version) ??
+      asString(record.newVersion);
+
+    updates.push({
+      kind: "core",
+      currentVersion,
+      newVersion,
+      label: newVersion
+        ? `WordPress ${newVersion}`
+        : "Mise a jour WordPress disponible",
+    });
+  }
+
+  for (const update of pluginUpdates) {
+    const record = isRecord(update) ? update : {};
+    const slug = asString(record.slug) ?? asString(record.plugin) ?? "plugin";
     updates.push({
       kind: "plugin",
       slug,
-      currentVersion: asString(record.current_version),
-      newVersion: asString(record.new_version),
+      currentVersion:
+        asString(record.currentVersion) ?? asString(record.current_version),
+      newVersion: asString(record.newVersion) ?? asString(record.new_version),
       label: `Plugin ${slug}`,
     });
   }
 
-  for (const [slug, update] of Object.entries(themeUpdates)) {
+  for (const update of themeUpdates) {
     const record = isRecord(update) ? update : {};
+    const slug = asString(record.slug) ?? asString(record.theme) ?? "theme";
     updates.push({
       kind: "theme",
       slug,
-      currentVersion: asString(record.current_version),
-      newVersion: asString(record.new_version),
+      currentVersion:
+        asString(record.currentVersion) ?? asString(record.current_version),
+      newVersion: asString(record.newVersion) ?? asString(record.new_version),
       label: `Theme ${slug}`,
     });
   }
 
+  for (const update of translationUpdates) {
+    const record = isRecord(update) ? update : {};
+    const slug = asString(record.slug) ?? asString(record.language) ?? "translation";
+    updates.push({
+      kind: "translation",
+      slug,
+      newVersion: asString(record.version),
+      label: `Traduction ${slug}`,
+    });
+  }
+
   return updates;
+}
+
+function activeThemeName(payload: unknown) {
+  if (!isRecord(payload)) {
+    return undefined;
+  }
+
+  const activeTheme = payload.activeTheme;
+
+  if (typeof activeTheme === "string") {
+    return activeTheme;
+  }
+
+  if (isRecord(activeTheme)) {
+    return asString(activeTheme.name) ?? asString(activeTheme.slug);
+  }
+
+  return asString(payload.activeThemeName);
 }
 
 export class CompanionPluginWordPressConnector implements WordPressConnector {
@@ -189,12 +268,16 @@ export class CompanionPluginWordPressConnector implements WordPressConnector {
     }
 
     const headers = { "X-WP-Agency-Ops-Key": apiKey };
-    const [healthResponse, pluginsResponse, themesResponse, updatesResponse] =
+    const [healthResponse, pluginsResponse, themesResponse, updatesResponse, siteInfoResponse] =
       await Promise.all([
         safeFetch(this.endpoint(site, "health"), { timeoutMs: 8000, headers }),
         safeFetch(this.endpoint(site, "plugins"), { timeoutMs: 8000, headers }),
         safeFetch(this.endpoint(site, "themes"), { timeoutMs: 8000, headers }),
         safeFetch(this.endpoint(site, "updates"), { timeoutMs: 8000, headers }),
+        safeFetch(this.endpoint(site, "site-info"), {
+          timeoutMs: 8000,
+          headers,
+        }).catch(() => null),
       ]);
 
     if (!healthResponse.ok) {
@@ -205,6 +288,7 @@ export class CompanionPluginWordPressConnector implements WordPressConnector {
     const pluginsRaw = await pluginsResponse.json().catch(() => []);
     const themesRaw = await themesResponse.json().catch(() => []);
     const updatesRaw = await updatesResponse.json().catch(() => ({}));
+    const siteInfo = await siteInfoResponse?.json().catch(() => null);
     const plugins = Array.isArray(pluginsRaw)
       ? pluginsRaw.map(toPluginInfo).filter((plugin): plugin is PluginInfo => Boolean(plugin))
       : [];
@@ -212,11 +296,31 @@ export class CompanionPluginWordPressConnector implements WordPressConnector {
       ? themesRaw.map(toThemeInfo).filter((theme): theme is ThemeInfo => Boolean(theme))
       : [];
 
-    return {
+    const healthRecord = isRecord(health) ? health : {};
+    const siteInfoRecord = isRecord(siteInfo) ? siteInfo : {};
+    const environment =
+      asString(healthRecord.environmentType) ??
+      asString(healthRecord.environment) ??
+      asString(siteInfoRecord.environmentType) ??
+      asString(siteInfoRecord.environment);
+
+    return enrichScanResult({
       detected: isRecord(health) && health.detected === true,
+      connectionType: "companion_plugin",
       siteUrl: normalizeUrl(asString(isRecord(health) ? health.siteUrl : undefined) ?? site.url),
-      wpVersion: asString(isRecord(health) ? health.wpVersion : undefined),
-      phpVersion: asString(isRecord(health) ? health.phpVersion : undefined),
+      wpVersion:
+        asString(healthRecord.wpVersion) ?? asString(siteInfoRecord.wpVersion),
+      phpVersion:
+        asString(healthRecord.phpVersion) ?? asString(siteInfoRecord.phpVersion),
+      activeTheme: activeThemeName(healthRecord) ?? activeThemeName(siteInfoRecord),
+      environment,
+      debugEnabled:
+        asBoolean(healthRecord.debugEnabled) ??
+        asBoolean(siteInfoRecord.debugEnabled),
+      multisite:
+        asBoolean(healthRecord.isMultisite) ??
+        asBoolean(siteInfoRecord.isMultisite) ??
+        asBoolean(siteInfoRecord.multisite),
       plugins,
       themes,
       updates: updateListFromPayload(updatesRaw),
@@ -227,19 +331,34 @@ export class CompanionPluginWordPressConnector implements WordPressConnector {
           message:
             "Donnees recuperees via le plugin compagnon en lecture seule. Aucune mise a jour n'a ete declenchee.",
         },
+        ...(siteInfoResponse
+          ? []
+          : [
+              {
+                code: "site_info_unavailable",
+                severity: "info" as const,
+                message:
+                  "Endpoint site-info indisponible. Le scan utilise les endpoints compagnon principaux.",
+              },
+            ]),
       ],
+      recommendations: [],
       securityHints: [],
       performanceHints: [],
       raw: {
         health,
+        siteInfo,
         plugins: pluginsRaw,
         themes: themesRaw,
         updates: updatesRaw,
       },
-    };
+    });
   }
 
-  private endpoint(site: ConnectorSite, path: "health" | "plugins" | "themes" | "updates") {
+  private endpoint(
+    site: ConnectorSite,
+    path: "health" | "plugins" | "themes" | "updates" | "site-info",
+  ) {
     const baseUrl = site.connection?.apiBaseUrl ?? site.url;
     return joinUrl(baseUrl, `/wp-json/wp-agency-ops/v1/${path}`);
   }

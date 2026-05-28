@@ -42,7 +42,7 @@ export type ThemeInfo = {
 };
 
 export type UpdateInfo = {
-  kind: "core" | "plugin" | "theme";
+  kind: "core" | "plugin" | "theme" | "translation";
   slug?: string;
   currentVersion?: string;
   newVersion?: string;
@@ -67,15 +67,27 @@ export type PerformanceHint = {
   status: "ok" | "warning" | "issue";
 };
 
+export type TechnicalRecommendation = {
+  code: string;
+  message: string;
+  priority: "info" | "warning" | "important";
+};
+
 export type WordPressScanResult = {
   detected: boolean;
+  connectionType: "public_rest" | "companion_plugin" | "manual";
   siteUrl: string;
   wpVersion?: string;
   phpVersion?: string;
+  activeTheme?: string;
+  environment?: string;
+  debugEnabled?: boolean;
+  multisite?: boolean;
   plugins: PluginInfo[];
   themes: ThemeInfo[];
   updates: UpdateInfo[];
   warnings: ScanWarning[];
+  recommendations: TechnicalRecommendation[];
   securityHints: SecurityHint[];
   performanceHints: PerformanceHint[];
   raw?: unknown;
