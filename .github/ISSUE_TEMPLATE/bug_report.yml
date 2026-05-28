@@ -1,0 +1,75 @@
+name: Bug report
+description: Signaler un probleme reproductible dans WP Agency Ops.
+title: "[Bug]: "
+labels:
+  - bug
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Merci de donner assez de contexte pour reproduire le probleme sans acces a vos secrets ni a vos clients.
+  - type: textarea
+    id: summary
+    attributes:
+      label: Resume
+      description: Que se passe-t-il ?
+      placeholder: Le scan WordPress echoue quand...
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Etapes de reproduction
+      description: Listez les actions exactes qui declenchent le probleme.
+      placeholder: |
+        1. Aller sur Sites
+        2. Ouvrir un site connecte
+        3. Cliquer sur Tester la connexion
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Comportement attendu
+      description: Quel resultat attendiez-vous ?
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Comportement observe
+      description: Quel resultat obtenez-vous ?
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Zone concernee
+      options:
+        - Dashboard
+        - Clients
+        - Sites
+        - WordPress connector
+        - Scans
+        - Performance
+        - Security
+        - Reports
+        - Forms watch
+        - WordPress companion plugin
+        - CI / tooling
+    validations:
+      required: true
+  - type: textarea
+    id: verification
+    attributes:
+      label: Verification locale
+      description: Commandes lancees et resultats utiles.
+      placeholder: |
+        npm run doctor
+        npm run test
+        npm run build
+  - type: textarea
+    id: notes
+    attributes:
+      label: Notes supplementaires
+      description: Logs anonymises, captures, contexte navigateur ou environnement.

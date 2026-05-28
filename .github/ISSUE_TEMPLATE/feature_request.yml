@@ -1,0 +1,66 @@
+name: Feature request
+description: Proposer une amelioration de WP Agency Ops.
+title: "[Feature]: "
+labels:
+  - enhancement
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Probleme a resoudre
+      description: Quel besoin agence ou client cette demande couvre-t-elle ?
+      placeholder: Nous devons suivre...
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Solution proposee
+      description: Decrivez le flux, les donnees et les ecrans attendus.
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Zone concernee
+      options:
+        - Dashboard
+        - Clients
+        - Sites
+        - WordPress connector
+        - Scans
+        - Performance
+        - Security
+        - Reports
+        - Forms watch
+        - WordPress companion plugin
+        - Automation / operations
+        - CI / tooling
+    validations:
+      required: true
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Priorite
+      options:
+        - Haute
+        - Moyenne
+        - Basse
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Criteres d'acceptation
+      description: Comment saura-t-on que la fonctionnalite est terminee ?
+      placeholder: |
+        - L'agence peut...
+        - Les erreurs sont visibles quand...
+        - Les tests couvrent...
+    validations:
+      required: true
+  - type: textarea
+    id: notes
+    attributes:
+      label: Notes supplementaires
+      description: Contraintes, idees alternatives, liens ou exemples.
