@@ -79,6 +79,10 @@ export function InterventionForm({
         required
         value={state.values.type}
       />
+      <p className="text-sm leading-6 text-zinc-600">
+        Le type &quot;Maintenance plugins via WPUR&quot; sert seulement à tracer une
+        intervention globale. Le détail plugin par plugin reste dans WPUR.
+      </p>
       <FormField
         errors={state.fieldErrors.date}
         label="Date"

@@ -119,7 +119,7 @@ export default async function SiteDetailPage({
           </Link>
         </div>
         {interventions.length === 0 ? (
-          <InlineEmpty message="Aucune intervention n'est encore liée à ce site." />
+          <InlineEmpty message="Aucune intervention n'est encore liée à ce site. L'action ci-dessus permet d'en créer une déjà rattachée." />
         ) : (
           <div className="divide-y divide-zinc-200">
             {interventions.map((intervention) => (
@@ -166,7 +166,7 @@ export default async function SiteDetailPage({
       </SectionPanel>
 
       <SectionPanel
-        description="Synthèse des payloads importés. WP Agency Ops ne génère pas ces données."
+        description="Synthèse des payloads importés depuis WPUR. WP Agency Ops ne génère pas ces données."
         title="Imports WPUR"
       >
         <div className="mb-5 flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
@@ -186,7 +186,7 @@ export default async function SiteDetailPage({
           </Link>
         </div>
         {wpurImports.length === 0 ? (
-          <InlineEmpty message="Aucun import WPUR n'est encore enregistré pour ce site." />
+          <InlineEmpty message="Aucun import WPUR n'est encore enregistré pour ce site. Importez un payload produit par WPUR pour afficher une synthèse ici." />
         ) : (
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-zinc-200 text-sm">
@@ -233,7 +233,7 @@ export default async function SiteDetailPage({
                           className="font-medium text-cyan-800 hover:text-cyan-950"
                           href={`/api/wpur-imports/${wpurImport.id}`}
                         >
-                          JSON
+                          Voir JSON
                         </Link>
                       </td>
                     </tr>
@@ -256,7 +256,7 @@ export default async function SiteDetailPage({
             className="inline-flex min-h-10 items-center justify-center rounded-md border border-zinc-200 px-3 text-sm font-medium text-cyan-800 hover:border-cyan-300"
             href={`/api/sites/${site.id}/technical-export`}
           >
-            Voir JSON
+            Voir l&apos;export JSON
           </Link>
         </div>
       </SectionPanel>

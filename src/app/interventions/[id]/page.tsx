@@ -113,16 +113,26 @@ export default async function InterventionDetailPage({
             title="Items d'intervention"
           >
             {intervention.type === "wpur_plugin_maintenance" ? (
-              <p className="mb-5 rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-sm leading-6 text-amber-900">
-                Pour une intervention WPUR, gardez des items de suivi global :
-                consulter le rapport WPUR, vérifier les alertes, documenter la
-                maintenance dans WPUR.
-              </p>
+              <div className="mb-5 rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-sm leading-6 text-amber-900">
+                <p>
+                  Pour une intervention WPUR, gardez des items de suivi global :
+                  consulter le rapport WPUR, vérifier les alertes, documenter la
+                  maintenance dans WPUR.
+                </p>
+                {intervention.site ? (
+                  <Link
+                    className="mt-2 inline-flex font-medium text-amber-950 underline-offset-4 hover:underline"
+                    href={`/sites/${intervention.site.id}`}
+                  >
+                    Ouvrir la fiche site pour consulter ou importer la synthèse WPUR.
+                  </Link>
+                ) : null}
+              </div>
             ) : null}
 
             {intervention.items.length === 0 ? (
               <p className="text-sm leading-6 text-zinc-600">
-                Aucun item n&apos;est encore lié à cette intervention.
+                Aucun item n&apos;est encore lié à cette intervention. Le formulaire d&apos;ajout permet d&apos;ajouter un item simple.
               </p>
             ) : (
               <div className="space-y-4">

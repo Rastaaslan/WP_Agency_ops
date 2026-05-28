@@ -48,7 +48,7 @@ export default async function NewWpurImportPage({
       </SectionPanel>
 
       <SectionPanel
-        description="Le JSON est validé côté serveur, puis stocké comme payload externe lié au site."
+        description="Le JSON est validé côté serveur, puis stocké comme payload externe lié au site. Le payload complet reste consultable depuis la fiche site."
         title="Payload JSON"
       >
         <WpurImportForm

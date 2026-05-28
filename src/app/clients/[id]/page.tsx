@@ -74,9 +74,17 @@ export default async function ClientDetailPage({
         title="Sites liés"
       >
         {sites.length === 0 ? (
-          <p className="text-sm leading-6 text-zinc-600">
-            Aucun site n&apos;est rattaché à ce client dans la base v2.
-          </p>
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <p className="text-sm leading-6 text-zinc-600">
+              Aucun site n&apos;est rattaché à ce client dans la base v2.
+            </p>
+            <Link
+              className="inline-flex min-h-10 items-center justify-center rounded-md border border-zinc-200 px-3 text-sm font-medium text-cyan-800 hover:border-cyan-300"
+              href={`/sites/new?clientId=${client.id}`}
+            >
+              Créer un site
+            </Link>
+          </div>
         ) : (
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-zinc-200 text-sm">

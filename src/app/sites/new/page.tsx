@@ -1,3 +1,4 @@
+import { connection } from "next/server";
 import Link from "next/link";
 import { EmptyState } from "@/components/empty-state";
 import { PageHeader } from "@/components/page-header";
@@ -6,12 +7,24 @@ import { listClients } from "@/features/clients/services/client-service";
 import { createSiteAction } from "@/features/sites/site-actions";
 import { SiteForm } from "@/features/sites/components/site-form";
 
-export default async function NewSitePage() {
-  const clients = await listClients();
+export default async function NewSitePage({
+  searchParams,
+}: {
+  searchParams: Promise<{ clientId?: string | string[] }>;
+}) {
+  await connection();
+
+  const [clients, query] = await Promise.all([listClients(), searchParams]);
   const clientOptions = clients.map((client) => ({
     id: client.id,
     name: client.name,
   }));
+  const requestedClientId = firstQueryValue(query.clientId);
+  const initialClientId = clientOptions.some(
+    (client) => client.id === requestedClientId,
+  )
+    ? requestedClientId
+    : "";
 
   return (
     <div className="space-y-6">
@@ -41,10 +54,19 @@ export default async function NewSitePage() {
             action={createSiteAction}
             cancelHref="/sites"
             clients={clientOptions}
+            initialValues={{ clientId: initialClientId }}
             submitLabel="Créer le site"
           />
         </SectionPanel>
       )}
     </div>
   );
+}
+
+function firstQueryValue(value: string | string[] | undefined) {
+  if (Array.isArray(value)) {
+    return value[0] ?? "";
+  }
+
+  return value ?? "";
 }
