@@ -56,5 +56,5 @@ export const createWpurImportSchema = z
   })
   .strict();
 
-export type WpurPayload = z.infer<typeof wpurPayloadSchema>;
-export type CreateWpurImportInput = z.infer<typeof createWpurImportSchema>;
+export type WpurPayload = z.input<typeof wpurPayloadSchema>;
+export type CreateWpurImportInput = z.input<typeof createWpurImportSchema>;

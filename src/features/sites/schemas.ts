@@ -13,4 +13,11 @@ export const createSiteSchema = z
   })
   .strict();
 
-export type CreateSiteInput = z.infer<typeof createSiteSchema>;
+export const updateSiteSchema = createSiteSchema
+  .partial()
+  .refine((input) => Object.keys(input).length > 0, {
+    message: "At least one site field must be provided.",
+  });
+
+export type CreateSiteInput = z.input<typeof createSiteSchema>;
+export type UpdateSiteInput = z.input<typeof updateSiteSchema>;

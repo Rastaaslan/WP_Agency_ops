@@ -68,6 +68,18 @@ npm run db:studio
 
 `npm run db:seed` crée un petit jeu de données fictif : un client, un site, une intervention globale, deux items et un import WPUR minimal.
 
+## Services serveur
+
+Une couche serveur minimale prépare les futurs CRUD sans exposer encore de routes API métier ni d'UI :
+
+- clients ;
+- sites ;
+- interventions ;
+- imports WPUR ;
+- export technique global.
+
+Ces services utilisent Prisma et les schémas Zod existants. WPUR est seulement importé via `WpurImport` : le toolkit ne lance pas WPUR, ne scanne pas les plugins et ne génère pas de rapport plugin.
+
 ## Ancienne base locale v1
 
 Si `dev.db` existe déjà et contient l'ancien schéma v1, `npm run db:migrate` peut échouer avec une erreur de drift Prisma.

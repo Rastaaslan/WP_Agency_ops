@@ -13,4 +13,11 @@ export const createClientSchema = z
   })
   .strict();
 
-export type CreateClientInput = z.infer<typeof createClientSchema>;
+export const updateClientSchema = createClientSchema
+  .partial()
+  .refine((input) => Object.keys(input).length > 0, {
+    message: "At least one client field must be provided.",
+  });
+
+export type CreateClientInput = z.input<typeof createClientSchema>;
+export type UpdateClientInput = z.input<typeof updateClientSchema>;
