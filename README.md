@@ -113,6 +113,7 @@ npm run db:studio
 - Tailwind CSS pour l’interface.
 - Server Actions pour les écrans applicatifs.
 - Route handlers JSON sous `/api`.
+- Endpoint santé `/api/health`.
 - Vitest pour les tests.
 
 Structure principale :

@@ -46,6 +46,8 @@ src/lib                  Dates, URLs, utils
 
 Les routes `/api/*` exposent un second point d’entrée JSON pour automatisations futures.
 
+`/api/health` retourne un statut simple de l’application et vérifie que la base SQLite répond.
+
 ## Connexion WordPress
 
 Le MVP implémente :
