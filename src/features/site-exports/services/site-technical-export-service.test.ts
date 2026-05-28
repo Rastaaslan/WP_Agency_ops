@@ -52,6 +52,20 @@ describe("site technical export service", () => {
           summaryJson: wpurSummary,
         },
       ],
+      backups: [
+        {
+          id: "backup_1",
+          type: "full",
+          status: "done",
+          performedAt: new Date("2026-05-28T08:00:00.000Z"),
+          provider: "Hebergeur Demo",
+          notes: "Sauvegarde manuelle documentee.",
+          intervention: {
+            id: "intervention_1",
+            title: "Maintenance globale",
+          },
+        },
+      ],
     });
 
     const exportState = await exportSiteTechnicalState("site_1");
@@ -73,6 +87,15 @@ describe("site technical export service", () => {
             importedAt: "desc",
           },
           take: 1,
+        },
+        backups: {
+          include: {
+            intervention: true,
+          },
+          orderBy: {
+            performedAt: "desc",
+          },
+          take: 5,
         },
       },
     });
@@ -97,7 +120,13 @@ describe("site technical export service", () => {
       security: [],
       performance: [],
       forms: [],
-      backups: [],
+      backups: [
+        {
+          id: "backup_1",
+          status: "done",
+          type: "full",
+        },
+      ],
     });
   });
 });

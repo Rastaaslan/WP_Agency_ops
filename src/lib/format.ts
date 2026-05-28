@@ -32,6 +32,10 @@ const enumLabels: Record<string, string> = {
   skipped: "Ignoré",
   failed: "Échec",
   warning: "Attention",
+  files: "Fichiers",
+  database: "Base de données",
+  full: "Complète",
+  unknown: "Inconnu",
 };
 
 export type WpurSummaryView = {

@@ -105,6 +105,33 @@ async function main() {
     },
   });
 
+  await prisma.backupRecord.upsert({
+    where: { id: "seed-backup-full-2026-05-28" },
+    update: {
+      siteId: site.id,
+      interventionId: intervention.id,
+      type: "full",
+      status: "done",
+      performedAt: new Date("2026-05-28T08:30:00.000Z"),
+      provider: "Hebergeur Demo",
+      storageLocation: "Espace de sauvegarde hebergeur",
+      notes:
+        "Sauvegarde fictive documentee pour valider le suivi manuel v2.",
+    },
+    create: {
+      id: "seed-backup-full-2026-05-28",
+      siteId: site.id,
+      interventionId: intervention.id,
+      type: "full",
+      status: "done",
+      performedAt: new Date("2026-05-28T08:30:00.000Z"),
+      provider: "Hebergeur Demo",
+      storageLocation: "Espace de sauvegarde hebergeur",
+      notes:
+        "Sauvegarde fictive documentee pour valider le suivi manuel v2.",
+    },
+  });
+
   const wpurPayload = wpurPayloadSchema.parse({
     schemaVersion: "1.0",
     reportType: "monthly_plugin_maintenance",

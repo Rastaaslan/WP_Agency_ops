@@ -19,6 +19,15 @@ export async function exportSiteTechnicalState(siteId: string) {
         },
         take: 1,
       },
+      backups: {
+        include: {
+          intervention: true,
+        },
+        orderBy: {
+          performedAt: "desc",
+        },
+        take: 5,
+      },
     },
   });
 
@@ -26,7 +35,7 @@ export async function exportSiteTechnicalState(siteId: string) {
     return null;
   }
 
-  const { client, interventions, wpurImports, ...site } = siteRecord;
+  const { backups, client, interventions, wpurImports, ...site } = siteRecord;
   const latestWpurImport = wpurImports[0] ?? null;
 
   return {
@@ -42,6 +51,6 @@ export async function exportSiteTechnicalState(siteId: string) {
     security: [],
     performance: [],
     forms: [],
-    backups: [],
+    backups,
   };
 }

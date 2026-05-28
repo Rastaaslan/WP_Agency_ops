@@ -37,9 +37,20 @@ export const interventionItemStatuses = [
   "warning",
 ] as const;
 
+export const backupTypes = ["files", "database", "full", "other"] as const;
+
+export const backupStatuses = [
+  "planned",
+  "done",
+  "failed",
+  "unknown",
+] as const;
+
 export type ClientStatus = (typeof clientStatuses)[number];
 export type SiteEnvironment = (typeof siteEnvironments)[number];
 export type SiteStatus = (typeof siteStatuses)[number];
 export type InterventionType = (typeof interventionTypes)[number];
 export type InterventionStatus = (typeof interventionStatuses)[number];
 export type InterventionItemStatus = (typeof interventionItemStatuses)[number];
+export type BackupType = (typeof backupTypes)[number];
+export type BackupStatus = (typeof backupStatuses)[number];

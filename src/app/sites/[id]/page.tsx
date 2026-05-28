@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { PageHeader } from "@/components/page-header";
 import { SectionPanel } from "@/components/section-panel";
 import { StatusBadge } from "@/components/status-badge";
+import { listBackupsBySite } from "@/features/backups/services/backup-service";
 import { listInterventionsBySite } from "@/features/interventions/services/intervention-service";
 import { archiveSiteAction } from "@/features/sites/site-actions";
 import { ArchiveSiteForm } from "@/features/sites/components/archive-site-form";
@@ -25,9 +26,10 @@ export default async function SiteDetailPage({
   await connection();
 
   const { id } = await params;
-  const [site, interventions, wpurImports] = await Promise.all([
+  const [site, interventions, backups, wpurImports] = await Promise.all([
     getSiteById(id),
     listInterventionsBySite(id),
+    listBackupsBySite(id),
     listWpurImportsBySite(id),
   ]);
 
@@ -161,6 +163,76 @@ export default async function SiteDetailPage({
                 ) : null}
               </article>
             ))}
+          </div>
+        )}
+      </SectionPanel>
+
+      <SectionPanel
+        description="Suivi documentaire des sauvegardes déclarées pour ce site. WP Agency Ops ne lance aucune sauvegarde automatique."
+        title="Sauvegardes"
+      >
+        <div className="mb-5">
+          <Link
+            className="inline-flex min-h-10 items-center justify-center rounded-md border border-zinc-200 px-3 text-sm font-medium text-cyan-800 hover:border-cyan-300"
+            href={`/sites/${site.id}/backups/new`}
+          >
+            Ajouter une sauvegarde manuelle
+          </Link>
+        </div>
+        {backups.length === 0 ? (
+          <InlineEmpty message="Aucune sauvegarde enregistrée pour ce site." />
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="min-w-full divide-y divide-zinc-200 text-sm">
+              <thead className="bg-zinc-50 text-left text-xs font-semibold uppercase text-zinc-500">
+                <tr>
+                  <th className="px-4 py-3">Date</th>
+                  <th className="px-4 py-3">Type</th>
+                  <th className="px-4 py-3">Statut</th>
+                  <th className="px-4 py-3">Fournisseur</th>
+                  <th className="px-4 py-3">Intervention</th>
+                  <th className="px-4 py-3 text-right">Détail</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-zinc-200">
+                {backups.slice(0, 5).map((backup) => (
+                  <tr key={backup.id}>
+                    <td className="px-4 py-4 text-zinc-600">
+                      {formatDateTime(backup.performedAt)}
+                    </td>
+                    <td className="px-4 py-4 text-zinc-700">
+                      {formatEnumLabel(backup.type)}
+                    </td>
+                    <td className="px-4 py-4">
+                      <StatusBadge value={backup.status} />
+                    </td>
+                    <td className="px-4 py-4 text-zinc-600">
+                      {formatNullable(backup.provider)}
+                    </td>
+                    <td className="px-4 py-4 text-zinc-600">
+                      {backup.intervention ? (
+                        <Link
+                          className="font-medium text-cyan-800 hover:text-cyan-950"
+                          href={`/interventions/${backup.intervention.id}`}
+                        >
+                          {backup.intervention.title}
+                        </Link>
+                      ) : (
+                        formatNullable(null)
+                      )}
+                    </td>
+                    <td className="px-4 py-4 text-right">
+                      <Link
+                        className="font-medium text-cyan-800 hover:text-cyan-950"
+                        href={`/backups/${backup.id}/edit`}
+                      >
+                        Modifier
+                      </Link>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         )}
       </SectionPanel>

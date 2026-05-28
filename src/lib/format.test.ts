@@ -15,6 +15,8 @@ describe("format helpers", () => {
     expect(formatEnumLabel("wpur_plugin_maintenance")).toBe(
       "Maintenance plugins via WPUR",
     );
+    expect(formatEnumLabel("database")).toBe("Base de données");
+    expect(formatEnumLabel("full")).toBe("Complète");
     expect(formatEnumLabel("custom_status")).toBe("Custom Status");
   });
 
