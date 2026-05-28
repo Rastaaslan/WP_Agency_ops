@@ -70,7 +70,9 @@ npm run db:seed
 npm run db:studio
 ```
 
-`npm run db:seed` crée un petit jeu de données fictif : un client, un site, une intervention globale, deux items, une sauvegarde documentée, un formulaire surveillé, un contrôle sécurité simple, un contrôle performance simple et un import WPUR minimal.
+`npm run db:seed` crée un jeu de données de démo réaliste autour d'Atelier Nova, avec plusieurs interventions, sauvegardes, formulaires surveillés, contrôles sécurité/performance, import WPUR synthétique et un second client léger.
+
+Un scénario guidé est disponible dans [`docs/DEMO.md`](docs/DEMO.md).
 
 ## Services serveur
 
