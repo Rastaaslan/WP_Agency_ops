@@ -204,6 +204,43 @@ async function main() {
     },
   });
 
+  await prisma.performanceCheck.upsert({
+    where: { id: "seed-performance-check-2026-05-28" },
+    update: {
+      siteId: site.id,
+      checkedAt: new Date("2026-05-28T10:45:00.000Z"),
+      status: "ok",
+      httpStatus: 200,
+      responseTimeMs: 420,
+      contentLengthBytes: 1256,
+      summary: "Réponse rapide : le site répond dans un délai raisonnable.",
+      notes:
+        "Contrôle fictif limité à une requête HTTP simple sur l'URL du site.",
+      rawJson: json({
+        checkedUrl: site.url,
+        method: "HEAD",
+        policy: "simple_single_url_performance_check",
+      }),
+    },
+    create: {
+      id: "seed-performance-check-2026-05-28",
+      siteId: site.id,
+      checkedAt: new Date("2026-05-28T10:45:00.000Z"),
+      status: "ok",
+      httpStatus: 200,
+      responseTimeMs: 420,
+      contentLengthBytes: 1256,
+      summary: "Réponse rapide : le site répond dans un délai raisonnable.",
+      notes:
+        "Contrôle fictif limité à une requête HTTP simple sur l'URL du site.",
+      rawJson: json({
+        checkedUrl: site.url,
+        method: "HEAD",
+        policy: "simple_single_url_performance_check",
+      }),
+    },
+  });
+
   const wpurPayload = wpurPayloadSchema.parse({
     schemaVersion: "1.0",
     reportType: "monthly_plugin_maintenance",

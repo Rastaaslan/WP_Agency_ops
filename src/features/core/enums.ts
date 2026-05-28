@@ -60,6 +60,13 @@ export const securityCheckStatuses = [
   "failed",
 ] as const;
 
+export const performanceCheckStatuses = [
+  "ok",
+  "warning",
+  "issue",
+  "failed",
+] as const;
+
 export type ClientStatus = (typeof clientStatuses)[number];
 export type SiteEnvironment = (typeof siteEnvironments)[number];
 export type SiteStatus = (typeof siteStatuses)[number];
@@ -70,3 +77,5 @@ export type BackupType = (typeof backupTypes)[number];
 export type BackupStatus = (typeof backupStatuses)[number];
 export type WatchedFormStatus = (typeof watchedFormStatuses)[number];
 export type SecurityCheckStatus = (typeof securityCheckStatuses)[number];
+export type PerformanceCheckStatus =
+  (typeof performanceCheckStatuses)[number];

@@ -2,7 +2,7 @@
 
 WP Agency Ops v2 est le cockpit global WordPress.
 
-Statut actuel : base technique, modèle de données minimal, routes API minimales, première UI métier, CRUD clients côté UI, CRUD sites côté UI, CRUD interventions globales côté UI, import WPUR manuel côté UI, suivi manuel des sauvegardes, suivi manuel des formulaires critiques et contrôle sécurité simple non offensif. Cette branche ne contient pas encore de performance, de tests automatiques de formulaires, de sauvegardes automatiques, de rapports, d'auth, de plugin compagnon ou d'intégration WPUR exécutée.
+Statut actuel : base technique, modèle de données minimal, routes API minimales, première UI métier, CRUD clients côté UI, CRUD sites côté UI, CRUD interventions globales côté UI, import WPUR manuel côté UI, suivi manuel des sauvegardes, suivi manuel des formulaires critiques, contrôle sécurité simple non offensif et contrôle performance simple. Cette branche ne contient pas encore de tests automatiques de formulaires, de sauvegardes automatiques, de rapports, d'auth, de plugin compagnon ou d'intégration WPUR exécutée.
 
 WPUR reste un projet séparé dédié à la maintenance détaillée des plugins WordPress. WP Agency Ops v2 peut importer et afficher des synthèses WPUR, mais ne doit pas réimplémenter son moteur.
 
@@ -59,6 +59,7 @@ Prisma et SQLite sont configurés avec un modèle minimal :
 - `BackupRecord` ;
 - `WatchedForm` ;
 - `SecurityCheck` ;
+- `PerformanceCheck` ;
 - `WpurImport`.
 
 `WpurImport` stocke un payload produit par WPUR. WP Agency Ops v2 ne scanne pas les plugins, ne compare pas les versions et ne génère pas les payloads WPUR.
@@ -69,7 +70,7 @@ npm run db:seed
 npm run db:studio
 ```
 
-`npm run db:seed` crée un petit jeu de données fictif : un client, un site, une intervention globale, deux items, une sauvegarde documentée, un formulaire surveillé, un contrôle sécurité simple et un import WPUR minimal.
+`npm run db:seed` crée un petit jeu de données fictif : un client, un site, une intervention globale, deux items, une sauvegarde documentée, un formulaire surveillé, un contrôle sécurité simple, un contrôle performance simple et un import WPUR minimal.
 
 ## Services serveur
 
@@ -79,6 +80,7 @@ Une couche serveur minimale prépare les futurs CRUD sans exposer encore de rout
 - sites ;
 - interventions ;
 - sécurité ;
+- performance ;
 - imports WPUR ;
 - export technique global.
 
@@ -119,7 +121,7 @@ L'interface applicative expose une première navigation métier :
 - `/clients/[id]/edit` : modification d'un client ;
 - `/sites` : liste des sites WordPress et accès à la création ;
 - `/sites/new` : création d'un site rattaché à un client existant ;
-- `/sites/[id]` : fiche site, interventions récentes avec lien de création pré-rattachée au site, contrôle sécurité simple, synthèse des imports WPUR, modification, archivage et lien vers l'export technique JSON ;
+- `/sites/[id]` : fiche site, interventions récentes avec lien de création pré-rattachée au site, contrôle sécurité simple, contrôle performance simple, synthèse des imports WPUR, modification, archivage et lien vers l'export technique JSON ;
 - `/sites/[id]/backups/new` : création d'un suivi manuel de sauvegarde pour le site ;
 - `/sites/[id]/forms/new` : création d'un formulaire surveillé pour le site ;
 - `/sites/[id]/wpur-imports/new` : import manuel d'un payload JSON WPUR produit par WPUR ;
@@ -139,9 +141,11 @@ Le suivi des formulaires est documentaire : l'application permet d'enregistrer l
 
 Le contrôle sécurité est volontairement simple et non offensif : il vérifie l'URL du site, HTTPS, quelques en-têtes HTTP basiques, `/xmlrpc.php` et `/readme.html` avec des requêtes limitées et un timeout court. Il ne lance pas d'attaque, ne fait pas de brute force, ne scanne pas des chemins en masse et ne remplace pas un audit sécurité complet.
 
+Le contrôle performance est volontairement simple : il mesure une réponse HTTP sur l'URL du site, stocke le statut HTTP, le temps de réponse et la taille déclarée via `content-length` si disponible. Il ne lance pas Lighthouse, PageSpeed, crawl multi-pages, test de charge, monitoring planifié ou alerte.
+
 Les items d'intervention doivent rester génériques. Le détail maintenance plugins, les versions, comparaisons et rapports plugins restent dans WPUR.
 
-Prochaine étape prévue : module performance, dans un ticket séparé.
+Prochaines étapes à définir dans des tickets séparés, sans élargir le périmètre sans validation.
 
 ## Ancienne base locale v1
 

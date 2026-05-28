@@ -44,6 +44,12 @@ export async function exportSiteTechnicalState(siteId: string) {
         },
         take: 5,
       },
+      performanceChecks: {
+        orderBy: {
+          checkedAt: "desc",
+        },
+        take: 5,
+      },
     },
   });
 
@@ -55,6 +61,7 @@ export async function exportSiteTechnicalState(siteId: string) {
     backups,
     client,
     interventions,
+    performanceChecks,
     securityChecks,
     watchedForms,
     wpurImports,
@@ -62,6 +69,7 @@ export async function exportSiteTechnicalState(siteId: string) {
   } = siteRecord;
   const latestWpurImport = wpurImports[0] ?? null;
   const latestSecurityCheck = securityChecks[0] ?? null;
+  const latestPerformanceCheck = performanceChecks[0] ?? null;
 
   return {
     client,
@@ -77,7 +85,10 @@ export async function exportSiteTechnicalState(siteId: string) {
       latest: latestSecurityCheck,
       history: securityChecks,
     },
-    performance: [],
+    performance: {
+      latest: latestPerformanceCheck,
+      history: performanceChecks,
+    },
     forms: watchedForms,
     backups,
   };

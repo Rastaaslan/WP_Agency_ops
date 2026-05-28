@@ -7,6 +7,9 @@ import { StatusBadge } from "@/components/status-badge";
 import { listBackupsBySite } from "@/features/backups/services/backup-service";
 import { listFormsBySite } from "@/features/forms/services/form-watch-service";
 import { listInterventionsBySite } from "@/features/interventions/services/intervention-service";
+import { PerformanceCheckForm } from "@/features/performance/components/performance-check-form";
+import { runPerformanceCheckAction } from "@/features/performance/performance-actions";
+import { listPerformanceChecksBySite } from "@/features/performance/services/performance-check-service";
 import { SecurityCheckForm } from "@/features/security/components/security-check-form";
 import { runSecurityCheckAction } from "@/features/security/security-actions";
 import { listSecurityChecksBySite } from "@/features/security/services/security-check-service";
@@ -34,6 +37,7 @@ export default async function SiteDetailPage({
     site,
     interventions,
     securityChecks,
+    performanceChecks,
     backups,
     watchedForms,
     wpurImports,
@@ -42,6 +46,7 @@ export default async function SiteDetailPage({
       getSiteById(id),
       listInterventionsBySite(id),
       listSecurityChecksBySite(id),
+      listPerformanceChecksBySite(id),
       listBackupsBySite(id),
       listFormsBySite(id),
       listWpurImportsBySite(id),
@@ -52,6 +57,7 @@ export default async function SiteDetailPage({
   }
 
   const latestSecurityCheck = securityChecks[0] ?? null;
+  const latestPerformanceCheck = performanceChecks[0] ?? null;
 
   return (
     <div className="space-y-6">
@@ -287,6 +293,94 @@ export default async function SiteDetailPage({
           </div>
         ) : (
           <InlineEmpty message="Aucun contrôle sécurité enregistré pour ce site. L'action ci-dessus lance un contrôle simple et non offensif." />
+        )}
+      </SectionPanel>
+
+      <SectionPanel
+        description="Contrôle simple limité à l'URL du site : statut HTTP, temps de réponse et taille via l'en-tête content-length si disponible. Aucun Lighthouse, PageSpeed, crawl ou test de charge n'est lancé."
+        title="Performance"
+      >
+        <div className="mb-5">
+          <PerformanceCheckForm
+            action={runPerformanceCheckAction.bind(null, site.id)}
+          />
+        </div>
+        {latestPerformanceCheck ? (
+          <div className="space-y-5">
+            <dl className="grid gap-4 text-sm md:grid-cols-3">
+              <PerformanceMetric label="Dernier contrôle performance">
+                <PerformanceStatusBadge value={latestPerformanceCheck.status} />
+              </PerformanceMetric>
+              <PerformanceMetric label="Date du contrôle">
+                {formatDateTime(latestPerformanceCheck.checkedAt)}
+              </PerformanceMetric>
+              <PerformanceMetric label="HTTP">
+                {formatNullable(
+                  latestPerformanceCheck.httpStatus?.toString(),
+                  "Non joignable",
+                )}
+              </PerformanceMetric>
+              <PerformanceMetric label="Temps de réponse">
+                {formatResponseTime(latestPerformanceCheck.responseTimeMs)}
+              </PerformanceMetric>
+              <PerformanceMetric label="Taille déclarée">
+                {formatBytes(latestPerformanceCheck.contentLengthBytes)}
+              </PerformanceMetric>
+            </dl>
+            <p className="text-sm leading-6 text-zinc-700">
+              {formatNullable(
+                latestPerformanceCheck.summary,
+                "Contrôle recommandé : ajoutez un premier résultat.",
+              )}
+            </p>
+            {performanceChecks.length > 1 ? (
+              <div className="overflow-x-auto">
+                <table className="min-w-full divide-y divide-zinc-200 text-sm">
+                  <thead className="bg-zinc-50 text-left text-xs font-semibold uppercase text-zinc-500">
+                    <tr>
+                      <th className="px-4 py-3">Date</th>
+                      <th className="px-4 py-3">Statut</th>
+                      <th className="px-4 py-3">HTTP</th>
+                      <th className="px-4 py-3">Temps</th>
+                      <th className="px-4 py-3">Taille</th>
+                      <th className="px-4 py-3">Résumé</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-zinc-200">
+                    {performanceChecks.slice(0, 5).map((performanceCheck) => (
+                      <tr key={performanceCheck.id}>
+                        <td className="px-4 py-4 text-zinc-600">
+                          {formatDateTime(performanceCheck.checkedAt)}
+                        </td>
+                        <td className="px-4 py-4">
+                          <PerformanceStatusBadge
+                            value={performanceCheck.status}
+                          />
+                        </td>
+                        <td className="px-4 py-4 text-zinc-600">
+                          {formatNullable(
+                            performanceCheck.httpStatus?.toString(),
+                            "Non joignable",
+                          )}
+                        </td>
+                        <td className="px-4 py-4 text-zinc-600">
+                          {formatResponseTime(performanceCheck.responseTimeMs)}
+                        </td>
+                        <td className="px-4 py-4 text-zinc-600">
+                          {formatBytes(performanceCheck.contentLengthBytes)}
+                        </td>
+                        <td className="px-4 py-4 text-zinc-600">
+                          {formatNullable(performanceCheck.summary)}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            ) : null}
+          </div>
+        ) : (
+          <InlineEmpty message="Aucun contrôle performance enregistré pour ce site. L'action ci-dessus lance un contrôle simple et non intrusif." />
         )}
       </SectionPanel>
 
@@ -581,6 +675,67 @@ function SecurityStatusBadge({ value }: { value: string }) {
       {labels[value] ?? formatEnumLabel(value)}
     </span>
   );
+}
+
+function PerformanceMetric({
+  children,
+  label,
+}: {
+  children: React.ReactNode;
+  label: string;
+}) {
+  return (
+    <div>
+      <dt className="font-medium text-zinc-500">{label}</dt>
+      <dd className="mt-1 text-zinc-900">{children}</dd>
+    </div>
+  );
+}
+
+function PerformanceStatusBadge({ value }: { value: string }) {
+  const labels: Record<string, string> = {
+    failed: "Contrôle échoué",
+    issue: "À vérifier",
+    ok: "Réponse rapide",
+    warning: "Réponse lente",
+  };
+
+  const tones: Record<string, string> = {
+    failed: "border-zinc-200 bg-zinc-100 text-zinc-700",
+    issue: "border-amber-200 bg-amber-50 text-amber-800",
+    ok: "border-emerald-200 bg-emerald-50 text-emerald-700",
+    warning: "border-cyan-200 bg-cyan-50 text-cyan-800",
+  };
+
+  return (
+    <span
+      className={`inline-flex min-h-7 items-center rounded-md border px-2 text-xs font-medium ${
+        tones[value] ?? "border-zinc-200 bg-zinc-50 text-zinc-700"
+      }`}
+    >
+      {labels[value] ?? formatEnumLabel(value)}
+    </span>
+  );
+}
+
+function formatResponseTime(value: number | null) {
+  return value === null ? "Non mesuré" : `${value} ms`;
+}
+
+function formatBytes(value: number | null) {
+  if (value === null) {
+    return "Non renseigné";
+  }
+
+  if (value < 1024) {
+    return `${value} o`;
+  }
+
+  if (value < 1024 * 1024) {
+    return `${(value / 1024).toFixed(1)} Ko`;
+  }
+
+  return `${(value / (1024 * 1024)).toFixed(1)} Mo`;
 }
 
 function formatSecurityBoolean(value: boolean) {

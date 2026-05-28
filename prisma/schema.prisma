@@ -81,6 +81,13 @@ enum SecurityCheckStatus {
   failed
 }
 
+enum PerformanceCheckStatus {
+  ok
+  warning
+  issue
+  failed
+}
+
 model Client {
   id          String       @id @default(cuid())
   name        String
@@ -97,38 +104,39 @@ model Client {
 }
 
 model Site {
-  id             String          @id @default(cuid())
-  clientId       String
-  name           String
-  url            String
-  environment    SiteEnvironment @default(production)
-  status         SiteStatus      @default(active)
-  notes          String?
-  createdAt      DateTime        @default(now())
-  updatedAt      DateTime        @updatedAt
-  client         Client          @relation(fields: [clientId], references: [id], onDelete: Cascade)
-  interventions  Intervention[]
-  wpurImports    WpurImport[]
-  backups        BackupRecord[]
-  watchedForms   WatchedForm[]
-  securityChecks SecurityCheck[]
+  id                String             @id @default(cuid())
+  clientId          String
+  name              String
+  url               String
+  environment       SiteEnvironment    @default(production)
+  status            SiteStatus         @default(active)
+  notes             String?
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+  client            Client             @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  interventions     Intervention[]
+  wpurImports       WpurImport[]
+  backups           BackupRecord[]
+  watchedForms      WatchedForm[]
+  securityChecks    SecurityCheck[]
+  performanceChecks PerformanceCheck[]
 
   @@index([clientId])
   @@index([status])
 }
 
 model Intervention {
-  id            String                 @id @default(cuid())
+  id            String             @id @default(cuid())
   siteId        String
   title         String
-  type          InterventionType       @default(other)
-  status        InterventionStatus     @default(planned)
+  type          InterventionType   @default(other)
+  status        InterventionStatus @default(planned)
   date          DateTime
   internalNotes String?
   clientSummary String?
-  createdAt     DateTime               @default(now())
-  updatedAt     DateTime               @updatedAt
-  site          Site                   @relation(fields: [siteId], references: [id], onDelete: Cascade)
+  createdAt     DateTime           @default(now())
+  updatedAt     DateTime           @updatedAt
+  site          Site               @relation(fields: [siteId], references: [id], onDelete: Cascade)
   items         InterventionItem[]
   backups       BackupRecord[]
 
@@ -221,6 +229,24 @@ model SecurityCheck {
   rawJson                   Json?
   createdAt                 DateTime            @default(now())
   site                      Site                @relation(fields: [siteId], references: [id], onDelete: Cascade)
+
+  @@index([siteId, checkedAt])
+  @@index([status])
+}
+
+model PerformanceCheck {
+  id                 String                 @id @default(cuid())
+  siteId             String
+  checkedAt          DateTime
+  status             PerformanceCheckStatus
+  httpStatus         Int?
+  responseTimeMs     Int?
+  contentLengthBytes Int?
+  summary            String?
+  notes              String?
+  rawJson            Json?
+  createdAt          DateTime               @default(now())
+  site               Site                   @relation(fields: [siteId], references: [id], onDelete: Cascade)
 
   @@index([siteId, checkedAt])
   @@index([status])

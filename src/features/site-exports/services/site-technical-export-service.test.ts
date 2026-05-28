@@ -92,6 +92,18 @@ describe("site technical export service", () => {
           summary: "À surveiller.",
         },
       ],
+      performanceChecks: [
+        {
+          id: "performance_1",
+          status: "ok",
+          checkedAt: new Date("2026-05-28T10:45:00.000Z"),
+          httpStatus: 200,
+          responseTimeMs: 420,
+          contentLengthBytes: 1256,
+          summary:
+            "Réponse rapide : le site répond dans un délai raisonnable.",
+        },
+      ],
     });
 
     const exportState = await exportSiteTechnicalState("site_1");
@@ -139,6 +151,12 @@ describe("site technical export service", () => {
           },
           take: 5,
         },
+        performanceChecks: {
+          orderBy: {
+            checkedAt: "desc",
+          },
+          take: 5,
+        },
       },
     });
     expect(exportState).toMatchObject({
@@ -170,7 +188,17 @@ describe("site technical export service", () => {
           },
         ],
       },
-      performance: [],
+      performance: {
+        latest: {
+          id: "performance_1",
+          status: "ok",
+        },
+        history: [
+          {
+            id: "performance_1",
+          },
+        ],
+      },
       forms: [
         {
           id: "form_1",
