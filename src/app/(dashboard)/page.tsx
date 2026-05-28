@@ -1,5 +1,16 @@
 import Link from "next/link";
-import { Activity, FilePlus2, Plus, Radar, Wrench } from "lucide-react";
+import {
+  Activity,
+  ClipboardList,
+  FilePlus2,
+  Gauge,
+  HardDrive,
+  Plus,
+  Radar,
+  ShieldCheck,
+  Upload,
+  Wrench,
+} from "lucide-react";
 import { EmptyState } from "@/components/feedback/empty-state";
 import { PageHeader } from "@/components/layout/page-header";
 import { Badge } from "@/components/ui/badge";
@@ -18,6 +29,12 @@ export default async function DashboardPage() {
     latestInterventions,
     latestReports,
     issueSites,
+    latestSecurityChecks,
+    latestPerformanceChecks,
+    formsToVerify,
+    latestBackups,
+    latestWpurImports,
+    wpurImportCount,
   ] = await Promise.all([
     prisma.client.count({ where: { status: "active" } }),
     prisma.wordPressSite.count({ where: { status: "active" } }),
@@ -48,13 +65,40 @@ export default async function DashboardPage() {
       orderBy: { updatedAt: "desc" },
       include: { client: true },
     }),
+    prisma.securityCheck.findMany({
+      orderBy: { createdAt: "desc" },
+      take: 5,
+      include: { site: true },
+    }),
+    prisma.performanceCheck.findMany({
+      orderBy: { createdAt: "desc" },
+      take: 5,
+      include: { site: true },
+    }),
+    prisma.formEndpoint.findMany({
+      where: { status: { in: ["untested", "issue"] } },
+      orderBy: { updatedAt: "desc" },
+      take: 5,
+      include: { site: true },
+    }),
+    prisma.backupRecord.findMany({
+      orderBy: { checkedAt: "desc" },
+      take: 5,
+      include: { site: true },
+    }),
+    prisma.wpurImport.findMany({
+      orderBy: { importedAt: "desc" },
+      take: 5,
+      include: { site: true },
+    }),
+    prisma.wpurImport.count(),
   ]);
 
   return (
     <>
       <PageHeader
         title="Dashboard"
-        description="Vue technique rapide de votre portefeuille WordPress : connexions, scans, interventions et rapports."
+        description="Cockpit global WordPress : clients, sites, interventions, securite, performance, formulaires, sauvegardes et imports WPUR."
         actions={
           <>
             <Link href="/clients/new" className={buttonClassName({ variant: "secondary" })}>
@@ -73,10 +117,11 @@ export default async function DashboardPage() {
         }
       />
 
-      <section className="grid gap-4 md:grid-cols-3">
+      <section className="grid gap-4 md:grid-cols-4">
         <StatCard label="Clients actifs" value={activeClients} />
         <StatCard label="Sites actifs" value={activeSites} />
         <StatCard label="Sites connectes" value={connectedSites} helper="Via REST public ou snapshot valide" />
+        <StatCard label="Imports WPUR" value={wpurImportCount} helper="Syntheses plugins importees" />
       </section>
 
       <section className="mt-6 grid gap-6 xl:grid-cols-2">
@@ -124,6 +169,120 @@ export default async function DashboardPage() {
                     <p className="text-sm text-zinc-500">{site.client.companyName || site.client.name}</p>
                   </div>
                   <Badge value={site.connectionStatus === "failed" ? "failed" : site.status} />
+                </Link>
+              ))}
+            </div>
+          )}
+        </Card>
+      </section>
+
+      <section className="mt-6 grid gap-6 xl:grid-cols-2">
+        <Card>
+          <CardHeader>
+            <CardTitle>Checks securite</CardTitle>
+            <ShieldCheck className="h-4 w-4 text-zinc-400" aria-hidden="true" />
+          </CardHeader>
+          {latestSecurityChecks.length === 0 ? (
+            <EmptyState title="Aucun check securite" description="Lancez un check depuis une fiche site." />
+          ) : (
+            <div className="divide-y divide-zinc-100">
+              {latestSecurityChecks.map((check) => (
+                <Link key={check.id} href={`/sites/${check.siteId}#security`} className="flex justify-between gap-4 py-3">
+                  <div>
+                    <p className="font-medium text-zinc-950">{check.site.name}</p>
+                    <p className="text-sm text-zinc-500">{formatDateTime(check.createdAt)}</p>
+                  </div>
+                  <Badge value={check.status} />
+                </Link>
+              ))}
+            </div>
+          )}
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Checks performance</CardTitle>
+            <Gauge className="h-4 w-4 text-zinc-400" aria-hidden="true" />
+          </CardHeader>
+          {latestPerformanceChecks.length === 0 ? (
+            <EmptyState title="Aucun check performance" description="Lancez un controle HTTP simple depuis une fiche site." />
+          ) : (
+            <div className="divide-y divide-zinc-100">
+              {latestPerformanceChecks.map((check) => (
+                <Link key={check.id} href={`/sites/${check.siteId}#performance`} className="flex justify-between gap-4 py-3">
+                  <div>
+                    <p className="font-medium text-zinc-950">{check.site.name}</p>
+                    <p className="text-sm text-zinc-500">{check.responseTimeMs ?? "n/a"} ms - {formatDateTime(check.createdAt)}</p>
+                  </div>
+                  <Badge value={check.status} />
+                </Link>
+              ))}
+            </div>
+          )}
+        </Card>
+      </section>
+
+      <section className="mt-6 grid gap-6 xl:grid-cols-3">
+        <Card>
+          <CardHeader>
+            <CardTitle>Formulaires a verifier</CardTitle>
+            <ClipboardList className="h-4 w-4 text-zinc-400" aria-hidden="true" />
+          </CardHeader>
+          {formsToVerify.length === 0 ? (
+            <EmptyState title="Aucun formulaire en alerte" description="Les formulaires critiques suivis sont OK ou archives." />
+          ) : (
+            <div className="divide-y divide-zinc-100">
+              {formsToVerify.map((form) => (
+                <Link key={form.id} href={`/sites/${form.siteId}#forms`} className="flex justify-between gap-4 py-3">
+                  <div>
+                    <p className="font-medium text-zinc-950">{form.name}</p>
+                    <p className="text-sm text-zinc-500">{form.site.name}</p>
+                  </div>
+                  <Badge value={form.status} />
+                </Link>
+              ))}
+            </div>
+          )}
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Sauvegardes recentes</CardTitle>
+            <HardDrive className="h-4 w-4 text-zinc-400" aria-hidden="true" />
+          </CardHeader>
+          {latestBackups.length === 0 ? (
+            <EmptyState title="Aucune sauvegarde suivie" description="Ajoutez un suivi manuel depuis une fiche site." />
+          ) : (
+            <div className="divide-y divide-zinc-100">
+              {latestBackups.map((backup) => (
+                <Link key={backup.id} href={`/sites/${backup.siteId}#backups`} className="flex justify-between gap-4 py-3">
+                  <div>
+                    <p className="font-medium text-zinc-950">{backup.site.name}</p>
+                    <p className="text-sm text-zinc-500">{formatDateTime(backup.checkedAt)}</p>
+                  </div>
+                  <Badge value={backup.status} />
+                </Link>
+              ))}
+            </div>
+          )}
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Imports WPUR recents</CardTitle>
+            <Upload className="h-4 w-4 text-zinc-400" aria-hidden="true" />
+          </CardHeader>
+          {latestWpurImports.length === 0 ? (
+            <EmptyState title="Aucun import WPUR" description="Importez un payload JSON depuis l'onglet WPUR d'une fiche site." />
+          ) : (
+            <div className="divide-y divide-zinc-100">
+              {latestWpurImports.map((wpurImport) => (
+                <Link key={wpurImport.id} href={`/sites/${wpurImport.siteId}#wpur`} className="flex justify-between gap-4 py-3">
+                  <div>
+                    <p className="font-medium text-zinc-950">{wpurImport.site.name}</p>
+                    <p className="text-sm text-zinc-500">{wpurImport.periodMonth}</p>
+                  </div>
+                  <Badge value="ok" label={formatDateTime(wpurImport.importedAt)} />
                 </Link>
               ))}
             </div>

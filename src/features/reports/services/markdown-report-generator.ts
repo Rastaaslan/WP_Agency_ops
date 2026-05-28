@@ -90,6 +90,14 @@ export class MarkdownReportGenerator implements ReportGenerator {
           where: { status: { not: "archived" } },
           orderBy: { updatedAt: "desc" },
         },
+        backupRecords: {
+          orderBy: { checkedAt: "desc" },
+          take: 3,
+        },
+        wpurImports: {
+          orderBy: { importedAt: "desc" },
+          take: 1,
+        },
       },
     });
     const latestScan = site.scans[0];
@@ -141,6 +149,23 @@ export class MarkdownReportGenerator implements ReportGenerator {
     const forms = site.forms.map(
       (form) => `${form.name} : ${readableStatus(form.status)}${form.pageUrl ? ` (${form.pageUrl})` : ""}`,
     );
+    const backups = site.backupRecords.map((backup) => {
+      const files = backup.filesBackedUp ? "fichiers OK" : "fichiers a verifier";
+      const database = backup.databaseBackedUp ? "base OK" : "base a verifier";
+      return `${formatDate(backup.checkedAt)} : ${files}, ${database} (${readableStatus(backup.status)}).`;
+    });
+    const latestWpurImport = site.wpurImports[0];
+    const latestWpurSummary = isRecord(latestWpurImport?.summaryJson)
+      ? latestWpurImport.summaryJson
+      : undefined;
+    const wpur = latestWpurImport
+      ? [
+          `Dernier import WPUR : ${latestWpurImport.periodMonth}.`,
+          `Plugins listes : ${asNumber(latestWpurSummary?.pluginCount) ?? "n/a"}.`,
+          `Alertes WPUR : ${asNumber(latestWpurSummary?.alertCount) ?? "n/a"}.`,
+          "Le rapport plugin detaille reste gere dans WPUR ; ce rapport reprend seulement la synthese cockpit.",
+        ]
+      : [];
     const pointsToWatch = [
       ...plannedInterventions,
       ...scanWarnings,
@@ -210,6 +235,14 @@ ${bullet(performance)}
 ## Formulaires
 
 ${bullet(forms)}
+
+## Sauvegardes
+
+${bullet(backups)}
+
+## WPUR / Plugins
+
+${bullet(wpur)}
 
 ## Points a surveiller
 

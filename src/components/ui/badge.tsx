@@ -9,6 +9,8 @@ const statusTone: Record<string, string> = {
   generated: "bg-emerald-50 text-emerald-700 ring-emerald-200",
   warning: "bg-amber-50 text-amber-700 ring-amber-200",
   issue: "bg-amber-50 text-amber-700 ring-amber-200",
+  a_surveiller: "bg-amber-50 text-amber-700 ring-amber-200",
+  action_conseillee: "bg-red-50 text-red-700 ring-red-200",
   failed: "bg-red-50 text-red-700 ring-red-200",
   archived: "bg-zinc-100 text-zinc-600 ring-zinc-200",
   paused: "bg-zinc-100 text-zinc-600 ring-zinc-200",

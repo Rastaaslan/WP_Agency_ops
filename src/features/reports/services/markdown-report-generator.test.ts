@@ -49,6 +49,23 @@ vi.mock("@/server/db/client", () => ({
         performanceChecks: [],
         securityChecks: [],
         forms: [],
+        backupRecords: [
+          {
+            checkedAt: new Date("2026-05-20"),
+            filesBackedUp: true,
+            databaseBackedUp: true,
+            status: "ok",
+          },
+        ],
+        wpurImports: [
+          {
+            periodMonth: "2026-05",
+            summaryJson: {
+              pluginCount: 3,
+              alertCount: 1,
+            },
+          },
+        ],
       })),
     },
   },
@@ -67,6 +84,8 @@ describe("MarkdownReportGenerator", () => {
     expect(report.markdownContent).toContain("## Etat general");
     expect(report.markdownContent).toContain("Maintenance mensuelle");
     expect(report.markdownContent).toContain("Version WordPress : 6.8.1");
+    expect(report.markdownContent).toContain("## WPUR / Plugins");
+    expect(report.markdownContent).toContain("## Sauvegardes");
     expect(report.htmlContent).toContain("<h1>");
   });
 });

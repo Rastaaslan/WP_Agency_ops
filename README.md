@@ -28,8 +28,11 @@ Le produit est **WordPress-first** et **static-ready** : WordPress reste le cent
 - Export Markdown d’un rapport.
 - Export HTML autonome d’un rapport.
 - Forms Watch manuel pour les formulaires critiques.
+- Suivi manuel des sauvegardes fichiers/base avec lien possible vers une intervention.
 - Contrôle performance HTTP simple.
 - Contrôle sécurité non intrusif : HTTPS, headers, `readme.html`, `xmlrpc.php`.
+- Import manuel de payload WPUR JSON, validation Zod et synthèse plugins sur la fiche site.
+- Export technique JSON global d'un site sous `/api/sites/[id]/technical-export`.
 - Section Static Publish avec checklist et score de compatibilité.
 - Interfaces préparées pour plugin compagnon, monitoring, déploiement, automatisation et publication statique.
 
@@ -40,8 +43,28 @@ Le produit est **WordPress-first** et **static-ready** : WordPress reste le cent
 - Pas de mise à jour WordPress automatique.
 - Pas de rollback automatique.
 - Pas de scan offensif de vulnérabilités.
+- Pas d'exécution automatique de WPUR, de CLI Python WPUR ou de fusion WPUR dans ce repo.
+- Pas de sauvegarde réelle automatique.
 - Pas de PDF avancé.
 - Pas de stockage chiffré de secrets applicatifs.
+
+## WPUR vs WP Agency Ops Toolkit
+
+WPUR est spécialisé dans la maintenance des plugins WordPress : détection des extensions, versions installées, versions disponibles, historique, alertes et payload de rapport plugin.
+
+WP Agency Ops Toolkit est le cockpit global qui centralise les clients, les sites, les interventions, la sécurité, la performance, les formulaires, les sauvegardes, les exports techniques et les modules spécialisés comme WPUR.
+
+Le toolkit ne remplace pas WPUR et ne recrée pas son scanner FTP, ses comparaisons de versions ou son rapport plugin détaillé. Il importe seulement un payload WPUR validé, le stocke avec le site concerné et affiche une synthèse utile dans le pilotage global.
+
+## Importer un payload WPUR
+
+1. Ouvrez une fiche site.
+2. Allez dans la section **WPUR / Plugins**.
+3. Collez le payload JSON exporté par WPUR.
+4. Cliquez sur **Importer payload WPUR JSON**.
+5. La fiche site affiche la période, les dates de maintenance, le nombre de sections, les plugins listés, les mises à jour cochées, les alertes et un lien vers le payload complet.
+
+Le format attendu est documenté dans [docs/WPUR_INTEGRATION.md](docs/WPUR_INTEGRATION.md). L'import est manuel pour l'instant : aucun appel CLI ou worker WPUR n'est lancé par le toolkit.
 
 ## Installation
 
@@ -107,7 +130,9 @@ npm run db:studio
 8. Lancez un **check sécurité** depuis la fiche site.
 9. Lancez un **check performance** depuis la fiche site.
 10. Ajoutez un formulaire dans **Forms Watch**.
-11. Complétez la checklist **Static Publish** sur la fiche site.
+11. Enregistrez une sauvegarde manuelle fichiers/base sur la fiche site.
+12. Importez un payload WPUR JSON si un rapport plugin existe.
+13. Complétez la checklist **Static Publish** sur la fiche site.
 
 ## Scénario de démo recommandé
 
@@ -157,6 +182,8 @@ docs/
 - Les checks HTTP sont volontaires, courts et non agressifs.
 - Les secrets sont représentés par une abstraction `SecretProvider`, mais aucun coffre chiffré n’est implémenté.
 - Static Publish est une analyse/checklist, pas encore un générateur statique.
+- WPUR est intégré par import JSON manuel uniquement.
+- Les sauvegardes sont suivies manuellement ; aucune archive n'est créée par l'application.
 - Monitoring et déploiement sont préparés par interfaces, pas encore automatisés.
 
 ## Roadmap courte
@@ -166,6 +193,7 @@ docs/
 - Monitoring planifié avec alertes.
 - Screenshots avant/après intervention.
 - Publication statique avec preview et rollback.
+- Import WPUR automatisé via worker externe, seulement quand le format et le workflow seront stabilisés.
 - Auth, multi-agence, rôles et licence si le produit devient SaaS.
 
-Voir aussi [docs/ROADMAP.md](docs/ROADMAP.md) et [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
+Voir aussi [docs/ROADMAP.md](docs/ROADMAP.md), [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) et [docs/WPUR_INTEGRATION.md](docs/WPUR_INTEGRATION.md).

@@ -2,6 +2,7 @@ import { z } from "zod";
 import { optionalText } from "@/server/validators/helpers";
 
 export const maintenanceTypeValues = [
+  "general",
   "update",
   "backup",
   "security",
@@ -10,6 +11,7 @@ export const maintenanceTypeValues = [
   "deployment",
   "static_publish",
   "bugfix",
+  "plugin_maintenance",
   "other",
 ] as const;
 

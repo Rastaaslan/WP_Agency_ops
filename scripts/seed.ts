@@ -400,7 +400,7 @@ async function main() {
     update: {
       siteId: siteOne.id,
       title: "Maintenance mensuelle plugins",
-      type: "update",
+      type: "plugin_maintenance",
       status: "done",
       description: "Controle des extensions, mises a jour mineures et verification rapide.",
       technicalNotes: "Aucun conflit observe apres verification.",
@@ -412,13 +412,156 @@ async function main() {
       id: "seed-intervention-updates",
       siteId: siteOne.id,
       title: "Maintenance mensuelle plugins",
-      type: "update",
+      type: "plugin_maintenance",
       status: "done",
       description: "Controle des extensions, mises a jour mineures et verification rapide.",
       technicalNotes: "Aucun conflit observe apres verification.",
       clientSummary: "Maintenance mensuelle realisee sans anomalie bloquante.",
       startedAt: new Date("2026-05-20T09:30:00.000Z"),
       finishedAt: new Date("2026-05-20T10:10:00.000Z"),
+    },
+  });
+
+  const wpurPayload = {
+    schemaVersion: "1.0",
+    reportType: "monthly_maintenance_matrix",
+    period: { month: "2026-05", label: "Mai 2026" },
+    report: { title: "Maintenance plugins - Atelier Nova" },
+    client: { name: atelier.companyName || atelier.name },
+    site: { url: siteOne.url },
+    offer: { name: "Maintenance mensuelle" },
+    maintenanceDates: ["2026-05-06", "2026-05-20"],
+    sections: [
+      {
+        title: "Plugins",
+        rows: [
+          {
+            label: "SEO Toolkit",
+            targetType: "plugin",
+            targetSlug: "seo-toolkit",
+            checks: { updated: true, tested: true },
+            metadata: { change: "changed" },
+          },
+          {
+            label: "Contact Forms Pro",
+            targetType: "plugin",
+            targetSlug: "contact-forms-pro",
+            checks: { updated: true, tested: true },
+            metadata: { change: "changed" },
+          },
+          {
+            label: "Legacy Gallery",
+            targetType: "plugin",
+            targetSlug: "legacy-gallery",
+            checks: { updated: false, tested: false },
+            metadata: { status: "removed" },
+          },
+        ],
+      },
+    ],
+    alerts: [
+      {
+        type: "premium_custom",
+        level: "warning",
+        message: "Verifier manuellement les plugins premium ou custom.",
+        plugin: { slug: "contact-forms-pro", name: "Contact Forms Pro" },
+      },
+    ],
+    notes: ["Import de demo : synthese WPUR sans execution automatique."],
+  };
+
+  const wpurImport = await prisma.wpurImport.upsert({
+    where: { id: "seed-wpur-import-atelier-may" },
+    update: {
+      siteId: siteOne.id,
+      importedAt: new Date("2026-05-20T10:20:00.000Z"),
+      periodMonth: "2026-05",
+      payloadJson: json(wpurPayload),
+      summaryJson: json({
+        schemaVersion: "1.0",
+        reportType: "monthly_maintenance_matrix",
+        periodMonth: "2026-05",
+        periodLabel: "Mai 2026",
+        maintenanceDateCount: 2,
+        sectionCount: 1,
+        pluginCount: 3,
+        updateCheckCount: 2,
+        alertCount: 1,
+        alertsByLevel: { info: 0, warning: 1, error: 0 },
+        pluginsAdded: 0,
+        pluginsRemoved: 1,
+        pluginsChanged: 2,
+        notesCount: 1,
+        firstAlerts: [
+          {
+            type: "premium_custom",
+            level: "warning",
+            message: "Verifier manuellement les plugins premium ou custom.",
+            pluginSlug: "contact-forms-pro",
+            pluginName: "Contact Forms Pro",
+          },
+        ],
+      }),
+    },
+    create: {
+      id: "seed-wpur-import-atelier-may",
+      siteId: siteOne.id,
+      importedAt: new Date("2026-05-20T10:20:00.000Z"),
+      periodMonth: "2026-05",
+      payloadJson: json(wpurPayload),
+      summaryJson: json({
+        schemaVersion: "1.0",
+        reportType: "monthly_maintenance_matrix",
+        periodMonth: "2026-05",
+        periodLabel: "Mai 2026",
+        maintenanceDateCount: 2,
+        sectionCount: 1,
+        pluginCount: 3,
+        updateCheckCount: 2,
+        alertCount: 1,
+        alertsByLevel: { info: 0, warning: 1, error: 0 },
+        pluginsAdded: 0,
+        pluginsRemoved: 1,
+        pluginsChanged: 2,
+        notesCount: 1,
+        firstAlerts: [
+          {
+            type: "premium_custom",
+            level: "warning",
+            message: "Verifier manuellement les plugins premium ou custom.",
+            pluginSlug: "contact-forms-pro",
+            pluginName: "Contact Forms Pro",
+          },
+        ],
+      }),
+    },
+  });
+
+  await prisma.maintenanceIntervention.update({
+    where: { id: intervention.id },
+    data: { wpurImportId: wpurImport.id },
+  });
+
+  await prisma.backupRecord.upsert({
+    where: { id: "seed-backup-atelier-may" },
+    update: {
+      siteId: siteOne.id,
+      interventionId: intervention.id,
+      checkedAt: new Date("2026-05-20T09:20:00.000Z"),
+      status: "ok",
+      filesBackedUp: true,
+      databaseBackedUp: true,
+      notes: "Sauvegarde fichiers et base verifiee avant maintenance mensuelle.",
+    },
+    create: {
+      id: "seed-backup-atelier-may",
+      siteId: siteOne.id,
+      interventionId: intervention.id,
+      checkedAt: new Date("2026-05-20T09:20:00.000Z"),
+      status: "ok",
+      filesBackedUp: true,
+      databaseBackedUp: true,
+      notes: "Sauvegarde fichiers et base verifiee avant maintenance mensuelle.",
     },
   });
 

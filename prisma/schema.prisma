@@ -54,6 +54,7 @@ enum AssetStatus {
 }
 
 enum MaintenanceType {
+  general
   update
   backup
   security
@@ -62,6 +63,7 @@ enum MaintenanceType {
   deployment
   static_publish
   bugfix
+  plugin_maintenance
   other
 }
 
@@ -108,6 +110,13 @@ enum CheckStatus {
   failed
 }
 
+enum BackupStatus {
+  unknown
+  ok
+  warning
+  issue
+}
+
 enum StaticCompatibilityStatus {
   unknown
   promising
@@ -122,9 +131,9 @@ model Client {
   email       String?
   phone       String?
   notes       String?
-  status      ClientStatus   @default(active)
-  createdAt   DateTime       @default(now())
-  updatedAt   DateTime       @updatedAt
+  status      ClientStatus    @default(active)
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
   sites       WordPressSite[]
   reports     Report[]
 
@@ -132,20 +141,20 @@ model Client {
 }
 
 model WordPressSite {
-  id                String                       @id @default(cuid())
+  id                String                      @id @default(cuid())
   clientId          String
   name              String
   url               String
   adminUrl          String?
-  environment       SiteEnvironment              @default(production)
-  status            SiteStatus                   @default(active)
-  connectionType    ConnectionType               @default(public_rest)
-  connectionStatus  ConnectionStatus             @default(unknown)
+  environment       SiteEnvironment             @default(production)
+  status            SiteStatus                  @default(active)
+  connectionType    ConnectionType              @default(public_rest)
+  connectionStatus  ConnectionStatus            @default(unknown)
   lastScanAt        DateTime?
   notes             String?
-  createdAt         DateTime                     @default(now())
-  updatedAt         DateTime                     @updatedAt
-  client            Client                       @relation(fields: [clientId], references: [id])
+  createdAt         DateTime                    @default(now())
+  updatedAt         DateTime                    @updatedAt
+  client            Client                      @relation(fields: [clientId], references: [id])
   connection        WordPressConnection?
   scans             SiteScan[]
   interventions     MaintenanceIntervention[]
@@ -154,6 +163,8 @@ model WordPressSite {
   performanceChecks PerformanceCheck[]
   securityChecks    SecurityCheck[]
   staticReviews     StaticCompatibilityReview[]
+  backupRecords     BackupRecord[]
+  wpurImports       WpurImport[]
 
   @@index([clientId])
   @@index([status])
@@ -177,7 +188,7 @@ model WordPressConnection {
 model SiteScan {
   id           String            @id @default(cuid())
   siteId       String
-  status       ScanStatus         @default(pending)
+  status       ScanStatus        @default(pending)
   startedAt    DateTime
   finishedAt   DateTime?
   summaryJson  Json?
@@ -226,23 +237,27 @@ model WordPressTheme {
 }
 
 model MaintenanceIntervention {
-  id             String                   @id @default(cuid())
+  id             String             @id @default(cuid())
   siteId         String
   title          String
-  type           MaintenanceType          @default(other)
-  status         MaintenanceStatus        @default(planned)
+  type           MaintenanceType    @default(other)
+  status         MaintenanceStatus  @default(planned)
   description    String?
   technicalNotes String?
   clientSummary  String?
+  wpurImportId   String?
   startedAt      DateTime?
   finishedAt     DateTime?
-  createdAt      DateTime                 @default(now())
-  updatedAt      DateTime                 @updatedAt
-  site           WordPressSite            @relation(fields: [siteId], references: [id], onDelete: Cascade)
+  createdAt      DateTime           @default(now())
+  updatedAt      DateTime           @updatedAt
+  site           WordPressSite      @relation(fields: [siteId], references: [id], onDelete: Cascade)
   items          InterventionItem[]
+  backupRecords  BackupRecord[]
+  wpurImport     WpurImport?        @relation(fields: [wpurImportId], references: [id], onDelete: SetNull)
 
   @@index([siteId, createdAt])
   @@index([status])
+  @@index([wpurImportId])
 }
 
 model InterventionItem {
@@ -344,6 +359,39 @@ model SecurityCheck {
 
   @@index([siteId, createdAt])
   @@index([status])
+}
+
+model BackupRecord {
+  id               String                   @id @default(cuid())
+  siteId           String
+  interventionId   String?
+  checkedAt        DateTime                 @default(now())
+  status           BackupStatus             @default(unknown)
+  filesBackedUp    Boolean                  @default(false)
+  databaseBackedUp Boolean                  @default(false)
+  notes            String?
+  createdAt        DateTime                 @default(now())
+  updatedAt        DateTime                 @updatedAt
+  site             WordPressSite            @relation(fields: [siteId], references: [id], onDelete: Cascade)
+  intervention     MaintenanceIntervention? @relation(fields: [interventionId], references: [id], onDelete: SetNull)
+
+  @@index([siteId, checkedAt])
+  @@index([status])
+  @@index([interventionId])
+}
+
+model WpurImport {
+  id            String                    @id @default(cuid())
+  siteId        String
+  importedAt    DateTime                  @default(now())
+  periodMonth   String
+  payloadJson   Json
+  summaryJson   Json
+  site          WordPressSite             @relation(fields: [siteId], references: [id], onDelete: Cascade)
+  interventions MaintenanceIntervention[]
+
+  @@index([siteId, importedAt])
+  @@index([periodMonth])
 }
 
 model StaticCompatibilityReview {

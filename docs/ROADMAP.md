@@ -9,6 +9,9 @@
 - Rapports Markdown et HTML.
 - Forms Watch manuel.
 - Checks securite et performance simples.
+- Suivi manuel des sauvegardes fichiers/base.
+- Import manuel de payload WPUR JSON avec synthese cockpit.
+- Export technique JSON global par site.
 - Workflow demo scan -> intervention -> rapport. Livre.
 
 ## Phase 2 - Plugin compagnon WordPress
@@ -17,17 +20,26 @@
 - Version WordPress/PHP. MVP minimal livre.
 - Plugins, themes et mises a jour. MVP minimal livre via transients WordPress.
 - Endpoint `site-info` et synthese exploitable par les scans. Livre pour demo.
-- Etat des backups.
+- Etat des backups remonte par le plugin compagnon.
 - Sante WordPress avancee.
 - Logs de lecture.
 
 ## Phase 3 - Maintenance assistee
 
-- Backup avant update.
+- Backup avant update avec checklist guidee.
 - Mise a jour plugin par plugin, assistee mais non automatique.
 - Journal technique.
 - Screenshots avant/apres.
 - Rollback manuel guide.
+
+## Phase 3 bis - Integration WPUR
+
+- Import JSON WPUR manuel. Livre.
+- Historique des imports WPUR par site. Livre.
+- Synthese WPUR dans le cockpit site. Livre.
+- Liaison optionnelle entre intervention plugin maintenance et import WPUR. Prepare.
+- Worker externe WPUR via CLI. A etudier plus tard.
+- Module interne WPUR. Non planifie pour le MVP.
 
 ## Phase 4 - Rapports avances
 
@@ -64,8 +76,8 @@
 
 ## Prochain palier conseille
 
-1. Export PDF et templates de rapport agence.
-2. Backup assiste avant intervention.
-3. Update assiste non automatique, plugin par plugin.
+1. Stabiliser le format WPUR importe avec plusieurs payloads reels.
+2. Export PDF et templates de rapport agence.
+3. Backup assiste avant intervention.
 4. Monitoring planifie.
 5. Alertes email, Slack ou Discord.
