@@ -46,6 +46,13 @@ export const backupStatuses = [
   "unknown",
 ] as const;
 
+export const watchedFormStatuses = [
+  "not_tested",
+  "ok",
+  "issue",
+  "ignored",
+] as const;
+
 export type ClientStatus = (typeof clientStatuses)[number];
 export type SiteEnvironment = (typeof siteEnvironments)[number];
 export type SiteStatus = (typeof siteStatuses)[number];
@@ -54,3 +61,4 @@ export type InterventionStatus = (typeof interventionStatuses)[number];
 export type InterventionItemStatus = (typeof interventionItemStatuses)[number];
 export type BackupType = (typeof backupTypes)[number];
 export type BackupStatus = (typeof backupStatuses)[number];
+export type WatchedFormStatus = (typeof watchedFormStatuses)[number];

@@ -2,7 +2,7 @@
 
 WP Agency Ops v2 est le cockpit global WordPress.
 
-Statut actuel : base technique, modèle de données minimal, routes API minimales, première UI métier, CRUD clients côté UI, CRUD sites côté UI, CRUD interventions globales côté UI, import WPUR manuel côté UI et suivi manuel des sauvegardes. Cette branche ne contient pas encore de sécurité, de performance, de formulaires, de sauvegardes automatiques, de rapports, d'auth, de plugin compagnon ou d'intégration WPUR exécutée.
+Statut actuel : base technique, modèle de données minimal, routes API minimales, première UI métier, CRUD clients côté UI, CRUD sites côté UI, CRUD interventions globales côté UI, import WPUR manuel côté UI, suivi manuel des sauvegardes et suivi manuel des formulaires critiques. Cette branche ne contient pas encore de sécurité, de performance, de tests automatiques de formulaires, de sauvegardes automatiques, de rapports, d'auth, de plugin compagnon ou d'intégration WPUR exécutée.
 
 WPUR reste un projet séparé dédié à la maintenance détaillée des plugins WordPress. WP Agency Ops v2 peut importer et afficher des synthèses WPUR, mais ne doit pas réimplémenter son moteur.
 
@@ -57,6 +57,7 @@ Prisma et SQLite sont configurés avec un modèle minimal :
 - `Intervention` ;
 - `InterventionItem` ;
 - `BackupRecord` ;
+- `WatchedForm` ;
 - `WpurImport`.
 
 `WpurImport` stocke un payload produit par WPUR. WP Agency Ops v2 ne scanne pas les plugins, ne compare pas les versions et ne génère pas les payloads WPUR.
@@ -67,7 +68,7 @@ npm run db:seed
 npm run db:studio
 ```
 
-`npm run db:seed` crée un petit jeu de données fictif : un client, un site, une intervention globale, deux items et un import WPUR minimal.
+`npm run db:seed` crée un petit jeu de données fictif : un client, un site, une intervention globale, deux items, une sauvegarde documentée, un formulaire surveillé et un import WPUR minimal.
 
 ## Services serveur
 
@@ -118,9 +119,11 @@ L'interface applicative expose une première navigation métier :
 - `/sites/new` : création d'un site rattaché à un client existant ;
 - `/sites/[id]` : fiche site, interventions récentes avec lien de création pré-rattachée au site, synthèse des imports WPUR, modification, archivage et lien vers l'export technique JSON ;
 - `/sites/[id]/backups/new` : création d'un suivi manuel de sauvegarde pour le site ;
+- `/sites/[id]/forms/new` : création d'un formulaire surveillé pour le site ;
 - `/sites/[id]/wpur-imports/new` : import manuel d'un payload JSON WPUR produit par WPUR ;
 - `/sites/[id]/edit` : modification d'un site.
 - `/backups/[id]/edit` : modification du statut et des notes d'une sauvegarde documentée ;
+- `/forms/[id]/edit` : modification du statut, de la dernière vérification et des notes d'un formulaire surveillé ;
 - `/interventions` : liste des interventions globales ;
 - `/interventions/new` : création d'une intervention liée à un site ;
 - `/interventions/[id]` : fiche intervention, changement de statut et gestion d'items simples ;
@@ -130,9 +133,11 @@ Le CRUD UI est limité aux clients, aux sites et aux interventions globales. L'i
 
 Le suivi des sauvegardes est documentaire : l'application permet d'enregistrer le type, le statut, la date, le fournisseur, l'emplacement et les notes d'une sauvegarde, avec une liaison optionnelle à une intervention. WP Agency Ops ne lance pas de sauvegarde automatique, ne stocke aucun fichier de backup, ne se connecte pas à un hébergeur et ne fait pas de rollback.
 
+Le suivi des formulaires est documentaire : l'application permet d'enregistrer les formulaires critiques, leur statut, leur dernière vérification, leurs destinataires attendus et leurs notes. WP Agency Ops ne teste pas automatiquement les formulaires, n'envoie pas de requêtes POST vers les formulaires et ne stocke aucune soumission.
+
 Les items d'intervention doivent rester génériques. Le détail maintenance plugins, les versions, comparaisons et rapports plugins restent dans WPUR.
 
-Prochaines étapes prévues : modules sécurité/performance/forms/backups, dans des tickets séparés.
+Prochaines étapes prévues : modules sécurité/performance, dans des tickets séparés.
 
 ## Ancienne base locale v1
 

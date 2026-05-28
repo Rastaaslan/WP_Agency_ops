@@ -67,6 +67,13 @@ enum BackupStatus {
   unknown
 }
 
+enum WatchedFormStatus {
+  not_tested
+  ok
+  issue
+  ignored
+}
+
 model Client {
   id          String       @id @default(cuid())
   name        String
@@ -96,6 +103,7 @@ model Site {
   interventions Intervention[]
   wpurImports   WpurImport[]
   backups       BackupRecord[]
+  watchedForms  WatchedForm[]
 
   @@index([clientId])
   @@index([status])
@@ -167,4 +175,22 @@ model BackupRecord {
   @@index([interventionId])
   @@index([status])
   @@index([type])
+}
+
+model WatchedForm {
+  id                 String            @id @default(cuid())
+  siteId             String
+  name               String
+  pageUrl            String
+  expectedRecipients String?
+  status             WatchedFormStatus @default(not_tested)
+  lastCheckedAt      DateTime?
+  notes              String?
+  createdAt          DateTime          @default(now())
+  updatedAt          DateTime          @updatedAt
+  site               Site              @relation(fields: [siteId], references: [id], onDelete: Cascade)
+
+  @@index([siteId])
+  @@index([status])
+  @@index([lastCheckedAt])
 }

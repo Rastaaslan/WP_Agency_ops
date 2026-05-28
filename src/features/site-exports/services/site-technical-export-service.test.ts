@@ -66,6 +66,17 @@ describe("site technical export service", () => {
           },
         },
       ],
+      watchedForms: [
+        {
+          id: "form_1",
+          name: "Contact principal",
+          pageUrl: "https://example.com/contact",
+          status: "ok",
+          lastCheckedAt: new Date("2026-05-28T10:00:00.000Z"),
+          expectedRecipients: "contact@example.com",
+          notes: "Verification manuelle OK.",
+        },
+      ],
     });
 
     const exportState = await exportSiteTechnicalState("site_1");
@@ -97,6 +108,16 @@ describe("site technical export service", () => {
           },
           take: 5,
         },
+        watchedForms: {
+          orderBy: [
+            {
+              status: "asc",
+            },
+            {
+              name: "asc",
+            },
+          ],
+        },
       },
     });
     expect(exportState).toMatchObject({
@@ -119,7 +140,12 @@ describe("site technical export service", () => {
       },
       security: [],
       performance: [],
-      forms: [],
+      forms: [
+        {
+          id: "form_1",
+          status: "ok",
+        },
+      ],
       backups: [
         {
           id: "backup_1",

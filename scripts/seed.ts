@@ -132,6 +132,31 @@ async function main() {
     },
   });
 
+  await prisma.watchedForm.upsert({
+    where: { id: "seed-form-contact-principal" },
+    update: {
+      siteId: site.id,
+      name: "Formulaire de contact principal",
+      pageUrl: "https://example.com/contact",
+      expectedRecipients: "contact@example.com",
+      status: "ok",
+      lastCheckedAt: new Date("2026-05-28T10:00:00.000Z"),
+      notes:
+        "Formulaire fictif documente pour valider le suivi manuel v2.",
+    },
+    create: {
+      id: "seed-form-contact-principal",
+      siteId: site.id,
+      name: "Formulaire de contact principal",
+      pageUrl: "https://example.com/contact",
+      expectedRecipients: "contact@example.com",
+      status: "ok",
+      lastCheckedAt: new Date("2026-05-28T10:00:00.000Z"),
+      notes:
+        "Formulaire fictif documente pour valider le suivi manuel v2.",
+    },
+  });
+
   const wpurPayload = wpurPayloadSchema.parse({
     schemaVersion: "1.0",
     reportType: "monthly_plugin_maintenance",

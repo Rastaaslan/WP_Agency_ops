@@ -5,6 +5,7 @@ import { PageHeader } from "@/components/page-header";
 import { SectionPanel } from "@/components/section-panel";
 import { StatusBadge } from "@/components/status-badge";
 import { listBackupsBySite } from "@/features/backups/services/backup-service";
+import { listFormsBySite } from "@/features/forms/services/form-watch-service";
 import { listInterventionsBySite } from "@/features/interventions/services/intervention-service";
 import { archiveSiteAction } from "@/features/sites/site-actions";
 import { ArchiveSiteForm } from "@/features/sites/components/archive-site-form";
@@ -26,12 +27,14 @@ export default async function SiteDetailPage({
   await connection();
 
   const { id } = await params;
-  const [site, interventions, backups, wpurImports] = await Promise.all([
-    getSiteById(id),
-    listInterventionsBySite(id),
-    listBackupsBySite(id),
-    listWpurImportsBySite(id),
-  ]);
+  const [site, interventions, backups, watchedForms, wpurImports] =
+    await Promise.all([
+      getSiteById(id),
+      listInterventionsBySite(id),
+      listBackupsBySite(id),
+      listFormsBySite(id),
+      listWpurImportsBySite(id),
+    ]);
 
   if (!site) {
     notFound();
@@ -238,6 +241,74 @@ export default async function SiteDetailPage({
       </SectionPanel>
 
       <SectionPanel
+        description="Suivi documentaire des formulaires critiques. WP Agency Ops ne teste pas automatiquement les formulaires et ne stocke aucune soumission."
+        title="Formulaires surveillés"
+      >
+        <div className="mb-5">
+          <Link
+            className="inline-flex min-h-10 items-center justify-center rounded-md border border-zinc-200 px-3 text-sm font-medium text-cyan-800 hover:border-cyan-300"
+            href={`/sites/${site.id}/forms/new`}
+          >
+            Ajouter un formulaire surveillé
+          </Link>
+        </div>
+        {watchedForms.length === 0 ? (
+          <InlineEmpty message="Aucun formulaire surveillé pour ce site." />
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="min-w-full divide-y divide-zinc-200 text-sm">
+              <thead className="bg-zinc-50 text-left text-xs font-semibold uppercase text-zinc-500">
+                <tr>
+                  <th className="px-4 py-3">Formulaire</th>
+                  <th className="px-4 py-3">Page</th>
+                  <th className="px-4 py-3">Statut</th>
+                  <th className="px-4 py-3">Dernière vérification</th>
+                  <th className="px-4 py-3">Destinataires</th>
+                  <th className="px-4 py-3 text-right">Détail</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-zinc-200">
+                {watchedForms.map((watchedForm) => (
+                  <tr key={watchedForm.id}>
+                    <td className="px-4 py-4 font-medium text-zinc-950">
+                      {watchedForm.name}
+                    </td>
+                    <td className="px-4 py-4 text-zinc-600">
+                      <a
+                        className="font-medium text-cyan-800 hover:text-cyan-950"
+                        href={watchedForm.pageUrl}
+                        rel="noreferrer"
+                        target="_blank"
+                      >
+                        Ouvrir
+                      </a>
+                    </td>
+                    <td className="px-4 py-4">
+                      <StatusBadge value={watchedForm.status} />
+                    </td>
+                    <td className="px-4 py-4 text-zinc-600">
+                      {formatDateTime(watchedForm.lastCheckedAt)}
+                    </td>
+                    <td className="px-4 py-4 text-zinc-600">
+                      {formatNullable(watchedForm.expectedRecipients)}
+                    </td>
+                    <td className="px-4 py-4 text-right">
+                      <Link
+                        className="font-medium text-cyan-800 hover:text-cyan-950"
+                        href={`/forms/${watchedForm.id}/edit`}
+                      >
+                        Modifier
+                      </Link>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </SectionPanel>
+
+      <SectionPanel
         description="Synthèse des payloads importés depuis WPUR. WP Agency Ops ne génère pas ces données."
         title="Imports WPUR"
       >
@@ -322,7 +393,7 @@ export default async function SiteDetailPage({
           <p className="max-w-2xl text-sm leading-6 text-zinc-700">
             L&apos;export technique global expose le client, le site, les
             interventions, le dernier import WPUR dans un bloc séparé et les
-            sections globales prévues.
+            suivis globaux documentés.
           </p>
           <Link
             className="inline-flex min-h-10 items-center justify-center rounded-md border border-zinc-200 px-3 text-sm font-medium text-cyan-800 hover:border-cyan-300"

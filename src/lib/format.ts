@@ -36,6 +36,9 @@ const enumLabels: Record<string, string> = {
   database: "Base de données",
   full: "Complète",
   unknown: "Inconnu",
+  not_tested: "Non testé",
+  ok: "OK",
+  ignored: "Ignoré",
 };
 
 export type WpurSummaryView = {

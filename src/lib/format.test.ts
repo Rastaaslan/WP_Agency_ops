@@ -17,6 +17,8 @@ describe("format helpers", () => {
     );
     expect(formatEnumLabel("database")).toBe("Base de données");
     expect(formatEnumLabel("full")).toBe("Complète");
+    expect(formatEnumLabel("not_tested")).toBe("Non testé");
+    expect(formatEnumLabel("ok")).toBe("OK");
     expect(formatEnumLabel("custom_status")).toBe("Custom Status");
   });
 
