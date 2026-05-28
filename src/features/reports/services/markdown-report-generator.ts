@@ -9,10 +9,52 @@ import type {
 
 function bullet(items: string[]) {
   if (items.length === 0) {
-    return "- Aucun element a signaler.";
+    return "- Aucun point particulier a signaler.";
   }
 
   return items.map((item) => `- ${item}`).join("\n");
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null;
+}
+
+function asString(value: unknown) {
+  return typeof value === "string" ? value : undefined;
+}
+
+function asNumber(value: unknown) {
+  return typeof value === "number" ? value : undefined;
+}
+
+function rawList(raw: unknown, key: "warnings" | "recommendations") {
+  if (!isRecord(raw) || !Array.isArray(raw[key])) {
+    return [];
+  }
+
+  return raw[key]
+    .map((item) => (isRecord(item) ? asString(item.message) : undefined))
+    .filter((item): item is string => Boolean(item));
+}
+
+function summaryValue(raw: unknown, key: string) {
+  return isRecord(raw) ? raw[key] : undefined;
+}
+
+function readableStatus(status: string) {
+  if (status === "done" || status === "ok" || status === "success") {
+    return "OK";
+  }
+
+  if (status === "warning" || status === "planned" || status === "in_progress") {
+    return "A surveiller";
+  }
+
+  if (status === "issue" || status === "failed") {
+    return "Action recommandee";
+  }
+
+  return status;
 }
 
 export class MarkdownReportGenerator implements ReportGenerator {
@@ -53,11 +95,25 @@ export class MarkdownReportGenerator implements ReportGenerator {
     const latestScan = site.scans[0];
     const title =
       input.title ??
-      `Rapport technique - ${site.name} - ${formatDate(input.periodStart)} au ${formatDate(input.periodEnd)}`;
-    const interventions = site.interventions.map((intervention) => {
-      const summary = intervention.clientSummary || intervention.description || intervention.title;
-      return `${intervention.title} (${intervention.status}) : ${summary}`;
-    });
+      `Rapport technique - ${site.name}`;
+    const latestSummary = latestScan?.summaryJson;
+    const latestRaw = latestScan?.rawJson;
+    const scanWarnings = rawList(latestRaw, "warnings");
+    const scanRecommendations = rawList(latestRaw, "recommendations");
+    const doneInterventions = site.interventions
+      .filter((intervention) => intervention.status === "done")
+      .map((intervention) => {
+        const summary = intervention.clientSummary || intervention.description || intervention.title;
+        return `${intervention.title} : ${summary}`;
+      });
+    const plannedInterventions = site.interventions
+      .filter((intervention) => intervention.status !== "done")
+      .map((intervention) => `${intervention.title} (${readableStatus(intervention.status)})`);
+    const interventionItems = site.interventions.flatMap((intervention) =>
+      (intervention.items ?? [])
+        .filter((item) => item.status === "done" || item.status === "warning")
+        .map((item) => `${item.label} (${readableStatus(item.status)})`),
+    );
     const updates = latestScan
       ? [
           ...latestScan.plugins
@@ -68,45 +124,82 @@ export class MarkdownReportGenerator implements ReportGenerator {
             .map((theme) => `${theme.name} ${theme.version ?? ""} -> ${theme.newVersion ?? "version disponible"}`),
         ]
       : [];
-    const security = site.securityChecks.map(
-      (check) => `${formatDate(check.createdAt)} : ${check.status} - ${check.notes ?? "controle effectue"}`,
-    );
-    const performance = site.performanceChecks.map(
+    const latestSecurity = site.securityChecks[0];
+    const security = latestSecurity
+      ? [
+          `HTTPS : ${latestSecurity.httpsEnabled ? "actif" : "a verifier"}`,
+          `Headers principaux : ${latestSecurity.hasSecurityHeaders ? "presents" : "a completer"}`,
+          `XML-RPC : ${latestSecurity.xmlrpcExposed ? "expose, a verifier selon l'usage" : "non expose ou non detecte"}`,
+          `Readme WordPress : ${latestSecurity.readmeExposed ? "expose" : "non expose ou non detecte"}`,
+          latestSecurity.notes ?? "Controle securite simple effectue.",
+        ]
+      : [];
+    const performance = site.performanceChecks.slice(0, 1).map(
       (check) =>
-        `${formatDate(check.createdAt)} : ${check.responseTimeMs ?? "n/a"} ms sur ${check.url} (${check.status})`,
+        `${check.responseTimeMs ?? "n/a"} ms observes sur ${check.url} (${readableStatus(check.status)}).`,
     );
     const forms = site.forms.map(
-      (form) => `${form.name} : ${form.status}${form.pageUrl ? ` (${form.pageUrl})` : ""}`,
+      (form) => `${form.name} : ${readableStatus(form.status)}${form.pageUrl ? ` (${form.pageUrl})` : ""}`,
     );
-    const warnings =
-      latestScan && latestScan.errorMessage
-        ? [latestScan.errorMessage]
-        : latestScan
-          ? [`Dernier scan ${latestScan.status} le ${formatDate(latestScan.createdAt)}.`]
-          : ["Aucun scan disponible sur la periode."];
+    const pointsToWatch = [
+      ...plannedInterventions,
+      ...scanWarnings,
+      ...(latestScan?.errorMessage ? [latestScan.errorMessage] : []),
+    ];
+    const recommendationDefaults = [
+      "Continuer les scans reguliers avant les interventions sensibles.",
+      "Verifier les formulaires critiques apres chaque mise a jour importante.",
+    ];
+    const recommendations =
+      scanRecommendations.length > 0
+        ? scanRecommendations
+        : recommendationDefaults;
+    const updateCount =
+      updates.length ||
+      asNumber(summaryValue(latestSummary, "updateCount")) ||
+      0;
+    const generalStatus =
+      latestScan?.status === "failed"
+        ? "Action recommandee"
+        : updateCount > 0 || scanWarnings.length > 0
+          ? "Attention recommandee"
+          : "Suivi technique stable";
 
-    const markdownContent = `# ${title}
+    const markdownContent = `# Rapport technique - ${site.name}
 
-## Client et site
+## Resume
+
+La maintenance technique du site a ete suivie et documentee. Le rapport ci-dessous presente les controles realises, les actions suivies et les points a surveiller sans alarme inutile.
+
+## Periode
+
+Du ${formatDate(input.periodStart)} au ${formatDate(input.periodEnd)}
+
+## Site concerne
 
 - Client : ${site.client.companyName || site.client.name}
 - Site : ${site.name}
 - URL : ${site.url}
-- Periode : ${formatDate(input.periodStart)} au ${formatDate(input.periodEnd)}
+- Environnement : ${site.environment}
 
-## Resume clair
+## Etat general
 
-Le suivi technique du site a ete consolide dans WP Agency Ops Toolkit. Les points ci-dessous reprennent les actions realisees, les controles simples et les prochaines actions conseillees.
+- Statut : ${generalStatus}
+- Dernier scan : ${latestScan ? `${readableStatus(latestScan.status)} le ${formatDate(latestScan.createdAt)}` : "Aucun scan disponible"}
+- Version WordPress : ${asString(summaryValue(latestSummary, "wpVersion")) ?? "Non connue"}
+- Version PHP : ${asString(summaryValue(latestSummary, "phpVersion")) ?? "Non connue"}
+- Theme actif : ${asString(summaryValue(latestSummary, "activeTheme")) ?? "Non connu"}
+- Mises a jour detectees : ${updateCount}
 
 ## Actions realisees
 
-${bullet(interventions)}
+${bullet([...doneInterventions, ...interventionItems])}
 
-## Mises a jour
+## Mises a jour et maintenance
 
 ${bullet(updates)}
 
-## Securite
+## Securite technique
 
 ${bullet(security)}
 
@@ -118,25 +211,17 @@ ${bullet(performance)}
 
 ${bullet(forms)}
 
-## Incidents ou problemes
+## Points a surveiller
 
-${bullet(warnings)}
+${bullet(pointsToWatch)}
 
 ## Recommandations techniques
 
-- Continuer les scans reguliers avant les interventions sensibles.
-- Verifier les formulaires critiques apres chaque mise a jour importante.
-- Completer les controles de securite avec le futur plugin compagnon pour obtenir plus de details WordPress.
-
-## Prochaines actions
-
-- Planifier la prochaine maintenance.
-- Mettre a jour le rapport apres les corrections realisees.
-- Evaluer la compatibilite statique si le site est une vitrine simple.
+${bullet(recommendations)}
 
 ## Conclusion
 
-Le site reste suivi avec une approche technique progressive. Les actions recommandees sont priorisees sans alarme inutile.`;
+Le site reste suivi avec une approche technique progressive. Les prochaines actions sont identifiees et peuvent etre traitees dans une intervention planifiee.`;
 
     const htmlContent = String(await marked.parse(markdownContent));
 

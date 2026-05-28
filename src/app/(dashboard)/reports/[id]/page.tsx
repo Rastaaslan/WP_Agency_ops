@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Download } from "lucide-react";
+import { Download, FileCode } from "lucide-react";
 import { notFound } from "next/navigation";
 import { PageHeader } from "@/components/layout/page-header";
 import { Badge } from "@/components/ui/badge";
@@ -30,10 +30,16 @@ export default async function ReportDetailPage({
         title={report.title}
         description={`${report.site.name} - ${formatDate(report.periodStart)} au ${formatDate(report.periodEnd)}`}
         actions={
-          <Link href={`/api/reports/${report.id}/markdown`} className={buttonClassName({ variant: "secondary" })}>
-            <Download className="h-4 w-4" aria-hidden="true" />
-            Export Markdown
-          </Link>
+          <>
+            <Link href={`/api/reports/${report.id}/html`} className={buttonClassName({ variant: "secondary" })}>
+              <FileCode className="h-4 w-4" aria-hidden="true" />
+              Export HTML
+            </Link>
+            <Link href={`/api/reports/${report.id}/markdown`} className={buttonClassName({ variant: "secondary" })}>
+              <Download className="h-4 w-4" aria-hidden="true" />
+              Export Markdown
+            </Link>
+          </>
         }
       />
       <section className="grid gap-6 xl:grid-cols-2">
