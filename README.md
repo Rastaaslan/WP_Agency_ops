@@ -2,7 +2,7 @@
 
 WP Agency Ops v2 est le cockpit global WordPress.
 
-Statut actuel : base technique, modèle de données minimal, routes API minimales, première UI métier, CRUD clients côté UI, CRUD sites côté UI, CRUD interventions globales côté UI, import WPUR manuel côté UI, suivi manuel des sauvegardes, suivi manuel des formulaires critiques, contrôle sécurité simple non offensif et contrôle performance simple. Cette branche ne contient pas encore de tests automatiques de formulaires, de sauvegardes automatiques, de rapports, d'auth, de plugin compagnon ou d'intégration WPUR exécutée.
+Statut actuel : base technique, modèle de données minimal, routes API minimales, dashboard synthèse, CRUD clients côté UI, CRUD sites côté UI, CRUD interventions globales côté UI, import WPUR manuel côté UI, suivi manuel des sauvegardes, suivi manuel des formulaires critiques, contrôle sécurité simple non offensif et contrôle performance simple. Cette branche ne contient pas encore de tests automatiques de formulaires, de sauvegardes automatiques, de rapports, d'auth, de plugin compagnon ou d'intégration WPUR exécutée.
 
 WPUR reste un projet séparé dédié à la maintenance détaillée des plugins WordPress. WP Agency Ops v2 peut importer et afficher des synthèses WPUR, mais ne doit pas réimplémenter son moteur.
 
@@ -76,6 +76,7 @@ npm run db:studio
 
 Une couche serveur minimale prépare les futurs CRUD sans exposer encore de routes API métier ni d'UI :
 
+- dashboard synthèse ;
 - clients ;
 - sites ;
 - interventions ;
@@ -114,7 +115,7 @@ Les imports WPUR restent des données reçues et stockées. Ces routes ne lancen
 
 L'interface applicative expose une première navigation métier :
 
-- `/` : accueil avec accès aux clients, sites, interventions et healthcheck ;
+- `/` : dashboard synthèse avec KPIs, interventions à suivre, derniers sites, derniers imports WPUR et points à surveiller ;
 - `/clients` : liste des clients et accès à la création ;
 - `/clients/new` : création d'un client ;
 - `/clients/[id]` : fiche client, sites liés, modification et archivage ;
@@ -142,6 +143,8 @@ Le suivi des formulaires est documentaire : l'application permet d'enregistrer l
 Le contrôle sécurité est volontairement simple et non offensif : il vérifie l'URL du site, HTTPS, quelques en-têtes HTTP basiques, `/xmlrpc.php` et `/readme.html` avec des requêtes limitées et un timeout court. Il ne lance pas d'attaque, ne fait pas de brute force, ne scanne pas des chemins en masse et ne remplace pas un audit sécurité complet.
 
 Le contrôle performance est volontairement simple : il mesure une réponse HTTP sur l'URL du site, stocke le statut HTTP, le temps de réponse et la taille déclarée via `content-length` si disponible. Il ne lance pas Lighthouse, PageSpeed, crawl multi-pages, test de charge, monitoring planifié ou alerte.
+
+Le dashboard affiche WPUR en synthèse uniquement : période, date d'import et nombre d'alertes. Il ne détaille pas les plugins et ne remplace pas les rapports WPUR.
 
 Les items d'intervention doivent rester génériques. Le détail maintenance plugins, les versions, comparaisons et rapports plugins restent dans WPUR.
 
