@@ -55,7 +55,7 @@ jobs:
         run: npm run plugin:zip
 
       - name: Upload plugin artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: wp-agency-ops-companion
           path: dist/wp-agency-ops-companion.zip
