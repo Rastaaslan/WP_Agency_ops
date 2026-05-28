@@ -1,34 +1,10 @@
-import { prisma } from "@/server/db/client";
+import { APP_NAME } from "@/lib/app-info";
+import { env } from "@/server/env";
 
-export const dynamic = "force-dynamic";
-
-export async function GET() {
-  const checkedAt = new Date().toISOString();
-
-  try {
-    await prisma.client.count();
-
-    return Response.json({
-      status: "ok",
-      checkedAt,
-      checks: {
-        database: "ok",
-      },
-    });
-  } catch (error) {
-    return Response.json(
-      {
-        status: "degraded",
-        checkedAt,
-        checks: {
-          database: "failed",
-        },
-        message:
-          error instanceof Error
-            ? error.message
-            : "Database health check failed.",
-      },
-      { status: 503 },
-    );
-  }
+export function GET() {
+  return Response.json({
+    status: "ok",
+    app: APP_NAME,
+    environment: env.NODE_ENV,
+  });
 }

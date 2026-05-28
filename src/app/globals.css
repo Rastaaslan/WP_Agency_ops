@@ -1,21 +1,30 @@
 @import "tailwindcss";
 
 :root {
-  --background: #f6f7f8;
-  --foreground: #171717;
+  --background: #ffffff;
+  --foreground: #18181b;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: Arial, Helvetica, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  min-height: 100%;
 }
 
 body {
+  min-height: 100%;
+  margin: 0;
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+  font-family: Arial, Helvetica, sans-serif;
 }
 
 button,
@@ -24,56 +33,4 @@ input,
 select,
 textarea {
   letter-spacing: 0;
-}
-
-input,
-select,
-textarea {
-  width: 100%;
-  border: 1px solid #d8dee4;
-  background: white;
-  color: #171717;
-  border-radius: 6px;
-  padding: 0.62rem 0.75rem;
-  font-size: 0.875rem;
-  outline: none;
-}
-
-input:focus,
-select:focus,
-textarea:focus {
-  border-color: #2563eb;
-  box-shadow: 0 0 0 3px rgb(37 99 235 / 0.12);
-}
-
-label {
-  display: grid;
-  gap: 0.35rem;
-  color: #3f3f46;
-  font-size: 0.875rem;
-  font-weight: 500;
-}
-
-.prose-report h1 {
-  font-size: 1.75rem;
-  font-weight: 700;
-  margin-bottom: 1rem;
-}
-
-.prose-report h2 {
-  font-size: 1.05rem;
-  font-weight: 700;
-  margin-top: 1.25rem;
-  margin-bottom: 0.5rem;
-}
-
-.prose-report p,
-.prose-report li {
-  color: #3f3f46;
-  line-height: 1.65;
-}
-
-.prose-report ul {
-  padding-left: 1.2rem;
-  list-style: disc;
 }

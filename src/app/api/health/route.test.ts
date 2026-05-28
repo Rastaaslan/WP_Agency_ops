@@ -1,53 +1,18 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
+import { APP_NAME } from "@/lib/app-info";
+import { env } from "@/server/env";
 import { GET } from "./route";
 
-const { countClients } = vi.hoisted(() => ({
-  countClients: vi.fn(),
-}));
-
-vi.mock("@/server/db/client", () => ({
-  prisma: {
-    client: {
-      count: countClients,
-    },
-  },
-}));
-
 describe("GET /api/health", () => {
-  beforeEach(() => {
-    countClients.mockReset();
-  });
-
-  it("returns ok when the database responds", async () => {
-    countClients.mockResolvedValue(0);
-
-    const response = await GET();
+  it("returns the minimal application health payload", async () => {
+    const response = GET();
     const body = await response.json();
 
     expect(response.status).toBe(200);
-    expect(body).toMatchObject({
+    expect(body).toEqual({
       status: "ok",
-      checks: {
-        database: "ok",
-      },
+      app: APP_NAME,
+      environment: env.NODE_ENV,
     });
-    expect(body.checkedAt).toEqual(expect.any(String));
-  });
-
-  it("returns degraded when the database check fails", async () => {
-    countClients.mockRejectedValue(new Error("database unavailable"));
-
-    const response = await GET();
-    const body = await response.json();
-
-    expect(response.status).toBe(503);
-    expect(body).toMatchObject({
-      status: "degraded",
-      checks: {
-        database: "failed",
-      },
-      message: "database unavailable",
-    });
-    expect(body.checkedAt).toEqual(expect.any(String));
   });
 });

@@ -2,33 +2,28 @@
 
 ## Supported scope
 
-WP Agency Ops Toolkit is currently a local MVP. Security fixes are accepted for
-the current default branch and active Codex feature branches.
+WP Agency Ops v2 is currently a technical skeleton. Security reports should focus
+on the Next.js app shell, route handlers, dependency configuration, environment
+handling, Prisma configuration, and local development tooling.
 
-The WordPress companion plugin is read-only by design. Reports should focus on
-issues that could expose secrets, bypass the companion API key, trigger unsafe
-network access, corrupt local data, or make the application perform unexpected
-WordPress actions.
+There is no WordPress scanner, no companion plugin, no WPUR import, no auth, and
+no production data workflow in this branch yet.
 
 ## Reporting a vulnerability
 
 Open a private security advisory on GitHub if available, or contact the
 maintainer privately before publishing details. Do not include client data,
-production secrets, API keys, database files, or full WordPress backups in the
-report.
+production secrets, API keys, database files, or WordPress backups in the report.
 
 Please include:
 
 - A short summary of the risk.
 - Reproduction steps on a local or disposable environment.
-- Affected area: app, route handler, WordPress connector, companion plugin, or
-  tooling.
+- The affected area.
 - Expected impact and any known workaround.
 
-## Non-goals for the MVP
+## Non-goals for the skeleton
 
-This MVP does not yet provide multi-user auth, SaaS tenant isolation, encrypted
-secret storage, persistent rate limiting, or automated WordPress updates.
-
-See [docs/SECURITY_NOTES.md](docs/SECURITY_NOTES.md) for implementation notes
-and the current pre-SaaS hardening checklist.
+This skeleton does not yet provide multi-user auth, SaaS tenant isolation,
+encrypted secret storage, persistent rate limiting, automated WordPress actions,
+plugin maintenance, or WPUR processing.
