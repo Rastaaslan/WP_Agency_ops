@@ -66,7 +66,7 @@ npm run db:seed
 npm run db:studio
 ```
 
-Limite locale connue : dans cet environnement, Prisma peut renvoyer `Schema engine error:` sans détail pendant `npm run db:migrate`. Les migrations SQL présentes dans `prisma/migrations` ont été vérifiées sur base SQLite temporaire, mais ce point doit être corrigé avant packaging ou démo hors environnement contrôlé.
+Investigation Prisma : les migrations automatisées `npm run db:migrate` et `npx prisma migrate deploy` passent sur une base SQLite temporaire propre. Si une erreur `Schema engine error:` réapparaît, vérifiez d'abord que le fichier SQLite ciblé n'existe pas déjà avec un schéma partiel ou ancien.
 
 `npm run db:seed` crée un jeu de données de démo réaliste autour d'Atelier Nova, avec plusieurs interventions, sauvegardes, formulaires surveillés, contrôles sécurité/performance, import WPUR synthétique et un second client léger.
 

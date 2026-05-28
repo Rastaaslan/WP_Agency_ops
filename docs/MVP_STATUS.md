@@ -49,7 +49,7 @@ WP Agency Ops v2 importe WPUR, mais ne le remplace pas. Le repo ne doit pas ajou
 
 - L'application cible une utilisation locale de démonstration.
 - SQLite est utilisé en local, avec une vigilance particulière si un ancien `dev.db` v1 existe.
-- `npm run db:migrate` peut échouer dans cet environnement avec `Schema engine error:` sans détail ; les migrations SQL versionnées ont été vérifiées manuellement sur base temporaire, mais ce point reste à corriger avant packaging.
+- `npm run db:migrate` et `npx prisma migrate deploy` passent sur base SQLite temporaire propre. Si une erreur `Schema engine error:` réapparaît, vérifier d'abord que la base ciblée n'est pas un ancien fichier v1 ou une base partielle.
 - Les contrôles sécurité et performance sont volontairement simples et ne remplacent pas un audit complet.
 - Les imports WPUR sont manuels : WP Agency Ops ne lance pas WPUR.
 - L'état technique est encore une réponse JSON d'API, pas encore une restitution client mise en page.

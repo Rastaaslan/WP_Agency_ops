@@ -31,7 +31,7 @@ npm run db:migrate
 npm run db:seed
 ```
 
-Si `npm run db:migrate` renvoie `Schema engine error:` sans détail, ne supprimez pas `dev.db` automatiquement. C'est une limite locale connue à traiter avant packaging ; les migrations SQL versionnées restent la source à vérifier sur une base propre.
+Les migrations Prisma ont été vérifiées sur base SQLite propre. Si `npm run db:migrate` renvoie une erreur, ne supprimez pas `dev.db` automatiquement : vérifiez d'abord que la base ciblée n'est pas une ancienne base v1 ou un fichier SQLite partiel.
 
 Démarrer l'application :
 
