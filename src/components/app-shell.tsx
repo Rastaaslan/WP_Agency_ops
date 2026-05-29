@@ -17,7 +17,7 @@ const navigationItems = [
   },
   {
     href: "/api/health",
-    label: "API Health",
+    label: "État application",
   },
 ] as const;
 

@@ -52,7 +52,7 @@ describe("wpur import form state", () => {
           payloadJson: " ",
         },
         fieldErrors: {
-          payloadJson: ["Le contenu JSON de l'export WPUR est obligatoire."],
+          payloadJson: ["Le contenu de l'export WPUR est obligatoire."],
         },
       },
     });
@@ -69,7 +69,7 @@ describe("wpur import form state", () => {
         },
         fieldErrors: {
           payloadJson: [
-            "Le JSON de l'export WPUR est invalide. Vérifiez le copier-coller puis réessayez.",
+            "L'export WPUR est illisible. Vérifiez le copier-coller puis réessayez.",
           ],
         },
       },

@@ -54,7 +54,7 @@ function getWpurImportMutationErrorMessage(error: unknown) {
     return "Site introuvable. Choisissez un site existant puis réessayez.";
   }
 
-  return "Impossible d'importer l'export WPUR. Vérifiez le JSON copié puis réessayez.";
+  return "Impossible d'importer l'export WPUR. Vérifiez le contenu copié puis réessayez.";
 }
 
 function isPrismaForeignKeyError(error: unknown) {

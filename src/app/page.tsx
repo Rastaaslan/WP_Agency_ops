@@ -28,13 +28,13 @@ export default async function Home() {
       <PageHeader
         description="Vue synthétique du portefeuille WordPress : activité récente, interventions ouvertes et points à surveiller."
         eyebrow="Cockpit global WordPress"
-        title="Dashboard"
+        title="Tableau de bord"
       >
         <Link
           className="inline-flex min-h-10 items-center rounded-md border border-zinc-200 bg-white px-3 text-sm font-medium text-cyan-800 hover:border-cyan-300"
           href="/api/health"
         >
-          API Health
+          État application
         </Link>
       </PageHeader>
 
@@ -273,7 +273,7 @@ export default async function Home() {
 
             <WatchGroup title="Sauvegardes récentes">
               {dashboard.watchPoints.backups.length === 0 ? (
-                <InlineEmpty message="Aucune sauvegarde en échec ou inconnue." />
+                <InlineEmpty message="Aucune sauvegarde à vérifier." />
               ) : (
                 dashboard.watchPoints.backups.map((backup) => (
                   <WatchItem

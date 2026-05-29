@@ -19,6 +19,9 @@ describe("format helpers", () => {
     expect(formatEnumLabel("full")).toBe("Complète");
     expect(formatEnumLabel("not_tested")).toBe("Non testé");
     expect(formatEnumLabel("ok")).toBe("OK");
+    expect(formatEnumLabel("issue")).toBe("Point à vérifier");
+    expect(formatEnumLabel("warning")).toBe("À surveiller");
+    expect(formatEnumLabel("failed")).toBe("À vérifier");
     expect(formatEnumLabel("custom_status")).toBe("Custom Status");
   });
 

@@ -24,7 +24,7 @@ export default async function NewWpurImportPage({
   return (
     <div className="space-y-6">
       <PageHeader
-        description={`Coller le contenu JSON de l'export WPUR produit pour ${site.name}.`}
+        description={`Coller le contenu de l'export WPUR produit pour ${site.name}.`}
         eyebrow="Imports WPUR"
         title="Importer un export WPUR"
       >
@@ -48,7 +48,7 @@ export default async function NewWpurImportPage({
       </SectionPanel>
 
       <SectionPanel
-        description="Le contenu JSON est validé côté serveur, puis stocké comme export externe lié au site. L'export complet reste consultable depuis la fiche site."
+        description="L'export est vérifié côté serveur, puis stocké comme synthèse externe liée au site. L'export complet reste consultable depuis la fiche site."
         title="Export WPUR"
       >
         <WpurImportForm

@@ -79,7 +79,7 @@ describe("wpur actions", () => {
     expect(siteServiceMock.getSiteById).not.toHaveBeenCalled();
     expect(wpurServiceMock.importWpurPayload).not.toHaveBeenCalled();
     expect(result.fieldErrors.payloadJson).toEqual([
-      "Le JSON de l'export WPUR est invalide. Vérifiez le copier-coller puis réessayez.",
+      "L'export WPUR est illisible. Vérifiez le copier-coller puis réessayez.",
     ]);
   });
 

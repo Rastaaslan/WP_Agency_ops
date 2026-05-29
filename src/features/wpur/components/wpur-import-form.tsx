@@ -35,7 +35,7 @@ export function WpurImportForm({ action, cancelHref }: WpurImportFormProps) {
 
       <div>
         <label className="text-sm font-medium text-zinc-800" htmlFor="wpur-payloadJson">
-          Export WPUR (JSON) <span className="text-red-600">*</span>
+          Export WPUR <span className="text-red-600">*</span>
         </label>
         <textarea
           className={`mt-2 min-h-96 w-full resize-y rounded-md border bg-white px-3 py-2 font-mono text-sm text-zinc-950 outline-none transition placeholder:text-zinc-400 focus:border-cyan-500 focus:ring-2 focus:ring-cyan-100 ${
@@ -44,7 +44,7 @@ export function WpurImportForm({ action, cancelHref }: WpurImportFormProps) {
           defaultValue={state.values.payloadJson}
           id="wpur-payloadJson"
           name="payloadJson"
-          placeholder='{"schemaVersion":"1.0","reportType":"monthly-plugin-maintenance","period":{"month":"2026-05"}}'
+          placeholder="Collez ici le contenu complet de l'export WPUR."
           spellCheck={false}
         />
         {payloadErrors?.length ? (
