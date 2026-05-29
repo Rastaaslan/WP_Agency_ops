@@ -67,7 +67,7 @@ export function parseWpurImportForm(formData: FormData):
     return {
       success: false,
       state: createWpurImportFieldErrorState(values, [
-        "Le JSON est invalide.",
+        "Le JSON de l'export WPUR est invalide. Vérifiez le copier-coller puis réessayez.",
       ]),
     };
   }
@@ -78,7 +78,7 @@ export function parseWpurImportForm(formData: FormData):
     return {
       success: false,
       state: createWpurImportFieldErrorState(values, [
-        "L'export WPUR ne respecte pas le schéma attendu.",
+        "L'export WPUR n'a pas la forme attendue. Vérifiez qu'il provient bien de WPUR.",
       ]),
     };
   }

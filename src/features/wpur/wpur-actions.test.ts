@@ -78,7 +78,9 @@ describe("wpur actions", () => {
 
     expect(siteServiceMock.getSiteById).not.toHaveBeenCalled();
     expect(wpurServiceMock.importWpurPayload).not.toHaveBeenCalled();
-    expect(result.fieldErrors.payloadJson).toEqual(["Le JSON est invalide."]);
+    expect(result.fieldErrors.payloadJson).toEqual([
+      "Le JSON de l'export WPUR est invalide. Vérifiez le copier-coller puis réessayez.",
+    ]);
   });
 
   it("returns a readable error when the WPUR payload is invalid", async () => {
@@ -99,7 +101,7 @@ describe("wpur actions", () => {
     expect(siteServiceMock.getSiteById).not.toHaveBeenCalled();
     expect(wpurServiceMock.importWpurPayload).not.toHaveBeenCalled();
     expect(result.fieldErrors.payloadJson).toEqual([
-      "L'export WPUR ne respecte pas le schéma attendu.",
+      "L'export WPUR n'a pas la forme attendue. Vérifiez qu'il provient bien de WPUR.",
     ]);
   });
 
@@ -133,7 +135,7 @@ describe("wpur actions", () => {
         createInitialWpurImportFormState(),
         createWpurImportFormData(JSON.stringify(minimalWpurPayload)),
       ),
-    ).rejects.toThrow("NEXT_REDIRECT:/sites/site_1");
+    ).rejects.toThrow("NEXT_REDIRECT:/sites/site_1?notice=wpur-imported");
 
     expect(wpurServiceMock.importWpurPayload).toHaveBeenCalledWith(
       "site_1",

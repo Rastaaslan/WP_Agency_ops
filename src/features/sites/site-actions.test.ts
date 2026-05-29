@@ -72,7 +72,7 @@ describe("site actions", () => {
 
     await expect(
       createSiteAction(createInitialSiteFormState(), formData),
-    ).rejects.toThrow("NEXT_REDIRECT:/sites/site_1");
+    ).rejects.toThrow("NEXT_REDIRECT:/sites/site_1?notice=site-created");
 
     expect(siteServiceMock.createSite).toHaveBeenCalledWith({
       clientId: "client_1",
@@ -103,7 +103,7 @@ describe("site actions", () => {
 
     await expect(
       updateSiteAction("site_1", createInitialSiteFormState(), formData),
-    ).rejects.toThrow("NEXT_REDIRECT:/sites/site_1");
+    ).rejects.toThrow("NEXT_REDIRECT:/sites/site_1?notice=site-updated");
 
     expect(siteServiceMock.updateSite).toHaveBeenCalledWith("site_1", {
       clientId: "client_new",
@@ -131,7 +131,7 @@ describe("site actions", () => {
 
     await expect(
       archiveSiteAction("site_1", createInitialSiteFormState(), new FormData()),
-    ).rejects.toThrow("NEXT_REDIRECT:/sites/site_1");
+    ).rejects.toThrow("NEXT_REDIRECT:/sites/site_1?notice=site-archived");
 
     expect(siteServiceMock.archiveSite).toHaveBeenCalledWith("site_1");
     expect(nextCacheMock.revalidatePath).toHaveBeenCalledWith("/sites");
@@ -176,7 +176,8 @@ describe("site actions", () => {
     expect(result).toEqual({
       values: emptySiteFormValues,
       fieldErrors: {},
-      formError: "Site introuvable ou déjà supprimé de la base.",
+      formError:
+        "Site introuvable dans ce cockpit. Actualisez la page puis réessayez.",
     });
   });
 });

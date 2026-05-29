@@ -81,7 +81,9 @@ describe("intervention actions", () => {
           date: "2026-05-28T09:30",
         }),
       ),
-    ).rejects.toThrow("NEXT_REDIRECT:/interventions/intervention_1");
+    ).rejects.toThrow(
+      "NEXT_REDIRECT:/interventions/intervention_1?notice=intervention-created",
+    );
 
     expect(interventionServiceMock.createIntervention).toHaveBeenCalledWith({
       siteId: "site_1",
@@ -117,7 +119,9 @@ describe("intervention actions", () => {
           date: "2026-05-28T10:00",
         }),
       ),
-    ).rejects.toThrow("NEXT_REDIRECT:/interventions/intervention_1");
+    ).rejects.toThrow(
+      "NEXT_REDIRECT:/interventions/intervention_1?notice=intervention-updated",
+    );
 
     expect(interventionServiceMock.updateIntervention).toHaveBeenCalledWith(
       "intervention_1",
@@ -156,7 +160,9 @@ describe("intervention actions", () => {
         createInitialInterventionStatusFormState(),
         formData,
       ),
-    ).rejects.toThrow("NEXT_REDIRECT:/interventions/intervention_1");
+    ).rejects.toThrow(
+      "NEXT_REDIRECT:/interventions/intervention_1?notice=intervention-cancelled",
+    );
 
     expect(interventionServiceMock.updateInterventionStatus).toHaveBeenCalledWith(
       "intervention_1",
@@ -182,7 +188,9 @@ describe("intervention actions", () => {
         createInitialInterventionItemFormState(),
         formData,
       ),
-    ).rejects.toThrow("NEXT_REDIRECT:/interventions/intervention_1");
+    ).rejects.toThrow(
+      "NEXT_REDIRECT:/interventions/intervention_1?notice=intervention-item-added",
+    );
 
     expect(interventionServiceMock.addInterventionItem).toHaveBeenCalledWith(
       "intervention_1",
@@ -231,7 +239,9 @@ describe("intervention actions", () => {
         createInitialInterventionItemFormState(),
         formData,
       ),
-    ).rejects.toThrow("NEXT_REDIRECT:/interventions/intervention_1");
+    ).rejects.toThrow(
+      "NEXT_REDIRECT:/interventions/intervention_1?notice=intervention-item-updated",
+    );
 
     expect(interventionServiceMock.updateInterventionItem).toHaveBeenCalledWith(
       "item_1",

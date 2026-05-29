@@ -67,7 +67,7 @@ describe("backup actions", () => {
           provider: "Hebergeur Demo",
         }),
       ),
-    ).rejects.toThrow("NEXT_REDIRECT:/sites/site_1");
+    ).rejects.toThrow("NEXT_REDIRECT:/sites/site_1?notice=backup-saved");
 
     expect(backupServiceMock.createBackup).toHaveBeenCalledWith({
       siteId: "site_1",
@@ -100,7 +100,7 @@ describe("backup actions", () => {
           notes: "Erreur documentee.",
         }),
       ),
-    ).rejects.toThrow("NEXT_REDIRECT:/sites/site_1");
+    ).rejects.toThrow("NEXT_REDIRECT:/sites/site_1?notice=backup-saved");
 
     expect(backupServiceMock.updateBackup).toHaveBeenCalledWith("backup_1", {
       type: "database",

@@ -1,5 +1,6 @@
 "use client";
 
+import type { FormEvent } from "react";
 import { useActionState } from "react";
 import {
   createInitialInterventionStatusFormState,
@@ -25,8 +26,25 @@ export function InterventionStatusForm({
     createInitialInterventionStatusFormState({ status: currentStatus }),
   );
 
+  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    const formData = new FormData(event.currentTarget);
+    const nextStatus = formData.get("status");
+
+    if (currentStatus === "cancelled" || nextStatus !== "cancelled") {
+      return;
+    }
+
+    const confirmed = window.confirm(
+      "Confirmer l'annulation ?\n\nL'intervention passera au statut annulé sans supprimer les données.",
+    );
+
+    if (!confirmed) {
+      event.preventDefault();
+    }
+  }
+
   return (
-    <form action={formAction} className="space-y-3">
+    <form action={formAction} className="space-y-3" onSubmit={handleSubmit}>
       {state.formError ? (
         <p className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm leading-6 text-red-700">
           {state.formError}

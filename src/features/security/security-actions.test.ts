@@ -49,7 +49,7 @@ describe("security actions", () => {
         createInitialSecurityCheckFormState(),
         new FormData(),
       ),
-    ).rejects.toThrow("NEXT_REDIRECT:/sites/site_1");
+    ).rejects.toThrow("NEXT_REDIRECT:/sites/site_1?notice=security-check-run");
 
     expect(securityServiceMock.runSecurityCheck).toHaveBeenCalledWith("site_1");
     expect(nextCacheMock.revalidatePath).toHaveBeenCalledWith("/sites/site_1");
@@ -68,7 +68,7 @@ describe("security actions", () => {
     );
 
     expect(result.formError).toBe(
-      "Site introuvable. Impossible de lancer le contrôle.",
+      "Site introuvable. Le contrôle sécurité n'a pas été lancé.",
     );
     expect(nextNavigationMock.redirect).not.toHaveBeenCalled();
   });
@@ -83,7 +83,7 @@ describe("security actions", () => {
     );
 
     expect(result.formError).toBe(
-      "Impossible de lancer le contrôle sécurité. Réessayez plus tard ou vérifiez l'URL du site.",
+      "Le contrôle sécurité n'a pas pu démarrer. Vérifiez l'URL du site puis réessayez.",
     );
     expect(nextNavigationMock.redirect).not.toHaveBeenCalled();
   });

@@ -18,17 +18,17 @@ export async function runSecurityCheckAction(
 
     if (!securityCheck) {
       return {
-        formError: "Site introuvable. Impossible de lancer le contrôle.",
+        formError: "Site introuvable. Le contrôle sécurité n'a pas été lancé.",
       };
     }
   } catch {
     return {
       formError:
-        "Impossible de lancer le contrôle sécurité. Réessayez plus tard ou vérifiez l'URL du site.",
+        "Le contrôle sécurité n'a pas pu démarrer. Vérifiez l'URL du site puis réessayez.",
     };
   }
 
   revalidatePath(`/sites/${siteId}`);
   revalidatePath(`/api/sites/${siteId}/technical-export`);
-  redirect(`/sites/${siteId}`);
+  redirect(`/sites/${siteId}?notice=security-check-run`);
 }

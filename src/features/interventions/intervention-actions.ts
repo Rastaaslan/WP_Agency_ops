@@ -47,7 +47,7 @@ export async function createInterventionAction(
   }
 
   revalidateInterventionLists(parsedForm.input.siteId);
-  redirect(`/interventions/${interventionId}`);
+  redirect(`/interventions/${interventionId}?notice=intervention-created`);
 }
 
 export async function updateInterventionAction(
@@ -81,7 +81,7 @@ export async function updateInterventionAction(
     revalidatePath(`/sites/${previousSiteId}`);
   }
 
-  redirect(`/interventions/${interventionId}`);
+  redirect(`/interventions/${interventionId}?notice=intervention-updated`);
 }
 
 export async function updateInterventionStatusAction(
@@ -107,9 +107,14 @@ export async function updateInterventionStatusAction(
     );
   }
 
+  const notice =
+    parsedForm.status === "cancelled"
+      ? "intervention-cancelled"
+      : "intervention-status-updated";
+
   revalidateInterventionLists(siteId);
   revalidatePath(`/interventions/${interventionId}`);
-  redirect(`/interventions/${interventionId}`);
+  redirect(`/interventions/${interventionId}?notice=${notice}`);
 }
 
 export async function addInterventionItemAction(
@@ -137,7 +142,7 @@ export async function addInterventionItemAction(
 
   revalidateInterventionLists(siteId);
   revalidatePath(`/interventions/${interventionId}`);
-  redirect(`/interventions/${interventionId}`);
+  redirect(`/interventions/${interventionId}?notice=intervention-item-added`);
 }
 
 export async function updateInterventionItemAction(
@@ -166,7 +171,7 @@ export async function updateInterventionItemAction(
 
   revalidateInterventionLists(siteId);
   revalidatePath(`/interventions/${interventionId}`);
-  redirect(`/interventions/${interventionId}`);
+  redirect(`/interventions/${interventionId}?notice=intervention-item-updated`);
 }
 
 function revalidateInterventionLists(siteId?: string) {
@@ -179,7 +184,7 @@ function revalidateInterventionLists(siteId?: string) {
 
 function getInterventionMutationErrorMessage(error: unknown) {
   if (isPrismaRecordNotFoundError(error)) {
-    return "Intervention introuvable ou déjà supprimée de la base.";
+    return "Intervention introuvable dans ce cockpit. Actualisez la page puis réessayez.";
   }
 
   if (isPrismaForeignKeyError(error)) {

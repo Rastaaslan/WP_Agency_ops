@@ -35,7 +35,7 @@ export async function createBackupAction(
 
   revalidatePath(`/sites/${siteId}`);
   revalidatePath(`/api/sites/${siteId}/technical-export`);
-  redirect(`/sites/${siteId}`);
+  redirect(`/sites/${siteId}?notice=backup-saved`);
 }
 
 export async function updateBackupAction(
@@ -62,12 +62,12 @@ export async function updateBackupAction(
   revalidatePath(`/sites/${siteId}`);
   revalidatePath(`/backups/${backupId}/edit`);
   revalidatePath(`/api/sites/${siteId}/technical-export`);
-  redirect(`/sites/${siteId}`);
+  redirect(`/sites/${siteId}?notice=backup-saved`);
 }
 
 function getBackupMutationErrorMessage(error: unknown) {
   if (isPrismaRecordNotFoundError(error)) {
-    return "Sauvegarde introuvable ou déjà supprimée de la base.";
+    return "Sauvegarde introuvable dans ce cockpit. Actualisez la page puis réessayez.";
   }
 
   if (isPrismaForeignKeyError(error)) {

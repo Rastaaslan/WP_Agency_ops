@@ -42,19 +42,19 @@ export async function importWpurPayloadAction(
 
   revalidatePath(`/sites/${siteId}`);
   revalidatePath(`/api/sites/${siteId}/technical-export`);
-  redirect(`/sites/${siteId}`);
+  redirect(`/sites/${siteId}?notice=wpur-imported`);
 }
 
 function getWpurImportMutationErrorMessage(error: unknown) {
   if (error instanceof ZodError) {
-    return "L'export WPUR ne respecte pas le schéma attendu.";
+    return "L'export WPUR n'a pas la forme attendue. Vérifiez qu'il provient bien de WPUR.";
   }
 
   if (isPrismaForeignKeyError(error)) {
     return "Site introuvable. Choisissez un site existant puis réessayez.";
   }
 
-  return "Impossible d'importer l'export WPUR. Vérifiez le JSON puis réessayez.";
+  return "Impossible d'importer l'export WPUR. Vérifiez le JSON copié puis réessayez.";
 }
 
 function isPrismaForeignKeyError(error: unknown) {

@@ -68,7 +68,9 @@ describe("wpur import form state", () => {
           payloadJson: "{bad json",
         },
         fieldErrors: {
-          payloadJson: ["Le JSON est invalide."],
+          payloadJson: [
+            "Le JSON de l'export WPUR est invalide. Vérifiez le copier-coller puis réessayez.",
+          ],
         },
       },
     });
@@ -94,7 +96,7 @@ describe("wpur import form state", () => {
         },
         fieldErrors: {
           payloadJson: [
-            "L'export WPUR ne respecte pas le schéma attendu.",
+            "L'export WPUR n'a pas la forme attendue. Vérifiez qu'il provient bien de WPUR.",
           ],
         },
       },

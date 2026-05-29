@@ -19,17 +19,17 @@ export async function runPerformanceCheckAction(
     if (!performanceCheck) {
       return {
         formError:
-          "Site introuvable. Impossible de lancer le contrôle performance.",
+          "Site introuvable. Le contrôle performance n'a pas été lancé.",
       };
     }
   } catch {
     return {
       formError:
-        "Impossible de lancer le contrôle performance. Réessayez plus tard ou vérifiez l'URL du site.",
+        "Le contrôle performance n'a pas pu démarrer. Vérifiez l'URL du site puis réessayez.",
     };
   }
 
   revalidatePath(`/sites/${siteId}`);
   revalidatePath(`/api/sites/${siteId}/technical-export`);
-  redirect(`/sites/${siteId}`);
+  redirect(`/sites/${siteId}?notice=performance-check-run`);
 }

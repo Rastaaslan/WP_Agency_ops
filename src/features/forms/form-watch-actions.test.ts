@@ -71,7 +71,7 @@ describe("watched form actions", () => {
           lastCheckedAt: "2026-05-28T10:30",
         }),
       ),
-    ).rejects.toThrow("NEXT_REDIRECT:/sites/site_1");
+    ).rejects.toThrow("NEXT_REDIRECT:/sites/site_1?notice=watched-form-saved");
 
     expect(formWatchServiceMock.createForm).toHaveBeenCalledWith({
       siteId: "site_1",
@@ -104,7 +104,7 @@ describe("watched form actions", () => {
           notes: "Erreur documentee.",
         }),
       ),
-    ).rejects.toThrow("NEXT_REDIRECT:/sites/site_1");
+    ).rejects.toThrow("NEXT_REDIRECT:/sites/site_1?notice=watched-form-saved");
 
     expect(formWatchServiceMock.updateForm).toHaveBeenCalledWith("form_1", {
       name: "Contact principal",

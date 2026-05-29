@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { PageHeader } from "@/components/page-header";
 import { SectionPanel } from "@/components/section-panel";
 import { StatusBadge } from "@/components/status-badge";
+import { UserNotice } from "@/components/user-notice";
 import { listBackupsBySite } from "@/features/backups/services/backup-service";
 import { listFormsBySite } from "@/features/forms/services/form-watch-service";
 import { listInterventionsBySite } from "@/features/interventions/services/intervention-service";
@@ -24,15 +25,18 @@ import {
   formatNullable,
   readWpurSummary,
 } from "@/lib/format";
+import { getUserNotice } from "@/lib/user-notice";
 
 export default async function SiteDetailPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ id: string }>;
+  searchParams: Promise<{ notice?: string | string[] }>;
 }) {
   await connection();
 
-  const { id } = await params;
+  const [{ id }, query] = await Promise.all([params, searchParams]);
   const [
     site,
     interventions,
@@ -41,16 +45,15 @@ export default async function SiteDetailPage({
     backups,
     watchedForms,
     wpurImports,
-  ] =
-    await Promise.all([
-      getSiteById(id),
-      listInterventionsBySite(id),
-      listSecurityChecksBySite(id),
-      listPerformanceChecksBySite(id),
-      listBackupsBySite(id),
-      listFormsBySite(id),
-      listWpurImportsBySite(id),
-    ]);
+  ] = await Promise.all([
+    getSiteById(id),
+    listInterventionsBySite(id),
+    listSecurityChecksBySite(id),
+    listPerformanceChecksBySite(id),
+    listBackupsBySite(id),
+    listFormsBySite(id),
+    listWpurImportsBySite(id),
+  ]);
 
   if (!site) {
     notFound();
@@ -58,6 +61,7 @@ export default async function SiteDetailPage({
 
   const latestSecurityCheck = securityChecks[0] ?? null;
   const latestPerformanceCheck = performanceChecks[0] ?? null;
+  const notice = getUserNotice(query.notice);
 
   return (
     <div className="space-y-6">
@@ -83,6 +87,7 @@ export default async function SiteDetailPage({
           disabled={site.status === "archived"}
         />
       </PageHeader>
+      <UserNotice notice={notice} />
 
       <section className="grid gap-4 md:grid-cols-4">
         <InfoTile label="Statut">

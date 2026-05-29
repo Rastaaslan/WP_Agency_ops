@@ -38,7 +38,7 @@ export async function createClientAction(
   }
 
   revalidatePath("/clients");
-  redirect(`/clients/${clientId}`);
+  redirect(`/clients/${clientId}?notice=client-created`);
 }
 
 export async function updateClientAction(
@@ -63,7 +63,7 @@ export async function updateClientAction(
 
   revalidatePath("/clients");
   revalidatePath(`/clients/${clientId}`);
-  redirect(`/clients/${clientId}`);
+  redirect(`/clients/${clientId}?notice=client-updated`);
 }
 
 export async function archiveClientAction(
@@ -85,12 +85,12 @@ export async function archiveClientAction(
 
   revalidatePath("/clients");
   revalidatePath(`/clients/${clientId}`);
-  redirect(`/clients/${clientId}`);
+  redirect(`/clients/${clientId}?notice=client-archived`);
 }
 
 function getClientMutationErrorMessage(error: unknown) {
   if (isPrismaRecordNotFoundError(error)) {
-    return "Client introuvable ou déjà supprimé de la base.";
+    return "Client introuvable dans ce cockpit. Actualisez la page puis réessayez.";
   }
 
   return "Impossible d'enregistrer le client. Vérifiez les champs puis réessayez.";

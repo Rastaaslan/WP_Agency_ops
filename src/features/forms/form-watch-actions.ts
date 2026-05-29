@@ -35,7 +35,7 @@ export async function createWatchedFormAction(
 
   revalidatePath(`/sites/${siteId}`);
   revalidatePath(`/api/sites/${siteId}/technical-export`);
-  redirect(`/sites/${siteId}`);
+  redirect(`/sites/${siteId}?notice=watched-form-saved`);
 }
 
 export async function updateWatchedFormAction(
@@ -62,12 +62,12 @@ export async function updateWatchedFormAction(
   revalidatePath(`/sites/${siteId}`);
   revalidatePath(`/forms/${formId}/edit`);
   revalidatePath(`/api/sites/${siteId}/technical-export`);
-  redirect(`/sites/${siteId}`);
+  redirect(`/sites/${siteId}?notice=watched-form-saved`);
 }
 
 function getWatchedFormMutationErrorMessage(error: unknown) {
   if (isPrismaRecordNotFoundError(error)) {
-    return "Formulaire surveillé introuvable ou déjà supprimé de la base.";
+    return "Formulaire surveillé introuvable dans ce cockpit. Actualisez la page puis réessayez.";
   }
 
   if (isPrismaForeignKeyError(error)) {

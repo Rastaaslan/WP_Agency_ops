@@ -49,7 +49,9 @@ describe("performance actions", () => {
         createInitialPerformanceCheckFormState(),
         new FormData(),
       ),
-    ).rejects.toThrow("NEXT_REDIRECT:/sites/site_1");
+    ).rejects.toThrow(
+      "NEXT_REDIRECT:/sites/site_1?notice=performance-check-run",
+    );
 
     expect(performanceServiceMock.runPerformanceCheck).toHaveBeenCalledWith(
       "site_1",
@@ -70,7 +72,7 @@ describe("performance actions", () => {
     );
 
     expect(result.formError).toBe(
-      "Site introuvable. Impossible de lancer le contrôle performance.",
+      "Site introuvable. Le contrôle performance n'a pas été lancé.",
     );
     expect(nextNavigationMock.redirect).not.toHaveBeenCalled();
   });
@@ -87,7 +89,7 @@ describe("performance actions", () => {
     );
 
     expect(result.formError).toBe(
-      "Impossible de lancer le contrôle performance. Réessayez plus tard ou vérifiez l'URL du site.",
+      "Le contrôle performance n'a pas pu démarrer. Vérifiez l'URL du site puis réessayez.",
     );
     expect(nextNavigationMock.redirect).not.toHaveBeenCalled();
   });

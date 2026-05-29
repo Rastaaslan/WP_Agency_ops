@@ -4,20 +4,24 @@ import { notFound } from "next/navigation";
 import { PageHeader } from "@/components/page-header";
 import { SectionPanel } from "@/components/section-panel";
 import { StatusBadge } from "@/components/status-badge";
+import { UserNotice } from "@/components/user-notice";
 import { archiveClientAction } from "@/features/clients/client-actions";
 import { ArchiveClientForm } from "@/features/clients/components/archive-client-form";
 import { getClientById } from "@/features/clients/services/client-service";
 import { listSitesByClient } from "@/features/sites/services/site-service";
 import { formatNullable } from "@/lib/format";
+import { getUserNotice } from "@/lib/user-notice";
 
 export default async function ClientDetailPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ id: string }>;
+  searchParams: Promise<{ notice?: string | string[] }>;
 }) {
   await connection();
 
-  const { id } = await params;
+  const [{ id }, query] = await Promise.all([params, searchParams]);
   const [client, sites] = await Promise.all([
     getClientById(id),
     listSitesByClient(id),
@@ -26,6 +30,8 @@ export default async function ClientDetailPage({
   if (!client) {
     notFound();
   }
+
+  const notice = getUserNotice(query.notice);
 
   return (
     <div className="space-y-6">
@@ -54,6 +60,7 @@ export default async function ClientDetailPage({
           disabled={client.status === "archived"}
         />
       </PageHeader>
+      <UserNotice notice={notice} />
 
       <section className="grid gap-4 md:grid-cols-3">
         <InfoTile label="Statut">

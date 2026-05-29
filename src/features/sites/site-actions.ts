@@ -41,7 +41,7 @@ export async function createSiteAction(
   revalidatePath("/sites");
   revalidatePath("/clients");
   revalidatePath(`/clients/${parsedForm.input.clientId}`);
-  redirect(`/sites/${siteId}`);
+  redirect(`/sites/${siteId}?notice=site-created`);
 }
 
 export async function updateSiteAction(
@@ -80,7 +80,7 @@ export async function updateSiteAction(
     revalidatePath(`/clients/${previousClientId}`);
   }
 
-  redirect(`/sites/${siteId}`);
+  redirect(`/sites/${siteId}?notice=site-updated`);
 }
 
 export async function archiveSiteAction(
@@ -110,12 +110,12 @@ export async function archiveSiteAction(
     revalidatePath(`/clients/${clientId}`);
   }
 
-  redirect(`/sites/${siteId}`);
+  redirect(`/sites/${siteId}?notice=site-archived`);
 }
 
 function getSiteMutationErrorMessage(error: unknown) {
   if (isPrismaRecordNotFoundError(error)) {
-    return "Site introuvable ou déjà supprimé de la base.";
+    return "Site introuvable dans ce cockpit. Actualisez la page puis réessayez.";
   }
 
   if (isPrismaForeignKeyError(error)) {

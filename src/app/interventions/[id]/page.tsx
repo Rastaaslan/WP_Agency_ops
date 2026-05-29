@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { PageHeader } from "@/components/page-header";
 import { SectionPanel } from "@/components/section-panel";
 import { StatusBadge } from "@/components/status-badge";
+import { UserNotice } from "@/components/user-notice";
 import { InterventionItemForm } from "@/features/interventions/components/intervention-item-form";
 import { InterventionStatusForm } from "@/features/interventions/components/intervention-status-form";
 import {
@@ -14,20 +15,25 @@ import {
 import { interventionItemValuesFromRecord } from "@/features/interventions/intervention-form-state";
 import { getInterventionById } from "@/features/interventions/services/intervention-service";
 import { formatDateTime, formatEnumLabel, formatNullable } from "@/lib/format";
+import { getUserNotice } from "@/lib/user-notice";
 
 export default async function InterventionDetailPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ id: string }>;
+  searchParams: Promise<{ notice?: string | string[] }>;
 }) {
   await connection();
 
-  const { id } = await params;
+  const [{ id }, query] = await Promise.all([params, searchParams]);
   const intervention = await getInterventionById(id);
 
   if (!intervention) {
     notFound();
   }
+
+  const notice = getUserNotice(query.notice);
 
   return (
     <div className="space-y-6">
@@ -49,6 +55,7 @@ export default async function InterventionDetailPage({
           Modifier
         </Link>
       </PageHeader>
+      <UserNotice notice={notice} />
 
       <section className="grid gap-4 md:grid-cols-4">
         <InfoTile label="Statut">

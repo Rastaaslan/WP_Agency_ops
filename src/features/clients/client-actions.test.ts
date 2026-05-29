@@ -66,7 +66,7 @@ describe("client actions", () => {
 
     await expect(
       createClientAction(createInitialClientFormState(), formData),
-    ).rejects.toThrow("NEXT_REDIRECT:/clients/client_1");
+    ).rejects.toThrow("NEXT_REDIRECT:/clients/client_1?notice=client-created");
 
     expect(clientServiceMock.createClient).toHaveBeenCalledWith({
       name: "Client Demo",
@@ -89,7 +89,7 @@ describe("client actions", () => {
 
     await expect(
       updateClientAction("client_1", createInitialClientFormState(), formData),
-    ).rejects.toThrow("NEXT_REDIRECT:/clients/client_1");
+    ).rejects.toThrow("NEXT_REDIRECT:/clients/client_1?notice=client-updated");
 
     expect(clientServiceMock.updateClient).toHaveBeenCalledWith("client_1", {
       name: "Client Demo Updated",
@@ -116,7 +116,7 @@ describe("client actions", () => {
         createInitialClientFormState(),
         new FormData(),
       ),
-    ).rejects.toThrow("NEXT_REDIRECT:/clients/client_1");
+    ).rejects.toThrow("NEXT_REDIRECT:/clients/client_1?notice=client-archived");
 
     expect(clientServiceMock.archiveClient).toHaveBeenCalledWith("client_1");
     expect(nextCacheMock.revalidatePath).toHaveBeenCalledWith("/clients");
@@ -139,7 +139,8 @@ describe("client actions", () => {
     expect(result).toEqual({
       values: emptyClientFormValues,
       fieldErrors: {},
-      formError: "Client introuvable ou déjà supprimé de la base.",
+      formError:
+        "Client introuvable dans ce cockpit. Actualisez la page puis réessayez.",
     });
   });
 });
