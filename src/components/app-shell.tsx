@@ -16,7 +16,7 @@ const navigationItems = [
     label: "Suivis techniques",
   },
   {
-    href: "/api/health",
+    href: "/etat-application",
     label: "État de l'application",
   },
 ] as const;

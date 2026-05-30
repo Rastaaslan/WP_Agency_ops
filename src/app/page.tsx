@@ -32,7 +32,7 @@ export default async function Home() {
       >
         <Link
           className="inline-flex min-h-10 items-center rounded-md border border-zinc-200 bg-white px-3 text-sm font-medium text-cyan-800 hover:border-cyan-300"
-          href="/api/health"
+          href="/etat-application"
         >
           État de l&apos;application
         </Link>
