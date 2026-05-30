@@ -140,18 +140,18 @@ export default async function SiteDetailPage({
 
       <SectionPanel
         description="Actions techniques ou vérifications globales enregistrées pour ce site."
-        title="Interventions récentes"
+        title="Suivis techniques récents"
       >
         <div className="mb-5">
           <Link
             className="inline-flex min-h-10 items-center justify-center rounded-md border border-zinc-200 px-3 text-sm font-medium text-cyan-800 hover:border-cyan-300"
             href={`/interventions/new?siteId=${site.id}`}
           >
-            Nouvelle intervention pour ce site
+            Nouveau suivi technique pour ce site
           </Link>
         </div>
         {interventions.length === 0 ? (
-          <InlineEmpty message="Aucune intervention n'est encore liée à ce site. L'action ci-dessus permet d'en créer une déjà rattachée." />
+          <InlineEmpty message="Aucun suivi technique n'est encore lié à ce site. L'action ci-dessus permet d'en créer un déjà rattaché." />
         ) : (
           <div className="divide-y divide-zinc-200">
             {interventions.map((intervention) => (
@@ -415,7 +415,7 @@ export default async function SiteDetailPage({
                   <th className="px-4 py-3">Type</th>
                   <th className="px-4 py-3">Statut</th>
                   <th className="px-4 py-3">Fournisseur</th>
-                  <th className="px-4 py-3">Intervention</th>
+                  <th className="px-4 py-3">Suivi lié</th>
                   <th className="px-4 py-3 text-right">Détail</th>
                 </tr>
               </thead>
@@ -617,7 +617,7 @@ export default async function SiteDetailPage({
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <p className="max-w-2xl text-sm leading-6 text-zinc-700">
             L&apos;état technique global expose le client, le site, les
-            interventions, le dernier import WPUR dans un bloc séparé et les
+            suivis techniques, le dernier import WPUR dans un bloc séparé et les
             suivis globaux documentés.
           </p>
           <Link

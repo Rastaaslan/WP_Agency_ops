@@ -184,14 +184,14 @@ function revalidateInterventionLists(siteId?: string) {
 
 function getInterventionMutationErrorMessage(error: unknown) {
   if (isPrismaRecordNotFoundError(error)) {
-    return "Intervention introuvable dans ce cockpit. Actualisez la page puis réessayez.";
+    return "Suivi technique introuvable dans ce cockpit. Actualisez la page puis réessayez.";
   }
 
   if (isPrismaForeignKeyError(error)) {
     return "Site introuvable. Choisissez un site existant puis réessayez.";
   }
 
-  return "Impossible d'enregistrer l'intervention. Vérifiez les champs puis réessayez.";
+  return "Impossible d'enregistrer le suivi technique. Vérifiez les champs puis réessayez.";
 }
 
 function isPrismaRecordNotFoundError(error: unknown) {

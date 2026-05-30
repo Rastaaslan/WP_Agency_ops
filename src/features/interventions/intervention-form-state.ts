@@ -60,7 +60,7 @@ export type InterventionItemFormState = {
 const interventionFieldLabels: Record<InterventionFormField, string> = {
   siteId: "Site",
   title: "Titre",
-  type: "Type",
+  type: "Catégorie",
   date: "Date",
   internalNotes: "Notes internes",
   clientSummary: "Résumé client",
@@ -240,7 +240,7 @@ export function parseInterventionStatusForm(formData: FormData):
       state: {
         values,
         fieldErrors: {
-          status: ["L'avancement de l'intervention doit être valide."],
+          status: ["L'avancement du suivi technique doit être valide."],
         },
       },
     };
@@ -439,7 +439,7 @@ function interventionFormStateFromZodError(
     fieldErrors,
     formError:
       Object.keys(fieldErrors).length === 0
-        ? "Le formulaire intervention contient une erreur."
+        ? "Le formulaire de suivi technique contient une erreur."
         : undefined,
   };
 }
@@ -549,7 +549,7 @@ function formatInterventionIssueMessage(
   }
 
   if (field === "type") {
-    return "Le type d'intervention doit être valide.";
+    return "La catégorie du suivi technique doit être valide.";
   }
 
   return `${interventionFieldLabels[field]} : valeur invalide.`;

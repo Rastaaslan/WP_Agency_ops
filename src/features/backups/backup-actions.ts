@@ -71,7 +71,7 @@ function getBackupMutationErrorMessage(error: unknown) {
   }
 
   if (isPrismaForeignKeyError(error)) {
-    return "Site ou intervention introuvable. Choisissez une valeur existante puis réessayez.";
+    return "Site ou suivi technique introuvable. Choisissez une valeur existante puis réessayez.";
   }
 
   return "Impossible d'enregistrer la sauvegarde. Vérifiez les champs puis réessayez.";

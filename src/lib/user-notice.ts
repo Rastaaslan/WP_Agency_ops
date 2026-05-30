@@ -21,16 +21,16 @@ const userNotices: Record<string, UserNotice> = {
     message: "Les informations du client ont été enregistrées.",
   },
   "intervention-cancelled": {
-    title: "Intervention annulée",
-    message: "Le statut a été mis à jour sans supprimer l'intervention.",
+    title: "Suivi technique annulé",
+    message: "Le statut a été mis à jour sans supprimer la fiche de suivi.",
   },
   "intervention-created": {
-    title: "Intervention créée",
-    message: "L'action est enregistrée dans le suivi global du site.",
+    title: "Suivi technique créé",
+    message: "La fiche est enregistrée dans le suivi global du site.",
   },
   "intervention-item-added": {
     title: "Action ajoutée",
-    message: "L'action à suivre a été ajoutée à l'intervention.",
+    message: "L'action à suivre a été ajoutée à la fiche de suivi.",
   },
   "intervention-item-updated": {
     title: "Action enregistrée",
@@ -38,11 +38,11 @@ const userNotices: Record<string, UserNotice> = {
   },
   "intervention-status-updated": {
     title: "Avancement enregistré",
-    message: "L'avancement de l'intervention a été mis à jour.",
+    message: "L'avancement du suivi technique a été mis à jour.",
   },
   "intervention-updated": {
-    title: "Intervention modifiée",
-    message: "Les informations de l'intervention ont été enregistrées.",
+    title: "Suivi technique modifié",
+    message: "Les informations du suivi technique ont été enregistrées.",
   },
   "performance-check-run": {
     title: "Contrôle performance lancé",

@@ -26,7 +26,7 @@ export default async function Home() {
   return (
     <div className="space-y-6">
       <PageHeader
-        description="Vue synthétique du portefeuille WordPress : activité récente, interventions ouvertes et points à surveiller."
+        description="Vue synthétique du portefeuille WordPress : activité récente, suivis techniques ouverts et points à surveiller."
         eyebrow="Cockpit global WordPress"
         title="Tableau de bord"
       >
@@ -54,7 +54,7 @@ export default async function Home() {
         />
         <KpiCard
           href="/interventions"
-          label="Interventions ouvertes"
+          label="Suivis techniques ouverts"
           value={dashboard.overview.openInterventionCount}
         />
         <KpiCard
@@ -96,7 +96,7 @@ export default async function Home() {
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           <ActionLink href="/clients/new" label="Nouveau client" />
           <ActionLink href="/sites/new" label="Nouveau site" />
-          <ActionLink href="/interventions/new" label="Nouvelle intervention" />
+          <ActionLink href="/interventions/new" label="Nouveau suivi technique" />
           <ActionLink
             href="/sites"
             label="Importer un export WPUR"
@@ -116,9 +116,9 @@ export default async function Home() {
       </SectionPanel>
 
       <div className="grid gap-6 lg:grid-cols-2">
-        <SectionPanel title="Interventions à suivre">
+        <SectionPanel title="Suivis techniques à suivre">
           {dashboard.interventionsToFollow.length === 0 ? (
-            <InlineEmpty message="Aucune intervention planifiée ou en cours." />
+            <InlineEmpty message="Aucun suivi technique planifié ou en cours." />
           ) : (
             <div className="divide-y divide-zinc-200">
               {dashboard.interventionsToFollow.map((intervention) => (

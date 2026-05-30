@@ -29,27 +29,27 @@ export default async function NewInterventionPage({
     <div className="space-y-6">
       <PageHeader
         description="Créer une fiche de suivi pour une action technique ou une vérification globale rattachée à un site."
-        eyebrow="Interventions"
-        title="Nouvelle intervention"
+        eyebrow="Suivis techniques"
+        title="Nouveau suivi technique"
       >
         <Link
           className="inline-flex min-h-10 items-center rounded-md border border-zinc-200 bg-white px-3 text-sm font-medium text-cyan-800 hover:border-cyan-300"
           href="/interventions"
         >
-          Retour interventions
+          Retour suivis techniques
         </Link>
       </PageHeader>
 
       {siteOptions.length === 0 ? (
         <EmptyState
-          description="Créez d'abord un site avant de planifier une intervention."
+          description="Créez d'abord un site avant de planifier un suivi technique."
           href="/sites/new"
           linkLabel="Créer un site"
           title="Aucun site disponible"
         />
       ) : (
         <SectionPanel
-          description="Renseignez le site concerné, le type de suivi, la date et les notes utiles."
+          description="Renseignez le site concerné, la catégorie de suivi, la date et les notes utiles."
           title="Informations de suivi"
         >
           <InterventionForm
@@ -57,7 +57,7 @@ export default async function NewInterventionPage({
             cancelHref="/interventions"
             initialValues={{ siteId: initialSiteId }}
             sites={siteOptions}
-            submitLabel="Créer l'intervention"
+            submitLabel="Créer le suivi technique"
           />
         </SectionPanel>
       )}

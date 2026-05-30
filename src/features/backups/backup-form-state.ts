@@ -36,7 +36,7 @@ const fieldLabels: Record<BackupFormField, string> = {
   performedAt: "Date",
   provider: "Fournisseur",
   storageLocation: "Emplacement",
-  interventionId: "Intervention",
+  interventionId: "Suivi technique",
   notes: "Notes",
 };
 

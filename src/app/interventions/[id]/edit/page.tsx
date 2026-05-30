@@ -36,19 +36,19 @@ export default async function EditInterventionPage({
     <div className="space-y-6">
       <PageHeader
         description="Modifier les informations générales de cette fiche de suivi."
-        eyebrow="Interventions"
+        eyebrow="Suivis techniques"
         title={`Modifier ${intervention.title}`}
       >
         <Link
           className="inline-flex min-h-10 items-center rounded-md border border-zinc-200 bg-white px-3 text-sm font-medium text-cyan-800 hover:border-cyan-300"
           href={`/interventions/${intervention.id}`}
         >
-          Retour fiche intervention
+          Retour fiche suivi
         </Link>
       </PageHeader>
 
       <SectionPanel
-        description="Ajustez le site, le titre, le type, la date et les notes de suivi."
+        description="Ajustez le site, le titre, la catégorie, la date et les notes de suivi."
         title="Informations de suivi"
       >
         <InterventionForm

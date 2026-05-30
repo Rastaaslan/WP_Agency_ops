@@ -38,15 +38,15 @@ export default async function InterventionDetailPage({
   return (
     <div className="space-y-6">
       <PageHeader
-        description={`Fiche de suivi d'une action technique ou d'une vérification globale. Date prévue ou réalisée : ${formatDateTime(intervention.date)}.`}
-        eyebrow="Intervention"
+        description={`Fiche de suivi technique pour comprendre le site concerné, l'avancement et les points à traiter. Date prévue ou réalisée : ${formatDateTime(intervention.date)}.`}
+        eyebrow="Suivi technique"
         title={intervention.title}
       >
         <Link
           className="inline-flex min-h-10 items-center rounded-md border border-zinc-200 bg-white px-3 text-sm font-medium text-cyan-800 hover:border-cyan-300"
           href="/interventions"
         >
-          Retour interventions
+          Retour suivis techniques
         </Link>
         <Link
           className="inline-flex min-h-10 items-center rounded-md border border-zinc-200 bg-white px-3 text-sm font-medium text-cyan-800 hover:border-cyan-300"
@@ -58,12 +58,6 @@ export default async function InterventionDetailPage({
       <UserNotice notice={notice} />
 
       <section className="grid gap-4 md:grid-cols-4">
-        <InfoTile label="Statut">
-          <StatusBadge value={intervention.status} />
-        </InfoTile>
-        <InfoTile label="Type">
-          {formatEnumLabel(intervention.type)}
-        </InfoTile>
         <InfoTile label="Site">
           {intervention.site ? (
             <Link
@@ -75,6 +69,12 @@ export default async function InterventionDetailPage({
           ) : (
             formatNullable(null)
           )}
+        </InfoTile>
+        <InfoTile label="Avancement">
+          <StatusBadge value={intervention.status} />
+        </InfoTile>
+        <InfoTile label="Catégorie">
+          {formatEnumLabel(intervention.type)}
         </InfoTile>
         <InfoTile label="Client">
           {intervention.site?.client ? (
@@ -90,9 +90,20 @@ export default async function InterventionDetailPage({
         </InfoTile>
       </section>
 
+      <section className="rounded-md border border-cyan-200 bg-cyan-50 p-5 text-sm leading-6 text-cyan-950">
+        <h2 className="text-sm font-semibold text-cyan-950">
+          Pourquoi cette fiche existe ?
+        </h2>
+        <p className="mt-2 max-w-3xl">
+          Cette fiche sert à suivre une action technique ou une vérification
+          globale sur un site. Elle regroupe les actions à faire, les points à
+          surveiller et les notes utiles.
+        </p>
+      </section>
+
       <section className="grid gap-6 lg:grid-cols-[1fr_22rem]">
         <div className="space-y-6">
-          <SectionPanel title="Résumé intervention">
+          <SectionPanel title="Contexte du suivi">
             <dl className="grid gap-4 text-sm md:grid-cols-2">
               <div>
                 <dt className="font-medium text-zinc-500">Notes internes</dt>
@@ -116,13 +127,13 @@ export default async function InterventionDetailPage({
           </SectionPanel>
 
           <SectionPanel
-            description="Points à faire, à vérifier ou à documenter pour cette fiche de suivi. Le détail maintenance plugins appartient à WPUR."
-            title="Actions à suivre"
+            description="Liste de points à traiter, vérifier ou documenter pour ce suivi technique. Le détail maintenance plugins appartient à WPUR."
+            title="À faire / à vérifier"
           >
             {intervention.type === "wpur_plugin_maintenance" ? (
               <div className="mb-5 rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-sm leading-6 text-amber-900">
                 <p>
-                  Pour une intervention WPUR, gardez des actions de suivi global :
+                  Pour un suivi WPUR, gardez des actions de suivi global :
                   consulter le rapport WPUR, vérifier les alertes, documenter la
                   maintenance dans WPUR.
                 </p>
@@ -139,8 +150,7 @@ export default async function InterventionDetailPage({
 
             {intervention.items.length === 0 ? (
               <p className="text-sm leading-6 text-zinc-600">
-                Aucune action n&apos;est encore liée à cette intervention. Le
-                formulaire d&apos;ajout permet d&apos;ajouter une action simple.
+                Aucune action n&apos;est encore liée à ce suivi technique.
               </p>
             ) : (
               <ul className="space-y-3">
@@ -200,7 +210,7 @@ export default async function InterventionDetailPage({
 
         <aside className="space-y-6">
           <SectionPanel
-            description="Mettez à jour l'avancement de la fiche sans modifier son contenu."
+            description="Mettez à jour l'avancement sans modifier les notes ni les actions."
             title="Mettre à jour l'avancement"
           >
             <InterventionStatusForm
@@ -208,16 +218,26 @@ export default async function InterventionDetailPage({
               currentStatus={intervention.status}
             />
           </SectionPanel>
+        </aside>
+      </section>
 
-          <SectionPanel title="Ajouter une action à suivre">
+      <SectionPanel
+        description="Ajoutez une action seulement si un nouveau point doit être suivi."
+        title="Ajouter une action"
+      >
+        <details className="rounded-md border border-zinc-200 bg-zinc-50">
+          <summary className="flex min-h-10 cursor-pointer list-none items-center px-3 text-sm font-medium text-cyan-800 hover:text-cyan-950">
+            Ouvrir le formulaire d&apos;ajout
+          </summary>
+          <div className="border-t border-zinc-200 bg-white p-4">
             <InterventionItemForm
               action={addInterventionItemAction.bind(null, intervention.id)}
               formId="intervention-item-new"
               submitLabel="Ajouter l'action"
             />
-          </SectionPanel>
-        </aside>
-      </section>
+          </div>
+        </details>
+      </SectionPanel>
     </div>
   );
 }

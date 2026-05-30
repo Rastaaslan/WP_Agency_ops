@@ -15,14 +15,14 @@ export default async function InterventionsPage() {
     <div>
       <PageHeader
         description="Fiches de suivi des actions techniques et vérifications globales menées sur les sites WordPress."
-        eyebrow="Interventions"
-        title="Interventions"
+        eyebrow="Suivis techniques"
+        title="Suivis techniques"
       >
         <Link
           className="inline-flex min-h-10 items-center rounded-md bg-zinc-950 px-3 text-sm font-medium text-white transition hover:bg-zinc-800"
           href="/interventions/new"
         >
-          Nouvelle intervention
+          Nouveau suivi technique
         </Link>
       </PageHeader>
 
@@ -30,8 +30,8 @@ export default async function InterventionsPage() {
         <EmptyState
           description="Aucune fiche de suivi n'est encore présente dans la base v2."
           href="/interventions/new"
-          linkLabel="Créer une intervention"
-          title="Aucune intervention"
+          linkLabel="Créer un suivi technique"
+          title="Aucun suivi technique"
         />
       ) : (
         <div className="overflow-hidden rounded-md border border-zinc-200 bg-white">
@@ -39,10 +39,10 @@ export default async function InterventionsPage() {
             <table className="min-w-full divide-y divide-zinc-200 text-sm">
               <thead className="bg-zinc-50 text-left text-xs font-semibold uppercase text-zinc-500">
                 <tr>
-                  <th className="px-4 py-3">Intervention</th>
+                  <th className="px-4 py-3">Suivi technique</th>
                   <th className="px-4 py-3">Site</th>
                   <th className="px-4 py-3">Client</th>
-                  <th className="px-4 py-3">Type</th>
+                  <th className="px-4 py-3">Catégorie</th>
                   <th className="px-4 py-3">Statut</th>
                   <th className="px-4 py-3">Date</th>
                   <th className="px-4 py-3 text-right">Détail</th>

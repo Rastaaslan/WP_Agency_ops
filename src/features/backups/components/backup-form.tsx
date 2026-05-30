@@ -93,13 +93,13 @@ export function BackupForm({
       />
       <FormSelect
         errors={state.fieldErrors.interventionId}
-        label="Intervention liée"
+        label="Suivi technique lié"
         name="interventionId"
         options={interventions.map((intervention) => ({
           label: intervention.title,
           value: intervention.id,
         }))}
-        placeholder="Aucune intervention liée"
+        placeholder="Aucun suivi technique lié"
         value={state.values.interventionId}
       />
       <FormField

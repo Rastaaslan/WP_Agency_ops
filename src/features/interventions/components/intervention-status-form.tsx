@@ -35,7 +35,7 @@ export function InterventionStatusForm({
     }
 
     const confirmed = window.confirm(
-      "Confirmer l'annulation ?\n\nL'intervention passera au statut annulé sans supprimer les données.",
+      "Confirmer l'annulation ?\n\nLe suivi technique passera au statut annulé sans supprimer les données.",
     );
 
     if (!confirmed) {

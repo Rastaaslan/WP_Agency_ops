@@ -60,7 +60,7 @@ async function main() {
       environment: "production",
       status: "active",
       notes:
-        "Site principal de démonstration avec interventions, WPUR, sauvegardes, formulaires, sécurité et performance.",
+        "Site principal de démonstration avec suivis techniques, WPUR, sauvegardes, formulaires, sécurité et performance.",
     },
     create: {
       id: "seed-site-vitrine-demo",
@@ -70,7 +70,7 @@ async function main() {
       environment: "production",
       status: "active",
       notes:
-        "Site principal de démonstration avec interventions, WPUR, sauvegardes, formulaires, sécurité et performance.",
+        "Site principal de démonstration avec suivis techniques, WPUR, sauvegardes, formulaires, sécurité et performance.",
     },
   });
 
@@ -83,7 +83,7 @@ async function main() {
       status: "done",
       date: new Date("2026-05-21T09:00:00.000Z"),
       internalNotes:
-        "Intervention de démonstration terminée, sans détail de maintenance plugin dans le cockpit.",
+        "Suivi de démonstration terminé, sans détail de maintenance plugin dans le cockpit.",
       clientSummary:
         "Maintenance mensuelle réalisée : état général contrôlé, sauvegardes vérifiées et synthèse WPUR consultée.",
     },
@@ -95,7 +95,7 @@ async function main() {
       status: "done",
       date: new Date("2026-05-21T09:00:00.000Z"),
       internalNotes:
-        "Intervention de démonstration terminée, sans détail de maintenance plugin dans le cockpit.",
+        "Suivi de démonstration terminé, sans détail de maintenance plugin dans le cockpit.",
       clientSummary:
         "Maintenance mensuelle réalisée : état général contrôlé, sauvegardes vérifiées et synthèse WPUR consultée.",
     },
@@ -137,7 +137,7 @@ async function main() {
       status: "issue",
       date: new Date("2026-05-28T14:00:00.000Z"),
       internalNotes:
-        "Contrôle global de démonstration : points sécurité et performance à revoir, sans scan intrusif.",
+        "Suivi des points à vérifier sur le site : sécurité, performance, formulaires et sauvegardes.",
       clientSummary:
         "Des points à surveiller sont identifiés sur les contrôles simples sécurité et performance.",
     },
@@ -149,7 +149,7 @@ async function main() {
       status: "issue",
       date: new Date("2026-05-28T14:00:00.000Z"),
       internalNotes:
-        "Contrôle global de démonstration : points sécurité et performance à revoir, sans scan intrusif.",
+        "Suivi des points à vérifier sur le site : sécurité, performance, formulaires et sauvegardes.",
       clientSummary:
         "Des points à surveiller sont identifiés sur les contrôles simples sécurité et performance.",
     },
@@ -231,7 +231,7 @@ async function main() {
       performedAt: new Date("2026-05-27T07:30:00.000Z"),
       provider: "Hébergement Nova",
       storageLocation: "Espace de sauvegarde hébergeur",
-      notes: "Sauvegarde complète manuelle confirmée avant intervention.",
+      notes: "Sauvegarde complète manuelle confirmée avant suivi technique.",
     },
     {
       id: "seed-backup-database-2026-05-28",
@@ -505,7 +505,7 @@ async function main() {
       type: "general_maintenance",
       status: "planned",
       date: new Date("2026-06-03T09:30:00.000Z"),
-      internalNotes: "Intervention légère pour montrer un second site.",
+      internalNotes: "Suivi léger pour montrer un second site.",
       clientSummary: "Première revue globale à planifier.",
     },
     create: {
@@ -515,7 +515,7 @@ async function main() {
       type: "general_maintenance",
       status: "planned",
       date: new Date("2026-06-03T09:30:00.000Z"),
-      internalNotes: "Intervention légère pour montrer un second site.",
+      internalNotes: "Suivi léger pour montrer un second site.",
       clientSummary: "Première revue globale à planifier.",
     },
   });

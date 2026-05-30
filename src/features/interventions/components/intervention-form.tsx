@@ -70,7 +70,7 @@ export function InterventionForm({
       />
       <FormSelect
         errors={state.fieldErrors.type}
-        label="Type"
+        label="Catégorie"
         name="type"
         options={interventionTypeOptions.map((value) => ({
           label: formatEnumLabel(value),
@@ -80,8 +80,8 @@ export function InterventionForm({
         value={state.values.type}
       />
       <p className="text-sm leading-6 text-zinc-600">
-        Le type &quot;Maintenance plugins via WPUR&quot; sert seulement à tracer une
-        intervention globale. Le détail plugin par plugin reste dans WPUR.
+        La catégorie &quot;Maintenance plugins via WPUR&quot; sert seulement à tracer un
+        suivi global. Le détail plugin par plugin reste dans WPUR.
       </p>
       <FormField
         errors={state.fieldErrors.date}

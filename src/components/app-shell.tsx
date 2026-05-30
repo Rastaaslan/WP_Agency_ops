@@ -13,7 +13,7 @@ const navigationItems = [
   },
   {
     href: "/interventions",
-    label: "Interventions",
+    label: "Suivis techniques",
   },
   {
     href: "/api/health",
