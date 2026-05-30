@@ -21,7 +21,8 @@ describe("format helpers", () => {
     expect(formatEnumLabel("ok")).toBe("OK");
     expect(formatEnumLabel("issue")).toBe("Point à vérifier");
     expect(formatEnumLabel("warning")).toBe("À surveiller");
-    expect(formatEnumLabel("failed")).toBe("À vérifier");
+    expect(formatEnumLabel("failed")).toBe("Échec");
+    expect(formatEnumLabel("unknown")).toBe("Non renseigné");
     expect(formatEnumLabel("custom_status")).toBe("Custom Status");
   });
 

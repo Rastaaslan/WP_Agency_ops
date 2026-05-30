@@ -14,7 +14,7 @@ export async function GET(_request: Request, context: IdRouteContext) {
     return apiData(
       ensureFound(
         await exportSiteTechnicalState(id),
-        "Site technical export not found.",
+        "État technique du site introuvable.",
       ),
     );
   } catch (error) {

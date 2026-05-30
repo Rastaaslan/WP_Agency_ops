@@ -24,7 +24,7 @@ export default async function NewWpurImportPage({
   return (
     <div className="space-y-6">
       <PageHeader
-        description={`Coller le contenu de l'export WPUR produit pour ${site.name}.`}
+        description={`Importer l'export WPUR produit pour ${site.name} afin de conserver sa synthèse dans le suivi global du site.`}
         eyebrow="Imports WPUR"
         title="Importer un export WPUR"
       >
@@ -39,16 +39,16 @@ export default async function NewWpurImportPage({
       <SectionPanel title="Cadre d'import">
         <div className="space-y-3 text-sm leading-6">
           <p className="rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-amber-900">
-            WPUR reste la source de vérité pour les rapports détaillés plugins.
+            WPUR est l&apos;outil dédié au suivi des plugins et aux rapports associés.
           </p>
           <p className="rounded-md border border-cyan-200 bg-cyan-50 px-3 py-2 text-cyan-950">
-            WP Agency Ops affiche uniquement une synthèse de l&apos;export WPUR.
+            Ici, WP Agency Ops conserve uniquement une synthèse de son export.
           </p>
         </div>
       </SectionPanel>
 
       <SectionPanel
-        description="L'export est vérifié côté serveur, puis stocké comme synthèse externe liée au site. L'export complet reste consultable depuis la fiche site."
+        description="L'export est vérifié côté serveur, puis stocké comme synthèse externe liée au site. Le détail de l'export reste consultable depuis la fiche site."
         title="Export WPUR"
       >
         <WpurImportForm

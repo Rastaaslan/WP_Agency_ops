@@ -215,7 +215,7 @@ describe("intervention actions", () => {
 
     expect(interventionServiceMock.addInterventionItem).not.toHaveBeenCalled();
     expect(result.fieldErrors.label).toEqual([
-      "L'item doit rester global. Le détail plugin par plugin appartient à WPUR.",
+      "L'action doit rester globale. Le détail plugin par plugin appartient à WPUR.",
     ]);
   });
 

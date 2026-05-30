@@ -37,8 +37,9 @@ export default async function ClientDetailPage({
     <div className="space-y-6">
       <PageHeader
         description={formatNullable(
-          client.companyName,
-          "Client sans entreprise renseignée",
+          client.companyName
+            ? `Fiche client pour ${client.companyName} : coordonnées, notes et sites rattachés.`
+            : "Fiche client : coordonnées, notes et sites rattachés.",
         )}
         eyebrow="Client"
         title={client.name}
@@ -77,7 +78,7 @@ export default async function ClientDetailPage({
       </SectionPanel>
 
       <SectionPanel
-        description="Sites WordPress rattachés à ce client."
+        description="Sites WordPress suivis pour ce client. Ouvrez une fiche site pour consulter son suivi technique."
         title="Sites liés"
       >
         {sites.length === 0 ? (

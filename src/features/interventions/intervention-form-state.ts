@@ -68,7 +68,7 @@ const interventionFieldLabels: Record<InterventionFormField, string> = {
 
 const itemFieldLabels: Record<InterventionItemFormField, string> = {
   label: "Libellé",
-  status: "Statut",
+  status: "Avancement",
   notes: "Notes",
 };
 
@@ -240,7 +240,7 @@ export function parseInterventionStatusForm(formData: FormData):
       state: {
         values,
         fieldErrors: {
-          status: ["Le statut d'intervention doit être valide."],
+          status: ["L'avancement de l'intervention doit être valide."],
         },
       },
     };
@@ -468,7 +468,7 @@ function itemFormStateFromZodError(
     fieldErrors,
     formError:
       Object.keys(fieldErrors).length === 0
-        ? "Le formulaire item contient une erreur."
+        ? "Le formulaire d'action contient une erreur."
         : undefined,
   };
 }
@@ -482,7 +482,7 @@ function validateItemBoundary(values: InterventionItemFormValues) {
     values,
     fieldErrors: {
       label: [
-        "L'item doit rester global. Le détail plugin par plugin appartient à WPUR.",
+        "L'action doit rester globale. Le détail plugin par plugin appartient à WPUR.",
       ],
     },
   } satisfies InterventionItemFormState;
@@ -557,11 +557,11 @@ function formatInterventionIssueMessage(
 
 function formatItemIssueMessage(field: InterventionItemFormField) {
   if (field === "label") {
-    return "Le libellé de l'item est obligatoire.";
+    return "Le libellé de l'action est obligatoire.";
   }
 
   if (field === "status") {
-    return "Le statut de l'item doit être valide.";
+    return "L'avancement de l'action doit être valide.";
   }
 
   return `${itemFieldLabels[field]} : valeur invalide.`;

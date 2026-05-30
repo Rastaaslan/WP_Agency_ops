@@ -66,7 +66,7 @@ export default async function SiteDetailPage({
   return (
     <div className="space-y-6">
       <PageHeader
-        description={site.url}
+        description="Cette fiche regroupe les informations utiles pour suivre l'état technique du site."
         eyebrow="Site WordPress"
         title={site.name}
       >
@@ -120,7 +120,10 @@ export default async function SiteDetailPage({
         </InfoTile>
       </section>
 
-      <SectionPanel title="Résumé site">
+      <SectionPanel
+        description="Vue d'ensemble du site, de son client et des notes utiles au suivi."
+        title="Résumé site"
+      >
         <dl className="grid gap-4 text-sm md:grid-cols-2">
           <div>
             <dt className="font-medium text-zinc-500">Nom</dt>
@@ -136,7 +139,7 @@ export default async function SiteDetailPage({
       </SectionPanel>
 
       <SectionPanel
-        description="Dernières interventions globales enregistrées pour ce site."
+        description="Actions techniques ou vérifications globales enregistrées pour ce site."
         title="Interventions récentes"
       >
         <div className="mb-5">
@@ -195,7 +198,7 @@ export default async function SiteDetailPage({
       </SectionPanel>
 
       <SectionPanel
-        description="Contrôle non offensif limité à l'URL du site, quelques en-têtes HTTP et deux fichiers publics. Aucun scan massif, brute force ou test d'exploitation n'est lancé."
+        description="Vérification simple de l'URL du site et de quelques signaux de sécurité publics. Aucun scan approfondi n'est lancé."
         title="Sécurité"
       >
         <div className="mb-5">
@@ -302,7 +305,7 @@ export default async function SiteDetailPage({
       </SectionPanel>
 
       <SectionPanel
-        description="Contrôle simple limité à l'URL du site : statut HTTP, temps de réponse et taille via l'en-tête content-length si disponible. Aucun Lighthouse, PageSpeed, crawl ou test de charge n'est lancé."
+        description="Vérification simple de la réponse du site : disponibilité, temps de réponse et taille déclarée quand elle est disponible."
         title="Performance"
       >
         <div className="mb-5">
@@ -528,16 +531,16 @@ export default async function SiteDetailPage({
       </SectionPanel>
 
       <SectionPanel
-        description="Synthèse des exports importés depuis WPUR. WP Agency Ops ne génère pas ces données."
-        title="Imports WPUR"
+        description="Synthèse des exports importés depuis WPUR. WP Agency Ops ne génère pas ces rapports."
+        title="Synthèse WPUR"
       >
         <div className="mb-5 flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
           <div className="space-y-2 text-sm leading-6">
             <p className="rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-amber-900">
-              WPUR reste la source de vérité pour les rapports détaillés plugins.
+              WPUR est l&apos;outil dédié au suivi des plugins et aux rapports associés.
             </p>
             <p className="rounded-md border border-cyan-200 bg-cyan-50 px-3 py-2 text-cyan-950">
-              WP Agency Ops affiche uniquement une synthèse de l&apos;export WPUR.
+              WP Agency Ops importe uniquement une synthèse de son export.
             </p>
           </div>
           <Link
@@ -560,7 +563,7 @@ export default async function SiteDetailPage({
                   <th className="px-4 py-3 text-right">Lignes</th>
                   <th className="px-4 py-3 text-right">Alertes</th>
                   <th className="px-4 py-3">Importé le</th>
-                  <th className="px-4 py-3 text-right">Export WPUR</th>
+                  <th className="px-4 py-3 text-right">Détail de l&apos;export</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-zinc-200">
@@ -595,7 +598,7 @@ export default async function SiteDetailPage({
                           className="font-medium text-cyan-800 hover:text-cyan-950"
                           href={`/api/wpur-imports/${wpurImport.id}`}
                         >
-                          Voir l&apos;export
+                          Voir le détail
                         </Link>
                       </td>
                     </tr>
@@ -607,7 +610,10 @@ export default async function SiteDetailPage({
         )}
       </SectionPanel>
 
-      <SectionPanel title="État technique du site">
+      <SectionPanel
+        description="Export global de la fiche site pour consulter les données de suivi dans un format structuré."
+        title="État technique du site"
+      >
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <p className="max-w-2xl text-sm leading-6 text-zinc-700">
             L&apos;état technique global expose le client, le site, les

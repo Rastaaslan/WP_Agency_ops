@@ -49,7 +49,7 @@ export function InterventionItemForm({
       <FormSelect
         errors={state.fieldErrors.status}
         formId={formId}
-        label="Statut"
+        label="Avancement"
         name="status"
         options={interventionItemStatusOptions.map((status) => ({
           label: formatEnumLabel(status),

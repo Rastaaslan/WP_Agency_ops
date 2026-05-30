@@ -28,7 +28,7 @@ export default async function NewInterventionPage({
   return (
     <div className="space-y-6">
       <PageHeader
-        description="Créer une intervention globale rattachée à un site existant."
+        description="Créer une fiche de suivi pour une action technique ou une vérification globale rattachée à un site."
         eyebrow="Interventions"
         title="Nouvelle intervention"
       >
@@ -48,7 +48,10 @@ export default async function NewInterventionPage({
           title="Aucun site disponible"
         />
       ) : (
-        <SectionPanel title="Informations intervention">
+        <SectionPanel
+          description="Renseignez le site concerné, le type de suivi, la date et les notes utiles."
+          title="Informations de suivi"
+        >
           <InterventionForm
             action={createInterventionAction}
             cancelHref="/interventions"

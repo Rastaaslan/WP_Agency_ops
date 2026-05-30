@@ -16,7 +16,7 @@ export default async function ClientsPage() {
   return (
     <div>
       <PageHeader
-        description="Portefeuille clients et sites WordPress rattachés."
+        description="Liste des clients suivis, avec leur statut et le nombre de sites WordPress rattachés."
         eyebrow="Clients"
         title="Clients"
       >

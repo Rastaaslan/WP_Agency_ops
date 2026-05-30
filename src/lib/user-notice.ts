@@ -29,16 +29,16 @@ const userNotices: Record<string, UserNotice> = {
     message: "L'action est enregistrée dans le suivi global du site.",
   },
   "intervention-item-added": {
-    title: "Item ajouté",
-    message: "Le point de suivi a été ajouté à l'intervention.",
+    title: "Action ajoutée",
+    message: "L'action à suivre a été ajoutée à l'intervention.",
   },
   "intervention-item-updated": {
-    title: "Item enregistré",
-    message: "Le point de suivi de l'intervention a été mis à jour.",
+    title: "Action enregistrée",
+    message: "L'action à suivre a été mise à jour.",
   },
   "intervention-status-updated": {
-    title: "Statut enregistré",
-    message: "Le statut de l'intervention a été mis à jour.",
+    title: "Avancement enregistré",
+    message: "L'avancement de l'intervention a été mis à jour.",
   },
   "intervention-updated": {
     title: "Intervention modifiée",

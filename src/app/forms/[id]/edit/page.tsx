@@ -25,7 +25,7 @@ export default async function EditWatchedFormPage({
   return (
     <div className="space-y-6">
       <PageHeader
-        description={`Modifier le suivi manuel pour ${watchedForm.site.name}.`}
+        description={`Mettre à jour le suivi manuel de ce formulaire pour ${watchedForm.site.name}.`}
         eyebrow="Formulaires surveillés"
         title="Modifier un formulaire surveillé"
       >
@@ -38,7 +38,7 @@ export default async function EditWatchedFormPage({
       </PageHeader>
 
       <SectionPanel
-        description="La modification ajuste uniquement le suivi documentaire du formulaire."
+        description="La modification ajuste uniquement le suivi documentaire du formulaire, sans test automatique."
         title="Informations formulaire"
       >
         <WatchedFormForm

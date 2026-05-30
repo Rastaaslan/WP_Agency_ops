@@ -55,7 +55,7 @@ export function InterventionStatusForm({
           className="text-sm font-medium text-zinc-800"
           htmlFor="intervention-status"
         >
-          Statut
+          Avancement
         </label>
         <select
           className="mt-2 w-full rounded-md border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-950 outline-none transition focus:border-cyan-500 focus:ring-2 focus:ring-cyan-100"
@@ -82,7 +82,7 @@ export function InterventionStatusForm({
         disabled={pending}
         type="submit"
       >
-        {pending ? "Mise à jour..." : "Changer le statut"}
+        {pending ? "Mise à jour..." : "Mettre à jour l'avancement"}
       </button>
     </form>
   );

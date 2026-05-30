@@ -132,8 +132,8 @@ async function main() {
     where: { id: "seed-intervention-controle-technique" },
     update: {
       siteId: atelierSite.id,
-      title: "Contrôle technique",
-      type: "performance",
+      title: "Vérification globale du site",
+      type: "general_maintenance",
       status: "issue",
       date: new Date("2026-05-28T14:00:00.000Z"),
       internalNotes:
@@ -144,8 +144,8 @@ async function main() {
     create: {
       id: "seed-intervention-controle-technique",
       siteId: atelierSite.id,
-      title: "Contrôle technique",
-      type: "performance",
+      title: "Vérification globale du site",
+      type: "general_maintenance",
       status: "issue",
       date: new Date("2026-05-28T14:00:00.000Z"),
       internalNotes:
@@ -429,7 +429,7 @@ async function main() {
       },
     ],
     notes: [
-      "WP Agency Ops stocke ce payload mais ne le génère pas.",
+      "WP Agency Ops stocke cet export mais ne le génère pas.",
       "Le cockpit affiche une synthèse exploitable pour l'agence.",
       "La maintenance détaillée des extensions reste dans WPUR.",
     ],

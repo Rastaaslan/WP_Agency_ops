@@ -14,7 +14,7 @@ export default async function InterventionsPage() {
   return (
     <div>
       <PageHeader
-        description="Interventions globales planifiées ou réalisées sur les sites WordPress."
+        description="Fiches de suivi des actions techniques et vérifications globales menées sur les sites WordPress."
         eyebrow="Interventions"
         title="Interventions"
       >
@@ -28,7 +28,7 @@ export default async function InterventionsPage() {
 
       {interventions.length === 0 ? (
         <EmptyState
-          description="Aucune intervention globale n'est encore présente dans la base v2."
+          description="Aucune fiche de suivi n'est encore présente dans la base v2."
           href="/interventions/new"
           linkLabel="Créer une intervention"
           title="Aucune intervention"

@@ -32,7 +32,7 @@ export default async function EditBackupPage({
   return (
     <div className="space-y-6">
       <PageHeader
-        description={`Modifier le suivi documentaire pour ${backup.site.name}.`}
+        description={`Mettre à jour les informations de suivi de sauvegarde pour ${backup.site.name}.`}
         eyebrow="Sauvegardes"
         title="Modifier une sauvegarde"
       >
@@ -45,7 +45,7 @@ export default async function EditBackupPage({
       </PageHeader>
 
       <SectionPanel
-        description="La modification ajuste uniquement le suivi documentaire."
+        description="La modification ajuste uniquement le suivi documentaire : aucune sauvegarde réelle n'est lancée."
         title="Informations sauvegarde"
       >
         <BackupForm

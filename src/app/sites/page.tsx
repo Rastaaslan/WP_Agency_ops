@@ -14,7 +14,7 @@ export default async function SitesPage() {
   return (
     <div>
       <PageHeader
-        description="Sites WordPress suivis dans le cockpit."
+        description="Liste des sites WordPress suivis, avec leur client, leur environnement et leur état."
         eyebrow="Sites"
         title="Sites"
       >

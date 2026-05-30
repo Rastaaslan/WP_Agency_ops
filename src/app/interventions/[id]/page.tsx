@@ -38,7 +38,7 @@ export default async function InterventionDetailPage({
   return (
     <div className="space-y-6">
       <PageHeader
-        description={formatDateTime(intervention.date)}
+        description={`Fiche de suivi d'une action technique ou d'une vérification globale. Date prévue ou réalisée : ${formatDateTime(intervention.date)}.`}
         eyebrow="Intervention"
         title={intervention.title}
       >
@@ -116,13 +116,13 @@ export default async function InterventionDetailPage({
           </SectionPanel>
 
           <SectionPanel
-            description="Les items restent globaux. Le détail maintenance plugins appartient à WPUR."
-            title="Items d'intervention"
+            description="Points à faire, à vérifier ou à documenter pour cette fiche de suivi. Le détail maintenance plugins appartient à WPUR."
+            title="Actions à suivre"
           >
             {intervention.type === "wpur_plugin_maintenance" ? (
               <div className="mb-5 rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-sm leading-6 text-amber-900">
                 <p>
-                  Pour une intervention WPUR, gardez des items de suivi global :
+                  Pour une intervention WPUR, gardez des actions de suivi global :
                   consulter le rapport WPUR, vérifier les alertes, documenter la
                   maintenance dans WPUR.
                 </p>
@@ -139,49 +139,69 @@ export default async function InterventionDetailPage({
 
             {intervention.items.length === 0 ? (
               <p className="text-sm leading-6 text-zinc-600">
-                Aucun item n&apos;est encore lié à cette intervention. Le formulaire d&apos;ajout permet d&apos;ajouter un item simple.
+                Aucune action n&apos;est encore liée à cette intervention. Le
+                formulaire d&apos;ajout permet d&apos;ajouter une action simple.
               </p>
             ) : (
-              <div className="space-y-4">
+              <ul className="space-y-3">
                 {intervention.items.map((item) => (
-                  <article
-                    className="rounded-md border border-zinc-200 bg-zinc-50 p-4"
+                  <li
+                    className="rounded-md border border-zinc-200 bg-white p-4"
                     key={item.id}
                   >
-                    <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
-                      <div>
-                        <h3 className="font-medium text-zinc-950">
-                          {item.label}
-                        </h3>
+                    <div className="flex gap-3">
+                      <span
+                        aria-hidden="true"
+                        className={`mt-1 h-4 w-4 shrink-0 rounded border ${
+                          item.status === "done"
+                            ? "border-emerald-600 bg-emerald-600"
+                            : "border-zinc-300 bg-zinc-50"
+                        }`}
+                      />
+                      <div className="min-w-0 flex-1">
+                        <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+                          <h3 className="font-medium text-zinc-950">
+                            {item.label}
+                          </h3>
+                          <StatusBadge value={item.status} />
+                        </div>
                         {item.notes ? (
-                          <p className="mt-1 text-sm leading-6 text-zinc-600">
+                          <p className="mt-2 whitespace-pre-wrap text-sm leading-6 text-zinc-600">
                             {item.notes}
                           </p>
                         ) : null}
+                        <details className="mt-4 rounded-md border border-zinc-200 bg-zinc-50">
+                          <summary className="flex min-h-10 cursor-pointer list-none items-center px-3 text-sm font-medium text-cyan-800 hover:text-cyan-950">
+                            Modifier
+                          </summary>
+                          <div className="border-t border-zinc-200 p-4">
+                            <InterventionItemForm
+                              action={updateInterventionItemAction.bind(
+                                null,
+                                item.id,
+                                intervention.id,
+                              )}
+                              formId={`intervention-item-${item.id}`}
+                              initialValues={interventionItemValuesFromRecord(
+                                item,
+                              )}
+                              submitLabel="Enregistrer l'action"
+                            />
+                          </div>
+                        </details>
                       </div>
-                      <StatusBadge value={item.status} />
                     </div>
-                    <InterventionItemForm
-                      action={updateInterventionItemAction.bind(
-                        null,
-                        item.id,
-                        intervention.id,
-                      )}
-                      formId={`intervention-item-${item.id}`}
-                      initialValues={interventionItemValuesFromRecord(item)}
-                      submitLabel="Enregistrer l'item"
-                    />
-                  </article>
+                  </li>
                 ))}
-              </div>
+              </ul>
             )}
           </SectionPanel>
         </div>
 
         <aside className="space-y-6">
           <SectionPanel
-            description="Utilisez le statut annulé pour annuler une intervention."
-            title="Changer le statut"
+            description="Mettez à jour l'avancement de la fiche sans modifier son contenu."
+            title="Mettre à jour l'avancement"
           >
             <InterventionStatusForm
               action={updateInterventionStatusAction.bind(null, intervention.id)}
@@ -189,11 +209,11 @@ export default async function InterventionDetailPage({
             />
           </SectionPanel>
 
-          <SectionPanel title="Ajouter un item">
+          <SectionPanel title="Ajouter une action à suivre">
             <InterventionItemForm
               action={addInterventionItemAction.bind(null, intervention.id)}
               formId="intervention-item-new"
-              submitLabel="Ajouter l'item"
+              submitLabel="Ajouter l'action"
             />
           </SectionPanel>
         </aside>

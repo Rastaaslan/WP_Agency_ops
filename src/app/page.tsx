@@ -34,7 +34,7 @@ export default async function Home() {
           className="inline-flex min-h-10 items-center rounded-md border border-zinc-200 bg-white px-3 text-sm font-medium text-cyan-800 hover:border-cyan-300"
           href="/api/health"
         >
-          État application
+          État de l&apos;application
         </Link>
       </PageHeader>
 
@@ -70,7 +70,7 @@ export default async function Home() {
       >
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
           <SignalItem
-            label="Sites avec import WPUR récent"
+            label="Sites avec synthèse WPUR récente"
             value={dashboard.signals.sitesWithRecentWpurImportCount}
           />
           <SignalItem
@@ -118,7 +118,7 @@ export default async function Home() {
       <div className="grid gap-6 lg:grid-cols-2">
         <SectionPanel title="Interventions à suivre">
           {dashboard.interventionsToFollow.length === 0 ? (
-            <InlineEmpty message="Aucune intervention planifiée, en cours ou en incident." />
+            <InlineEmpty message="Aucune intervention planifiée ou en cours." />
           ) : (
             <div className="divide-y divide-zinc-200">
               {dashboard.interventionsToFollow.map((intervention) => (
@@ -184,11 +184,11 @@ export default async function Home() {
       </div>
 
       <SectionPanel
-        description="Synthèse des imports existants. Les rapports détaillés plugins restent dans WPUR."
-        title="Derniers imports WPUR"
+        description="Synthèse des exports WPUR déjà importés. Les rapports détaillés plugins restent dans WPUR."
+        title="Dernières synthèses WPUR"
       >
         {dashboard.latestWpurImports.length === 0 ? (
-          <InlineEmpty message="Aucun import WPUR n'est encore enregistré." />
+          <InlineEmpty message="Aucune synthèse WPUR n'est encore enregistrée." />
         ) : (
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-zinc-200 text-sm">

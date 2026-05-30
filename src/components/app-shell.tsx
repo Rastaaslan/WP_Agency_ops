@@ -17,7 +17,7 @@ const navigationItems = [
   },
   {
     href: "/api/health",
-    label: "État application",
+    label: "État de l'application",
   },
 ] as const;
 

@@ -24,7 +24,7 @@ export default async function NewWatchedFormPage({
   return (
     <div className="space-y-6">
       <PageHeader
-        description={`Documenter un formulaire critique à surveiller pour ${site.name}.`}
+        description={`Documenter un formulaire important à surveiller pour ${site.name}.`}
         eyebrow="Formulaires surveillés"
         title="Ajouter un formulaire surveillé"
       >

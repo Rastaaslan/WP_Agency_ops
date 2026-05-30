@@ -33,7 +33,7 @@ export default async function NewBackupPage({
   return (
     <div className="space-y-6">
       <PageHeader
-        description={`Documenter une sauvegarde manuelle pour ${site.name}.`}
+        description={`Documenter une sauvegarde prévue ou déjà réalisée pour ${site.name}.`}
         eyebrow="Sauvegardes"
         title="Ajouter une sauvegarde"
       >
@@ -46,7 +46,7 @@ export default async function NewBackupPage({
       </PageHeader>
 
       <SectionPanel
-        description="Aucune sauvegarde automatique n'est lancée depuis WP Agency Ops."
+        description="Ce suivi reste documentaire : aucune sauvegarde automatique n'est lancée depuis WP Agency Ops."
         title="Suivi manuel"
       >
         <BackupForm
